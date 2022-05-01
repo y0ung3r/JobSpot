@@ -17,43 +17,37 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
-        // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
+    fun login(phoneNumber: String) {
+        val result = loginRepository.login(phoneNumber)
 
-        if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-        } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
-        }
+        _loginResult.value = if (result is Result.Success)
+            LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+        else
+            LoginResult(error = R.string.login_failed)
     }
 
-    fun loginDataChanged(username: String, password: String) {
-        if (!isUserNameValid(username) && !isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(isDataValid = true)
-        }
+    fun validateLoginForm(phoneNumber: String) {
+        _loginForm.value = if (isPhoneNumberValid(phoneNumber))
+            LoginFormState(isDataValid = true)
+        else
+            LoginFormState(phoneNumberError = R.string.invalid_phone_number)
+    }
 
-        if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
-        }
-
-        if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
-        }
+    private fun isPhoneNumberValid(phoneNumber: String): Boolean {
+        return phoneNumber.isNotBlank()
     }
 
     // A placeholder username validation check
-    private fun isUserNameValid(username: String): Boolean {
+    /*private fun isUserNameValid(username: String): Boolean {
         return if (username.contains('@')) {
             Patterns.EMAIL_ADDRESS.matcher(username).matches()
         } else {
             username.isNotBlank()
         }
-    }
+    }*/
 
     // A placeholder password validation check
-    private fun isPasswordValid(password: String): Boolean {
+    /*private fun isPasswordValid(password: String): Boolean {
         return password.length > 5
-    }
+    }*/
 }

@@ -1,12 +1,9 @@
 <resources>
     <string name="app_name">AnyJob</string>
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="prompt_phone_number">Номер телефона</string>
+    <string name="action_get_confirmation_code">Получить код</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="invalid_phone_number">Неправильно указан номер телефона</string>
     <string name="login_failed">"Login failed"</string>
 </resources>

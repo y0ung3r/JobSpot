@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import com.anyjob.databinding.ActivityLoginBinding
 
@@ -25,91 +24,74 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val username = binding.username
-        val password = binding.password
-        val login = binding.login
-        val loading = binding.loading
+        val loginViewModelFactory = LoginViewModelFactory();
+        loginViewModel = ViewModelProvider(this@LoginActivity, loginViewModelFactory)[LoginViewModel::class.java]
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
+        loginViewModel.apply {
+            loginFormState.observe(this@LoginActivity, Observer {
+                val loginState = it ?: return@Observer
 
-        loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
-            val loginState = it ?: return@Observer
+                // disable login button unless both username / password is valid
+                binding.getConfirmationCodeButton.isEnabled = loginState.isDataValid
 
-            // disable login button unless both username / password is valid
-            login.isEnabled = loginState.isDataValid
+                if (loginState.phoneNumberError != null) {
+                    binding.phoneNumberField.error = getString(loginState.phoneNumberError)
+                }
+            })
 
-            if (loginState.usernameError != null) {
-                username.error = getString(loginState.usernameError)
-            }
+            loginResult.observe(this@LoginActivity, Observer {
+                val loginResult = it ?: return@Observer
 
-            if (loginState.passwordError != null) {
-                password.error = getString(loginState.passwordError)
-            }
-        })
+                binding.loadingBar.visibility = View.GONE
 
-        loginViewModel.loginResult.observe(this@LoginActivity, Observer {
-            val loginResult = it ?: return@Observer
+                if (loginResult.error != null) {
+                    showLoginFailed(loginResult.error)
+                }
+                else if (loginResult.success != null) {
+                    afterLogin(loginResult.success)
+                }
 
-            loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
-        })
-
-        username.afterTextChanged {
-            loginViewModel.loginDataChanged(
-                username.text.toString(),
-                password.text.toString()
-            )
+                setResult(Activity.RESULT_OK)
+                finish()
+            })
         }
 
-        password.apply {
+        binding.phoneNumberField.apply {
             afterTextChanged {
-                loginViewModel.loginDataChanged(
-                    username.text.toString(),
-                    password.text.toString()
+                loginViewModel.validateLoginForm(
+                    binding.phoneNumberField.text.toString(),
                 )
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
+            /*setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
+                            binding.phoneNumberField.text.toString()
                         )
                 }
                 false
-            }
+            }*/
+        }
 
-            login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
-            }
+        binding.getConfirmationCodeButton.setOnClickListener {
+            binding.loadingBar.visibility = View.VISIBLE
+            loginViewModel.login(
+                binding.phoneNumberField.text.toString()
+            )
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        val welcome = getString(R.string.welcome)
+    private fun afterLogin(model: LoggedInUserView) {
         val displayName = model.displayName
-        // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+        val welcomeMessage = "${getString(R.string.welcome)} $displayName"
+
+        Toast.makeText(applicationContext, welcomeMessage, Toast.LENGTH_LONG)
+             .show()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
-        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT)
+             .show()
     }
 }
