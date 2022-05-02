@@ -4,10 +4,15 @@ import android.app.Activity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.Gravity
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationSet
+import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.transition.Slide
 import com.anyjob.databinding.ActivityLoginBinding
 
 import com.anyjob.R
@@ -24,7 +29,9 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val loginViewModelFactory = LoginViewModelFactory();
+        supportActionBar?.hide()
+
+        val loginViewModelFactory = LoginViewModelFactory()
         loginViewModel = ViewModelProvider(this@LoginActivity, loginViewModelFactory)[LoginViewModel::class.java]
 
         loginViewModel.apply {
@@ -51,6 +58,8 @@ class LoginActivity : AppCompatActivity() {
                     afterLogin(loginResult.success)
                 }
 
+                //isBusy(false)
+
                 setResult(Activity.RESULT_OK)
                 finish()
             })
@@ -75,7 +84,24 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.getConfirmationCodeButton.setOnClickListener {
-            binding.loadingBar.visibility = View.VISIBLE
+            val animationSet = AnimationSet(false).apply {
+                addAnimation(
+                    AnimationUtils.loadAnimation(this@LoginActivity, R.anim.fade_in)
+                )
+
+                addAnimation(
+                    AnimationUtils.loadAnimation(this@LoginActivity, R.anim.slide_from_top)
+                )
+            }
+
+            binding.loadingBar.apply {
+                startAnimation(animationSet)
+                visibility = View.VISIBLE
+            }
+
+            binding.phoneNumberField.isEnabled = false
+            binding.getConfirmationCodeButton.isEnabled = false
+
             loginViewModel.login(
                 binding.phoneNumberField.text.toString()
             )

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">AnyJob</string>
     <!-- Strings related to login -->
+    <string name="login_activity_title">Авторизация</string>
+    <string name="login_activity_description">Укажите номер телефона, чтобы авторизоваться или зарегистрироваться</string>
     <string name="prompt_phone_number">Номер телефона</string>
     <string name="action_get_confirmation_code">Получить код</string>
     <string name="welcome">"Welcome !"</string>
