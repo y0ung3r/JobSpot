@@ -1,22 +1,16 @@
 package com.anyjob.ui.login
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.view.Gravity
+import android.view.View
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import android.view.View
-import android.view.animation.Animation
-import android.view.animation.AnimationSet
-import android.view.animation.AnimationUtils
-import android.widget.Toast
-import androidx.transition.Slide
-import com.anyjob.databinding.ActivityLoginBinding
-
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.anyjob.R
-import com.anyjob.extensions.afterTextChanged
+import com.anyjob.databinding.ActivityLoginBinding
+import com.anyjob.extensions.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -84,19 +78,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.getConfirmationCodeButton.setOnClickListener {
-            val animationSet = AnimationSet(false).apply {
-                addAnimation(
-                    AnimationUtils.loadAnimation(this@LoginActivity, R.anim.fade_in)
-                )
-
-                addAnimation(
-                    AnimationUtils.loadAnimation(this@LoginActivity, R.anim.slide_from_top)
-                )
-            }
-
             binding.loadingBar.apply {
-                startAnimation(animationSet)
-                visibility = View.VISIBLE
+                slideDown(300)
+                fadeIn(1000)
             }
 
             binding.phoneNumberField.isEnabled = false
