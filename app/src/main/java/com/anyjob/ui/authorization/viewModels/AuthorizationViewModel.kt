@@ -1,36 +1,38 @@
-package com.anyjob.ui.login
+package com.anyjob.ui.authorization.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
-import com.anyjob.data.LoginRepository
-import com.anyjob.data.Result
+import com.anyjob.persistence.LoginRepository
+import com.anyjob.persistence.Result
 
 import com.anyjob.R
+import com.anyjob.ui.authorization.dto.LoggedInUser
+import com.anyjob.ui.authorization.AuthorizationActivityState
+import com.anyjob.ui.authorization.dto.AuthorizationResult
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class AuthorizationViewModel(private val loginRepository: LoginRepository) : ViewModel() {
 
-    private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState> = _loginForm
+    private val _loginForm = MutableLiveData<AuthorizationActivityState>()
+    val loginFormState: LiveData<AuthorizationActivityState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _loginResult = MutableLiveData<AuthorizationResult>()
+    val loginResult: LiveData<AuthorizationResult> = _loginResult
 
     fun login(phoneNumber: String) {
         val result = loginRepository.login(phoneNumber)
 
         _loginResult.value = if (result is Result.Success)
-            LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            AuthorizationResult(success = LoggedInUser(displayName = result.data.displayName))
         else
-            LoginResult(error = R.string.login_failed)
+            AuthorizationResult(error = R.string.login_failed)
     }
 
     fun validateLoginForm(phoneNumber: String) {
         _loginForm.value = if (isPhoneNumberValid(phoneNumber))
-            LoginFormState(isDataValid = true)
+            AuthorizationActivityState(isDataValid = true)
         else
-            LoginFormState(phoneNumberError = R.string.invalid_phone_number)
+            AuthorizationActivityState(phoneNumberError = R.string.invalid_phone_number)
     }
 
     private fun isPhoneNumberValid(phoneNumber: String): Boolean {

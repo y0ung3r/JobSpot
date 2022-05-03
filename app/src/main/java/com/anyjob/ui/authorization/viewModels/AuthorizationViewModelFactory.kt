@@ -1,20 +1,20 @@
-package com.anyjob.ui.login
+package com.anyjob.ui.authorization.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.anyjob.data.LoginDataSource
-import com.anyjob.data.LoginRepository
+import com.anyjob.persistence.LoginDataSource
+import com.anyjob.persistence.LoginRepository
 
 /**
  * ViewModel provider factory to instantiate LoginViewModel.
  * Required given LoginViewModel has a non-empty constructor
  */
-class LoginViewModelFactory : ViewModelProvider.Factory {
+class AuthorizationViewModelFactory : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginViewModel::class.java)) {
-            return LoginViewModel(
+        if (modelClass.isAssignableFrom(AuthorizationViewModel::class.java)) {
+            return AuthorizationViewModel(
                 loginRepository = LoginRepository(
                     dataSource = LoginDataSource()
                 )

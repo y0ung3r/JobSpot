@@ -1,4 +1,4 @@
-package com.anyjob.extensions
+package com.anyjob.ui.extensions
 
 import android.text.Editable
 import android.text.TextWatcher

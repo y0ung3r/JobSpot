@@ -1,6 +1,6 @@
-package com.anyjob.data
+package com.anyjob.persistence
 
-import com.anyjob.data.model.LoggedInUser
+import com.anyjob.persistence.entities.User
 import java.io.IOException
 
 /**
@@ -8,10 +8,10 @@ import java.io.IOException
  */
 class LoginDataSource {
 
-    fun login(phoneNumber: String): Result<LoggedInUser> {
+    fun login(phoneNumber: String): Result<User> {
         try {
             // TODO: handle loggedInUser authentication
-            val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), "Jane Doe")
+            val fakeUser = User(java.util.UUID.randomUUID().toString(), "Jane Doe")
 
             return Result.Success(fakeUser)
         } catch (e: Throwable) {

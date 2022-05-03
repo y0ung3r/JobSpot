@@ -1,4 +1,4 @@
-package com.anyjob.data
+package com.anyjob.persistence
 
 /**
  * A generic class that holds a value with its loading status.
