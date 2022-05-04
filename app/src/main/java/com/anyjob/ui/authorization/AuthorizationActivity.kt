@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.anyjob.R
 import com.anyjob.databinding.ActivityAuthorizationBinding
 import com.anyjob.ui.animations.AnimationParameters
@@ -14,15 +13,12 @@ import com.anyjob.ui.animations.extensions.fadeIn
 import com.anyjob.ui.animations.extensions.fadeOut
 import com.anyjob.ui.animations.fade.FadeOutParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
-import com.anyjob.ui.authorization.viewModels.AuthorizationViewModelFactory
 import com.anyjob.ui.extensions.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AuthorizationActivity : AppCompatActivity() {
 
-    private val authorizationViewModel: AuthorizationViewModel by lazy {
-        val factory = AuthorizationViewModelFactory()
-        ViewModelProvider(this@AuthorizationActivity, factory)[AuthorizationViewModel::class.java]
-    }
+    private val authorizationViewModel by viewModel<AuthorizationViewModel>()
 
     private val binding: ActivityAuthorizationBinding by lazy {
         ActivityAuthorizationBinding.inflate(layoutInflater)

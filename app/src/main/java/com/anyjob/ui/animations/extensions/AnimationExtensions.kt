@@ -1,7 +1,5 @@
 package com.anyjob.ui.animations.extensions
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.view.View
 import android.view.ViewPropertyAnimator
 import android.view.animation.AccelerateDecelerateInterpolator

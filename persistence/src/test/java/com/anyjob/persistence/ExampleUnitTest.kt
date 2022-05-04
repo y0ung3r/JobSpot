@@ -1,4 +1,4 @@
-package com.anyjob
+package com.anyjob.persistence
 
 import org.junit.Test
 
