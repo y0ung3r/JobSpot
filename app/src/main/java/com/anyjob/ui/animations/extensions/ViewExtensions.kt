@@ -10,6 +10,16 @@ import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.animations.slide.asGravity
 
 /**
+ * Запускает анимацию
+ */
+private fun View.beginAnimation(transition: Transition, trigger: () -> Unit) {
+    val sceneView = parent as ViewGroup
+    TransitionManager.beginDelayedTransition(sceneView, transition)
+
+    trigger()
+}
+
+/**
  * Устанавливает подходящее visibility для View, чтобы анимация запускалась правильно
  */
 private fun View.ensureVisibilityValid(mode: VisibilityMode) = when (mode) {
@@ -28,11 +38,9 @@ fun View.fade(parameters: FadeParameters) {
     }
 
     ensureVisibilityValid(parameters.mode)
-
-    val sceneView = parent as ViewGroup
-    TransitionManager.beginDelayedTransition(sceneView, fadeTransition)
-
-    visibility = parameters.mode.asVisibility()
+    beginAnimation(fadeTransition) {
+        visibility = parameters.mode.asVisibility()
+    }
 }
 
 /**
@@ -57,9 +65,7 @@ fun View.slide(parameters: SlideParameters) {
     }
 
     ensureVisibilityValid(parameters.mode)
-
-    val sceneView = parent as ViewGroup
-    TransitionManager.beginDelayedTransition(sceneView, transitionSet)
-
-    visibility = parameters.mode.asVisibility()
+    beginAnimation(transitionSet) {
+        visibility = parameters.mode.asVisibility()
+    }
 }
