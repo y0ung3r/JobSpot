@@ -1,9 +1,9 @@
-package com.anyjob.domain.profile.models
+package com.anyjob.data.profile.entities
 
 /**
  * Пользователь
  */
-data class User(
+data class UserEntity(
     val id: String,
     var firstname: String,
     var lastname: String,

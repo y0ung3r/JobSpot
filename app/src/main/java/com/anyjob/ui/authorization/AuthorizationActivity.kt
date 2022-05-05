@@ -24,7 +24,46 @@ class AuthorizationActivity : AppCompatActivity() {
         ActivityAuthorizationBinding.inflate(layoutInflater)
     }
 
-    private fun toWaitingState() {
+    private fun usePhoneNumberValidator() {
+        binding.phoneNumberField.afterTextChanged {
+            phoneNumber -> authorizationViewModel.validatePhoneNumber(phoneNumber)
+        }
+    }
+
+    private fun useErrorIfPhoneNumberNotValid() {
+        authorizationViewModel.isPhoneNumberValid.observe(this@AuthorizationActivity) { isPhoneNumberValid ->
+            binding.sendConfirmationCodeButton.isEnabled = isPhoneNumberValid
+
+            if (!isPhoneNumberValid) {
+                binding.phoneNumberField.error = getString(R.string.invalid_phone_number)
+            }
+        }
+    }
+
+    private fun useErrorIfConfirmationCodeNotSent() {
+        authorizationViewModel.isConfirmationCodeSent.observe(this@AuthorizationActivity) { isConfirmationCodeSent ->
+            binding.loadingBar.fadeOut(
+                FadeOutParameters().apply {
+                    goneAfterAnimation = true
+                    animationLength = 1500
+                }
+            )
+
+            binding.phoneNumberField.isEnabled = true
+            binding.sendConfirmationCodeButton.isEnabled = true
+
+            if (!isConfirmationCodeSent) {
+                Toast.makeText(baseContext, R.string.confirmation_code_send_failed, Toast.LENGTH_LONG)
+                     .show()
+            }
+            else {
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        }
+    }
+
+    private val sendConfirmationCode = View.OnClickListener {
         binding.loadingBar.fadeIn(
             AnimationParameters().apply {
                 animationLength = 1500
@@ -32,55 +71,11 @@ class AuthorizationActivity : AppCompatActivity() {
         )
 
         binding.phoneNumberField.isEnabled = false
-        binding.getConfirmationCodeButton.isEnabled = false
-    }
+        binding.sendConfirmationCodeButton.isEnabled = false
 
-    private fun toIdleState() {
-        binding.loadingBar.fadeOut(
-            FadeOutParameters().apply {
-                goneAfterAnimation = true
-                animationLength = 1500
-            }
+        authorizationViewModel.sendConfirmationCode(
+            binding.phoneNumberField.text.toString()
         )
-
-        binding.phoneNumberField.isEnabled = true
-        binding.getConfirmationCodeButton.isEnabled = true
-    }
-
-    private fun observeActivityErrors() {
-        authorizationViewModel.loginFormState.observe(this@AuthorizationActivity, Observer {
-            val loginState = it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            binding.getConfirmationCodeButton.isEnabled = loginState.isDataValid
-
-            if (loginState.phoneNumberError != null) {
-                binding.phoneNumberField.error = getString(loginState.phoneNumberError)
-            }
-        })
-    }
-
-    private fun observeAuthorizationResults() {
-        authorizationViewModel.loginResult.observe(this@AuthorizationActivity, Observer {
-            val loginResult = it ?: return@Observer
-
-            toIdleState()
-
-            if (loginResult.error != null) {
-                Toast.makeText(baseContext, R.string.login_failed, Toast.LENGTH_SHORT)
-                     .show()
-            }
-
-            setResult(Activity.RESULT_OK)
-            finish()
-        })
-    }
-
-    private val getConfirmationCode = View.OnClickListener {
-        toWaitingState()
-
-        val phoneNumber = binding.phoneNumberField.text.toString()
-        authorizationViewModel.login(phoneNumber)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,13 +83,10 @@ class AuthorizationActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        observeActivityErrors()
-        observeAuthorizationResults()
+        usePhoneNumberValidator()
+        useErrorIfPhoneNumberNotValid()
 
-        binding.phoneNumberField.afterTextChanged {
-            phoneNumber -> authorizationViewModel.validateLoginForm(phoneNumber)
-        }
-
-        binding.getConfirmationCodeButton.setOnClickListener(getConfirmationCode)
+        useErrorIfConfirmationCodeNotSent()
+        binding.sendConfirmationCodeButton.setOnClickListener(sendConfirmationCode)
     }
 }

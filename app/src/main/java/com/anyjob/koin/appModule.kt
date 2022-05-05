@@ -6,8 +6,6 @@ import org.koin.dsl.module
 
 val appModule = module {
     viewModel {
-        AuthorizationViewModel(
-            loginRepository = get()
-        )
+        AuthorizationViewModel()
     }
 }

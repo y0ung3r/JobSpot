@@ -5,7 +5,7 @@
     <string name="login_activity_description">Укажите номер телефона, чтобы авторизоваться или зарегистрироваться</string>
     <string name="prompt_phone_number">Номер телефона</string>
     <string name="action_get_confirmation_code">Получить код</string>
-    <string name="welcome">"Welcome !"</string>
+    <string name="welcome">"Добро пожаловать!"</string>
     <string name="invalid_phone_number">Неправильно указан номер телефона</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="confirmation_code_send_failed">"Произошла ошибка при отправке кода подтверждения"</string>
 </resources>
