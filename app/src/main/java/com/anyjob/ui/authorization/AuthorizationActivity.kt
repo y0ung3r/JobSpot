@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.anyjob.R
 import com.anyjob.databinding.ActivityAuthorizationBinding
-import com.anyjob.ui.animations.AnimationParameters
-import com.anyjob.ui.animations.extensions.fadeIn
-import com.anyjob.ui.animations.extensions.fadeOut
-import com.anyjob.ui.animations.fade.FadeOutParameters
+import com.anyjob.ui.animations.slide.SlideFrom
+import com.anyjob.ui.animations.extensions.slide
+import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.fade
+import com.anyjob.ui.animations.fade.FadeParameters
+import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.extensions.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -42,10 +43,10 @@ class AuthorizationActivity : AppCompatActivity() {
 
     private fun useErrorIfConfirmationCodeNotSent() {
         authorizationViewModel.isConfirmationCodeSent.observe(this@AuthorizationActivity) { isConfirmationCodeSent ->
-            binding.loadingBar.fadeOut(
-                FadeOutParameters().apply {
-                    goneAfterAnimation = true
-                    animationLength = 1500
+            binding.loadingBar.fade(
+                FadeParameters().apply {
+                    mode = VisibilityMode.Hide
+                    animationLength = 300
                 }
             )
 
@@ -64,9 +65,11 @@ class AuthorizationActivity : AppCompatActivity() {
     }
 
     private val sendConfirmationCode = View.OnClickListener {
-        binding.loadingBar.fadeIn(
-            AnimationParameters().apply {
-                animationLength = 1500
+        binding.loadingBar.slide(
+            SlideParameters().apply {
+                from = SlideFrom.Top
+                mode = VisibilityMode.Show
+                animationLength = 300
             }
         )
 
