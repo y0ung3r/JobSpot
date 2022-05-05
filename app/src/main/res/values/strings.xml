@@ -8,4 +8,8 @@
     <string name="welcome">"Добро пожаловать!"</string>
     <string name="invalid_phone_number">Неправильно указан номер телефона</string>
     <string name="confirmation_code_send_failed">"Произошла ошибка при отправке кода подтверждения"</string>
+    <string name="title_activity_explorer">ExplorerActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_profile">Profile</string>
 </resources>

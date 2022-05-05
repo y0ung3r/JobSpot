@@ -1,4 +1,4 @@
-package com.anyjob.ui.profile.models
+package com.anyjob.ui.explorer.profile.models
 
 /**
  * Информация о авторизованном пользователе

@@ -12,7 +12,7 @@
     tools:context=".ui.authorization.AuthorizationActivity">
 
     <TextView
-        android:id="@+id/login_title"
+        android:id="@+id/authorization_activity_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -26,7 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/loading_bar" />
 
     <TextView
-        android:id="@+id/login_description"
+        android:id="@+id/authorization_activity_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -36,7 +36,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_title" />
+        app:layout_constraintTop_toBottomOf="@+id/authorization_activity_title" />
 
     <EditText
         android:id="@+id/phone_number_field"
@@ -54,7 +54,7 @@
         android:textColorHint="?android:attr/textColorHint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_description" />
+        app:layout_constraintTop_toBottomOf="@+id/authorization_activity_description" />
 
     <Button
         android:id="@+id/send_confirmation_code_button"

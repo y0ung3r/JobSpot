@@ -1,6 +1,7 @@
 package com.anyjob.ui.authorization
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,6 +15,7 @@ import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
+import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.extensions.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -59,6 +61,11 @@ class AuthorizationActivity : AppCompatActivity() {
             }
             else {
                 setResult(Activity.RESULT_OK)
+
+                startActivity(
+                    Intent(this@AuthorizationActivity, ExplorerActivity::class.java)
+                )
+
                 finish()
             }
         }
