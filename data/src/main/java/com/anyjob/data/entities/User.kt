@@ -1,4 +1,4 @@
-package com.anyjob.persistence.entities
+package com.anyjob.data.entities
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository

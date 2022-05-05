@@ -1,6 +1,6 @@
-package com.anyjob.persistence
+package com.anyjob.data
 
-import com.anyjob.persistence.entities.User
+import com.anyjob.data.entities.User
 import java.io.IOException
 
 /**

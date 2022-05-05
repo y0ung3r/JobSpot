@@ -3,8 +3,8 @@ package com.anyjob.ui.authorization.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.anyjob.persistence.LoginRepository
-import com.anyjob.persistence.Result
+import com.anyjob.data.LoginRepository
+import com.anyjob.data.Result
 
 import com.anyjob.R
 import com.anyjob.ui.authorization.dto.LoggedInUser

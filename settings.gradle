@@ -10,5 +10,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AnyJob"
 include ':app'
-include ':persistence'
+include ':data'
 include ':domain'

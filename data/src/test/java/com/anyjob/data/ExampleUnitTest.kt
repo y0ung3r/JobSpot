@@ -1,4 +1,4 @@
-package com.anyjob.persistence
+package com.anyjob.data
 
 import org.junit.Test
 

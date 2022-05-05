@@ -1,6 +1,6 @@
-package com.anyjob.persistence
+package com.anyjob.data
 
-import com.anyjob.persistence.entities.User
+import com.anyjob.data.entities.User
 
 /**
  * Class that requests authentication and user information from the remote data source and
