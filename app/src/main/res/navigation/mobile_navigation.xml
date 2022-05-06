@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.anyjob.ui.explorer.home.HomeFragment"
-        android:label="@string/title_home"
+        android:label="@string/home_fragment_title"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.anyjob.ui.explorer.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:label="@string/dashboard_fragment_title"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_profile"
         android:name="com.anyjob.ui.explorer.profile.ProfileFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/profile_fragment_title"
         tools:layout="@layout/fragment_profile" />
 </navigation>

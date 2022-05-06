@@ -13,7 +13,7 @@
         <activity
             android:name=".ui.explorer.ExplorerActivity"
             android:exported="false"
-            android:label="@string/title_activity_explorer" />
+            android:label="@string/explorer_activity_title" />
         <activity
             android:name=".ui.authorization.AuthorizationActivity"
             android:exported="true"

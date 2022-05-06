@@ -12,7 +12,7 @@ class AuthorizationViewModel() : ViewModel() {
     val isPhoneNumberValid: LiveData<Boolean> = _isPhoneNumberValid
 
     fun sendConfirmationCode(phoneNumber: String) {
-        _isConfirmationCodeSent.value = true
+        _isConfirmationCodeSent.value = false
     }
 
     private fun isPhoneNumberValid(phoneNumber: String): Boolean {

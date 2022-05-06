@@ -72,9 +72,8 @@ class AuthorizationActivity : AppCompatActivity() {
     }
 
     private val sendConfirmationCode = View.OnClickListener {
-        binding.loadingBar.slide(
-            SlideParameters().apply {
-                from = SlideFrom.Top
+        binding.loadingBar.fade(
+            FadeParameters().apply {
                 mode = VisibilityMode.Show
                 animationLength = 300
             }

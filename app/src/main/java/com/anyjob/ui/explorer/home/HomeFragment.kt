@@ -16,9 +16,9 @@ class HomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        viewModel.text.observe(viewLifecycleOwner, { content ->
+        viewModel.text.observe(viewLifecycleOwner) { content ->
             binding.textHome.text = content
-        })
+        }
 
         return binding.root
     }

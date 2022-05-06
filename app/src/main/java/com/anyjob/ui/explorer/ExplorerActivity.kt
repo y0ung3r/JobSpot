@@ -22,7 +22,7 @@ class ExplorerActivity : AppCompatActivity() {
         val navigationItems = setOf(
             R.id.navigation_home,
             R.id.navigation_dashboard,
-            R.id.navigation_notifications
+            R.id.navigation_profile
         )
 
         val navigationController = findNavController(R.id.explorer_fragment_host)

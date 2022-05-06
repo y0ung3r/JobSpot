@@ -4,10 +4,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.transition.*
 import com.anyjob.ui.animations.VisibilityMode
-import com.anyjob.ui.animations.asVisibility
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.slide.SlideParameters
-import com.anyjob.ui.animations.slide.asGravity
+import com.anyjob.ui.animations.slide.extensions.asGravity
 
 /**
  * Запускает анимацию
@@ -54,7 +53,7 @@ fun View.slide(parameters: SlideParameters) {
         addTarget(this@slide)
     }
 
-    var transitionSet = TransitionSet().apply {
+    val transitionSet = TransitionSet().apply {
         ordering = TransitionSet.ORDERING_TOGETHER
         addTransition(slideTransition)
         addTransition(

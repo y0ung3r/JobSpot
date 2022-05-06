@@ -18,12 +18,12 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/login_activity_title"
+        android:text="@string/authorization_activity_title"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loading_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/authorization_activity_icon" />
 
     <TextView
         android:id="@+id/authorization_activity_description"
@@ -32,7 +32,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/login_activity_description"
+        android:text="@string/authorization_activity_description"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -70,15 +70,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phone_number_field" />
 
+    <ImageView
+        android:id="@+id/authorization_activity_icon"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/authorization_activity_title"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_smartphone_24" />
+
     <ProgressBar
         android:id="@+id/loading_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="16dp"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/authorization_activity_icon"
+        app:layout_constraintEnd_toEndOf="@+id/authorization_activity_icon"
+        app:layout_constraintStart_toStartOf="@+id/authorization_activity_icon"
+        app:layout_constraintTop_toTopOf="@+id/authorization_activity_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
