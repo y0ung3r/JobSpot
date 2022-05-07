@@ -24,6 +24,7 @@ class AuthorizationActivity : AppCompatActivity() {
             binding.authorizationFragmentsContainer.id,
             PhoneNumberEntryFragment()
         )
+        .disallowAddToBackStack()
         .commit()
     }
 }
