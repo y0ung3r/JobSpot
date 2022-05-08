@@ -7,7 +7,7 @@
     tools:context=".ui.authorization.ConfirmationCodeValidationFragment">
 
     <TextView
-        android:id="@+id/phone_number_entry_fragment_title"
+        android:id="@+id/confirmation_code_validation_fragment_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -18,10 +18,10 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number_entry_fragment_image_view" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmation_code_validation_fragment_image_view" />
 
     <TextView
-        android:id="@+id/phone_number_entry_fragment_description"
+        android:id="@+id/confirmation_code_validation_fragment_description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -31,10 +31,10 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number_entry_fragment_title" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmation_code_validation_fragment_title" />
 
     <ImageView
-        android:id="@+id/phone_number_entry_fragment_image_view"
+        android:id="@+id/confirmation_code_validation_fragment_image_view"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
@@ -58,7 +58,7 @@
         android:minHeight="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phone_number_entry_fragment_description" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmation_code_validation_fragment_description" />
 
     <Button
         android:id="@+id/confirm_button"

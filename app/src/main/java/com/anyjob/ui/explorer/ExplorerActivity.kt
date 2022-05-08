@@ -25,7 +25,7 @@ class ExplorerActivity : AppCompatActivity() {
             R.id.navigation_profile
         )
 
-        val navigationController = findNavController(R.id.explorer_fragment_host)
+        val navigationController = findNavController(R.id.explorer_fragments_container)
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
         setupActionBarWithNavController(navigationController, applicationBarConfiguration)
         binding.navigationView.setupWithNavController(navigationController)

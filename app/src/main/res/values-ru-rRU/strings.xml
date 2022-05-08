@@ -17,4 +17,10 @@
     <string name="confirmation_code_fragment_description">Введите код подтверждения, который был отправлен на</string>
     <string name="confirmation_code_prompt">Проверочный код</string>
     <string name="confirm_entry_action">Подтвердить</string>
+    <string name="lastname_prompt">Фамилия</string>
+    <string name="firstname_prompt">Имя</string>
+    <string name="middlename_prompt">Отчество (необязательно)</string>
+    <string name="registration_fragment_title">Расскажите о себе</string>
+    <string name="registration_fragment_description">Нам необходимо знать о Вас совсем немного!</string>
+    <string name="is_worker_prompt">Зарегистрироваться, как работник</string>
 </resources>

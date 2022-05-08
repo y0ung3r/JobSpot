@@ -17,4 +17,10 @@
     <string name="confirmation_code_fragment_description">Enter your verification code sent to</string>
     <string name="confirmation_code_prompt">Verification code</string>
     <string name="confirm_entry_action">Confirm</string>
+    <string name="lastname_prompt">Lastname</string>
+    <string name="firstname_prompt">Firstname</string>
+    <string name="middlename_prompt">Middlename (optional)</string>
+    <string name="registration_fragment_title">Tell us about yourself</string>
+    <string name="registration_fragment_description">We need to know very little about you!</string>
+    <string name="is_worker_prompt">I\'m worker</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.anyjob.koin
 
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
+import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
+import com.anyjob.ui.authorization.viewModels.RegistrationViewModel
 import com.anyjob.ui.explorer.dashboard.viewModels.DashboardViewModel
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
 import com.anyjob.ui.explorer.profile.viewModels.ProfileViewModel
@@ -15,6 +17,14 @@ val appModule = module {
 
     viewModel {
         PhoneNumberEntryViewModel()
+    }
+
+    viewModel {
+        ConfirmationCodeValidationViewModel()
+    }
+
+    viewModel {
+        RegistrationViewModel()
     }
 
     viewModel {
