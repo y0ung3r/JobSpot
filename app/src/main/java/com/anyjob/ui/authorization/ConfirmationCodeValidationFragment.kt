@@ -1,12 +1,12 @@
 package com.anyjob.ui.authorization
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.replace
@@ -19,10 +19,10 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ConfirmationCodeValidationFragment : Fragment() {
-    private val activityViewModel by sharedViewModel<AuthorizationViewModel>()
-    private val viewModel by viewModel<ConfirmationCodeValidationViewModel>()
+    private val _activityViewModel by sharedViewModel<AuthorizationViewModel>()
+    private val _viewModel by viewModel<ConfirmationCodeValidationViewModel>()
 
-    private lateinit var binding: FragmentConfirmationCodeValidationBinding
+    private lateinit var _binding: FragmentConfirmationCodeValidationBinding
 
     private fun navigateToRegistrationFragment() {
         val activity = requireActivity()
@@ -47,37 +47,42 @@ class ConfirmationCodeValidationFragment : Fragment() {
     }
 
     private fun putPhoneNumberToDescription() {
-        val description = "${getString(R.string.confirmation_code_fragment_description)} ${activityViewModel.phoneNumber.value}"
-        binding.confirmationCodeValidationFragmentDescription.text = description
+        val description = "${getString(R.string.confirmation_code_fragment_description)} ${_activityViewModel.phoneNumber.value}"
+        _binding.confirmationCodeValidationFragmentDescription.text = description
     }
 
     private fun useCodeValidatingStateObserver() {
-        viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment) { isConfirmationCodeValid ->
-            binding.confirmButton.isEnabled = true
+        _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment) { isConfirmationCodeValid ->
+            _binding.confirmButton.isEnabled = true
 
-            navigateToRegistrationFragment()
+            // navigateToRegistrationFragment()
+        }
+
+        _activityViewModel.errorMessageCode.observe(this@ConfirmationCodeValidationFragment) { errorMessageCode ->
+            val errorMessage = getString(errorMessageCode)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
+                 .show()
         }
     }
 
     private fun useValidateConfirmationCodeCommand() {
-        binding.confirmButton.setOnClickListener {
-            binding.confirmButton.isEnabled = false
+        _binding.confirmButton.setOnClickListener {
+            _binding.confirmButton.isEnabled = false
 
-            viewModel.validateConfirmationCode(
-                binding.verificationCodeField.text.toString()
+            _activityViewModel.verifyCode(
+                _binding.verificationCodeField.text.toString()
             )
         }
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentConfirmationCodeValidationBinding.inflate(inflater, container, false)
+        _binding = FragmentConfirmationCodeValidationBinding.inflate(inflater, container, false)
 
         putPhoneNumberToDescription()
         useCodeValidatingStateObserver()
 
         useValidateConfirmationCodeCommand()
 
-        return binding.root
+        return _binding.root
     }
 }

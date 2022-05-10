@@ -10,16 +10,16 @@ import com.anyjob.ui.explorer.profile.viewModels.ProfileViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileFragment : Fragment() {
-    private val viewModel by viewModel<ProfileViewModel>()
-    private lateinit var binding: FragmentProfileBinding
+    private val _viewModel by viewModel<ProfileViewModel>()
+    private lateinit var _binding: FragmentProfileBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        viewModel.text.observe(viewLifecycleOwner) { content ->
-            binding.textNotifications.text = content
+        _viewModel.text.observe(viewLifecycleOwner) { content ->
+            _binding.textNotifications.text = content
         }
 
-        return binding.root
+        return _binding.root
     }
 }

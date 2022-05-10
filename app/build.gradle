@@ -38,6 +38,7 @@ android {
 dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
+    implementation platform('com.google.firebase:firebase-bom:30.0.0')
     implementation "io.insert-koin:koin-core:3.1.6"
     implementation "io.insert-koin:koin-android:3.1.6"
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -50,7 +51,7 @@ dependencies {
     implementation 'com.github.RedMadRobot:input-mask-android:6.1.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
-    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.+'
     testImplementation "io.insert-koin:koin-test:3.1.6"

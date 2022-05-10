@@ -23,4 +23,7 @@
     <string name="registration_fragment_title">Tell us about yourself</string>
     <string name="registration_fragment_description">We need to know very little about you!</string>
     <string name="is_worker_prompt">I\'m worker</string>
+    <string name="authorization_server_error">Authorization server is not available now. Try later</string>
+    <string name="unexpected_error">An unexpected error has occurred</string>
+    <string name="invalid_confirmation_code">Invalid confirmation code</string>
 </resources>

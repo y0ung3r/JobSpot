@@ -10,12 +10,12 @@ import com.anyjob.ui.authorization.viewModels.RegistrationViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RegistrationFragment : Fragment() {
-    private val viewModel by viewModel<RegistrationViewModel>()
-    private lateinit var binding: FragmentRegistrationBinding
+    private val _viewModel by viewModel<RegistrationViewModel>()
+    private lateinit var _binding: FragmentRegistrationBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentRegistrationBinding.inflate(inflater, container, false)
+        _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
 
-        return binding.root
+        return _binding.root
     }
 }

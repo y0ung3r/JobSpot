@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.add
 import com.anyjob.databinding.ActivityAuthorizationBinding
-import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import java.util.concurrent.TimeUnit
 
 class AuthorizationActivity : AppCompatActivity() {
-    private val binding: ActivityAuthorizationBinding by lazy {
+    private val _binding: ActivityAuthorizationBinding by lazy {
         ActivityAuthorizationBinding.inflate(layoutInflater)
     }
 
@@ -17,7 +20,7 @@ class AuthorizationActivity : AppCompatActivity() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
 
         fragmentTransaction.add<PhoneNumberEntryFragment>(
-            binding.authorizationFragmentsContainer.id
+            _binding.authorizationFragmentsContainer.id
         )
         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
         .commit()
@@ -25,7 +28,7 @@ class AuthorizationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        setContentView(_binding.root)
         supportActionBar?.hide()
 
         navigateToPhoneNumberEntryFragment()

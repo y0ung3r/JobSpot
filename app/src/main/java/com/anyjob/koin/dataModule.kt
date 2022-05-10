@@ -1,17 +1,18 @@
 package com.anyjob.koin
 
-import com.anyjob.data.authorization.FirebaseAuthorizationRepository
-import com.anyjob.domain.authorization.interfaces.AuthorizationRepository
-import com.google.firebase.auth.FirebaseAuth
+import com.anyjob.data.authorization.firebase.FirebasePhoneNumberAuthorizationSource
+import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationSource
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import org.koin.dsl.module
 
 val persistenceModule = module {
     single {
-        FirebaseAuth.getInstance()
+        Firebase.auth
     }
 
-    factory<AuthorizationRepository> {
-        FirebaseAuthorizationRepository(
+    factory<PhoneNumberAuthorizationSource> {
+        FirebasePhoneNumberAuthorizationSource(
             firebaseProvider = get()
         )
     }
