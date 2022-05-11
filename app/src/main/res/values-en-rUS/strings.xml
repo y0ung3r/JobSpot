@@ -6,7 +6,7 @@
     <string name="phone_number_prompt">Phone number</string>
     <string name="get_confirmation_code_action_description">Get confirmation code</string>
     <string name="welcome">Welcome!</string>
-    <string name="invalid_phone_number">Invalid phone number</string>
+    <string name="invalid_phone_number_format">Invalid phone number format</string>
     <string name="confirmation_code_send_failed">An error occurred while sending the confirmation code</string>
     <string name="home_fragment_title">Home</string>
     <string name="dashboard_fragment_title">Dashboard</string>
@@ -25,5 +25,8 @@
     <string name="is_worker_prompt">I\'m worker</string>
     <string name="authorization_server_error">Authorization server is not available now. Try later</string>
     <string name="unexpected_error">An unexpected error has occurred</string>
-    <string name="invalid_confirmation_code">Invalid confirmation code</string>
+    <string name="invalid_confirmation_code_format">Invalid confirmation code</string>
+    <string name="incorrect_confirmation_code">Incorrect confirmation code</string>
+    <string name="confirmation_code_verification_error">An error occurred while checking the code</string>
+    <string name="resend_code_action">Resend verification code</string>
 </resources>

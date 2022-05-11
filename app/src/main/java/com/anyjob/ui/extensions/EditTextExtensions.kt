@@ -3,6 +3,7 @@ package com.anyjob.ui.extensions
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.redmadrobot.inputmask.MaskedTextChangedListener
 
 /**
  * Метод-расширения для упрощения настройки действия при afterTextChanged в EditText
@@ -23,4 +24,13 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
             // Ignore...
         }
     })
+}
+
+/**
+ * Метод-расширения для закрепления MaskedTextChangedListener к EditText'у
+ */
+fun EditText.attachMaskedTextChangedListener(listener: MaskedTextChangedListener) {
+    addTextChangedListener(listener)
+    onFocusChangeListener = listener
+    hint = listener.placeholder()
 }

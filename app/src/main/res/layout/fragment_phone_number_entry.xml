@@ -42,8 +42,10 @@
         android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
         android:autofillHints="@string/phone_number_prompt"
-        android:digits="0123456789+()"
+        android:digits="1234567890+-() "
+        android:gravity="center_vertical"
         android:hint="@string/phone_number_prompt"
+        android:imeOptions="actionSend"
         android:inputType="phone"
         android:minHeight="48dp"
         android:selectAllOnFocus="true"
@@ -70,23 +72,24 @@
         android:id="@+id/phone_number_entry_fragment_image_view"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:contentDescription="@string/phone_number_entry_fragment_title"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_smartphone_24" />
+        app:layout_constraintTop_toBottomOf="@+id/loading_bar"
+        app:srcCompat="@drawable/ic_baseline_smartphone_24"
+        app:tint="@color/purple_500" />
 
     <ProgressBar
         android:id="@+id/loading_bar"
+        style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/phone_number_entry_fragment_image_view"
-        app:layout_constraintEnd_toEndOf="@+id/phone_number_entry_fragment_image_view"
-        app:layout_constraintStart_toStartOf="@+id/phone_number_entry_fragment_image_view"
-        app:layout_constraintTop_toTopOf="@+id/phone_number_entry_fragment_image_view" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

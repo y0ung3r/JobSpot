@@ -4,17 +4,18 @@ import com.anyjob.data.authorization.PhoneNumberAuthorizationParameters
 import com.anyjob.data.authorization.exceptions.AuthorizationException
 import com.anyjob.data.authorization.exceptions.AuthorizationServerException
 import com.anyjob.data.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationSource
+import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 
-class FirebasePhoneNumberAuthorizationSource(private val firebaseProvider: FirebaseAuth) : PhoneNumberAuthorizationSource {
+class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: FirebaseAuth) : PhoneNumberAuthorizationProvider {
     private var _verificationId: String? = null
     private var _forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
-    private var _onCodeSendingStateListener: PhoneNumberAuthorizationSource.OnCodeSendingStateListener? = null
+    private lateinit var _onCodeSent: (Result<Unit>) -> Unit
+    private lateinit var _onCodeVerified: (Result<Unit>) -> Unit
 
     private val _phoneNumberAuthenticationCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credentials: PhoneAuthCredential) {
@@ -25,17 +26,21 @@ class FirebasePhoneNumberAuthorizationSource(private val firebaseProvider: Fireb
             _verificationId = verificationId
             _forceResendingToken = forceResendingToken
 
-            _onCodeSendingStateListener?.onSuccess()
+            _onCodeSent.invoke(
+                Result.success(Unit)
+            )
         }
 
-        override fun onVerificationFailed(exception: FirebaseException) {
-            val authorizationException = when (exception) {
-                is FirebaseAuthInvalidCredentialsException -> InvalidCredentialsException("Неправильно указан номер телефона")
+        override fun onVerificationFailed(firebaseException: FirebaseException) {
+            val authorizationException = when (firebaseException) {
+                is FirebaseAuthInvalidCredentialsException -> InvalidCredentialsException("Передан некорректный номер телефона")
                 is FirebaseTooManyRequestsException -> AuthorizationServerException()
                 else -> AuthorizationException("Произошла непредвиденная ошибка при авторизации")
             }
 
-            _onCodeSendingStateListener?.onFailed(authorizationException as AuthorizationException)
+            _onCodeSent.invoke(
+                Result.failure(authorizationException)
+            )
         }
     }
 
@@ -57,15 +62,26 @@ class FirebasePhoneNumberAuthorizationSource(private val firebaseProvider: Fireb
     private fun signIn(credentials: PhoneAuthCredential) {
         firebaseProvider.signInWithCredential(credentials)
                         .addOnCompleteListener { task ->
-                            if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                                throw InvalidCredentialsException("Неправильно указан проверочный код")
+                            if (task.isSuccessful){
+                                _onCodeVerified.invoke(
+                                    Result.success(Unit)
+                                )
+                            }
+                            else if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                                _onCodeVerified.invoke(
+                                    Result.failure(
+                                        InvalidCredentialsException("Передан некорректный проверочный код")
+                                    )
+                                )
                             }
                         }
     }
 
-    override fun verifyCode(code: String) {
+    override fun verifyCode(code: String, onCodeVerified: (Result<Unit>) -> Unit) {
+        _onCodeVerified = onCodeVerified
+
         if (_verificationId == null) {
-            throw AuthorizationException("Невозможно выполнить авторизацию. Попробуйте снова")
+            throw AuthorizationException("Невозможно выполнить авторизацию")
         }
 
         if (code.isBlank()) {
@@ -77,10 +93,12 @@ class FirebasePhoneNumberAuthorizationSource(private val firebaseProvider: Fireb
         )
     }
 
-    override fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
+    override fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Unit>) -> Unit) {
         if (authorizationParameters !is FirebasePhoneNumberAuthorizationParameters) {
             throw IllegalArgumentException("Для авторизации через Firebase необходимо использовать ${FirebasePhoneNumberAuthorizationParameters::class.simpleName}")
         }
+        
+        _onCodeSent = onCodeSent
 
         PhoneAuthProvider.verifyPhoneNumber(
             createPhoneNumberAuthenticationOptions(
@@ -88,11 +106,5 @@ class FirebasePhoneNumberAuthorizationSource(private val firebaseProvider: Fireb
                 _forceResendingToken
             )
         )
-    }
-
-    override fun setOnCodeSendingStateListener(listener: PhoneNumberAuthorizationSource.OnCodeSendingStateListener): PhoneNumberAuthorizationSource {
-        _onCodeSendingStateListener = listener
-
-        return this@FirebasePhoneNumberAuthorizationSource
     }
 }

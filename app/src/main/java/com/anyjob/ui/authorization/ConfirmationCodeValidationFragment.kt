@@ -6,15 +6,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.replace
 import com.anyjob.R
 import com.anyjob.databinding.FragmentConfirmationCodeValidationBinding
+import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.slide
+import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
 import com.anyjob.ui.explorer.ExplorerActivity
+import com.anyjob.ui.extensions.afterTextChanged
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,6 +26,23 @@ class ConfirmationCodeValidationFragment : Fragment() {
     private val _viewModel by viewModel<ConfirmationCodeValidationViewModel>()
 
     private lateinit var _binding: FragmentConfirmationCodeValidationBinding
+
+    private fun setBusy(isBusy: Boolean) {
+        val visibilityMode = when (isBusy) {
+            true -> VisibilityMode.Show
+            false -> VisibilityMode.Hide
+        }
+
+        _binding.verificationCodeField.isEnabled = !isBusy
+        _binding.confirmButton.isEnabled = !isBusy
+
+        _binding.loadingBar.slide(
+            SlideParameters().apply {
+                mode = visibilityMode
+                animationLength = 300
+            }
+        )
+    }
 
     private fun navigateToRegistrationFragment() {
         val activity = requireActivity()
@@ -37,7 +57,6 @@ class ConfirmationCodeValidationFragment : Fragment() {
 
     private fun navigateToExplorerActivity() {
         val activity = requireActivity()
-
         startActivity(
             Intent(context, ExplorerActivity::class.java)
         )
@@ -51,27 +70,38 @@ class ConfirmationCodeValidationFragment : Fragment() {
         _binding.confirmationCodeValidationFragmentDescription.text = description
     }
 
-    private fun useCodeValidatingStateObserver() {
-        _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment) { isConfirmationCodeValid ->
-            _binding.confirmButton.isEnabled = true
-
-            // navigateToRegistrationFragment()
+    private fun useCodeValidator() {
+        _binding.verificationCodeField.afterTextChanged {
+            code -> _viewModel.validateCode(code)
         }
 
-        _activityViewModel.errorMessageCode.observe(this@ConfirmationCodeValidationFragment) { errorMessageCode ->
-            val errorMessage = getString(errorMessageCode)
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
-                 .show()
+        _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment) { isConfirmationCodeValid ->
+            _binding.confirmButton.isEnabled = isConfirmationCodeValid
+
+            if (!isConfirmationCodeValid) {
+                _binding.verificationCodeField.error = getString(R.string.invalid_confirmation_code_format)
+            }
         }
     }
 
-    private fun useValidateConfirmationCodeCommand() {
-        _binding.confirmButton.setOnClickListener {
-            _binding.confirmButton.isEnabled = false
+    private fun useOnCodeVerifiedObserver() {
+        _activityViewModel.isCodeVerified.observe(this@ConfirmationCodeValidationFragment) { isCodeVerified ->
+            if (isCodeVerified) {
+                navigateToRegistrationFragment()
+            }
+        }
 
-            _activityViewModel.verifyCode(
-                _binding.verificationCodeField.text.toString()
-            )
+        _activityViewModel.errorMessageCode.observe(this@ConfirmationCodeValidationFragment) {
+            setBusy(false)
+        }
+    }
+
+    private fun useVerifyConfirmationCodeCommand() {
+        _binding.confirmButton.setOnClickListener {
+            setBusy(true)
+
+            val code = _binding.verificationCodeField.text.toString()
+            _activityViewModel.verifyCode(code)
         }
     }
 
@@ -79,9 +109,11 @@ class ConfirmationCodeValidationFragment : Fragment() {
         _binding = FragmentConfirmationCodeValidationBinding.inflate(inflater, container, false)
 
         putPhoneNumberToDescription()
-        useCodeValidatingStateObserver()
 
-        useValidateConfirmationCodeCommand()
+        useCodeValidator()
+        useOnCodeVerifiedObserver()
+
+        useVerifyConfirmationCodeCommand()
 
         return _binding.root
     }

@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel {
         AuthorizationViewModel(
-            authorizationSource = get()
+            authorizationProvider = get()
         )
     }
 

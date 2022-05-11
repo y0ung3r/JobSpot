@@ -3,10 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/AnyJob/app/src/main/res/drawable/ic_baseline_autorenew_24.xml" value="0.3536458333333333" />
         <entry key="..\:/Android/AnyJob/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.3536458333333333" />
-        <entry key="..\:/Android/AnyJob/app/src/main/res/layout/activity_authorization.xml" value="0.36666666666666664" />
+        <entry key="..\:/Android/AnyJob/app/src/main/res/layout/activity_authorization.xml" value="0.25" />
         <entry key="..\:/Android/AnyJob/app/src/main/res/layout/activity_explorer.xml" value="0.302536231884058" />
-        <entry key="..\:/Android/AnyJob/app/src/main/res/layout/fragment_confirmation_code_validation.xml" value="1.0" />
+        <entry key="..\:/Android/AnyJob/app/src/main/res/layout/fragment_confirmation_code_validation.xml" value="0.33" />
         <entry key="..\:/Android/AnyJob/app/src/main/res/layout/fragment_dashboard.xml" value="0.302536231884058" />
         <entry key="..\:/Android/AnyJob/app/src/main/res/layout/fragment_home.xml" value="0.302536231884058" />
         <entry key="..\:/Android/AnyJob/app/src/main/res/layout/fragment_notifications.xml" value="0.302536231884058" />

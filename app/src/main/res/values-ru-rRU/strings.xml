@@ -6,7 +6,7 @@
     <string name="phone_number_prompt">Номер телефона</string>
     <string name="get_confirmation_code_action_description">Получить код</string>
     <string name="welcome">Добро пожаловать!</string>
-    <string name="invalid_phone_number">Неправильно указан номер телефона</string>
+    <string name="invalid_phone_number_format">Неправильный формат номера телефона</string>
     <string name="confirmation_code_send_failed">Произошла ошибка при отправке кода подтверждения</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="explorer_activity_title">Поиск</string>
@@ -25,5 +25,8 @@
     <string name="is_worker_prompt">Зарегистрироваться, как работник</string>
     <string name="authorization_server_error">Сервер на данный момент недоступен. Попробуйте выполнить авторизацию позже</string>
     <string name="unexpected_error">Произошла непредвиденная ошибка</string>
-    <string name="invalid_confirmation_code">Указан некорректный проверочный код</string>
+    <string name="invalid_confirmation_code_format">Неправильный формат проверочного кода</string>
+    <string name="incorrect_confirmation_code">Некорректный проверочный код</string>
+    <string name="confirmation_code_verification_error">Произошла ошибка при проверке кода</string>
+    <string name="resend_code_action">Отправить код повторно</string>
 </resources>
