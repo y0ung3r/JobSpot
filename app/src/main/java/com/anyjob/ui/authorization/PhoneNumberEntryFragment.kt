@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.replace
@@ -18,6 +19,7 @@ import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.attachMaskedTextChangedListener
+import com.anyjob.ui.extensions.onEditorActionReceived
 import com.anyjob.ui.extensions.onTextChanged
 import com.google.firebase.auth.*
 import com.redmadrobot.inputmask.MaskedTextChangedListener
@@ -70,20 +72,12 @@ class PhoneNumberEntryFragment : Fragment() {
 
         _binding.phoneNumberField.apply {
             attachMaskedTextChangedListener(maskedTextChangedListener)
+            onEditorActionReceived(EditorInfo.IME_ACTION_SEND) { phoneNumber ->
+                val phoneNumberIsValid = _viewModel.isPhoneNumberValid.value
 
-            setOnEditorActionListener { phoneNumberField, actionId, _ ->
-                val phoneNumber = phoneNumberField.text.toString()
-
-                when (actionId) {
-                    EditorInfo.IME_ACTION_SEND -> {
-                        val phoneNumberIsValid = _viewModel.isPhoneNumberValid.value
-
-                        if (phoneNumberIsValid != null && phoneNumberIsValid) {
-                            sendConfirmationCode(phoneNumber)
-                        }
-                    }
+                if (phoneNumberIsValid != null && phoneNumberIsValid) {
+                    sendConfirmationCode(phoneNumber)
                 }
-                false
             }
         }
 
@@ -103,8 +97,12 @@ class PhoneNumberEntryFragment : Fragment() {
             }
         }
 
-        _activityViewModel.errorMessageCode.observe(this@PhoneNumberEntryFragment) {
+        _activityViewModel.sentErrorMessageCode.observe(this@PhoneNumberEntryFragment) { errorMessageCode ->
             setBusy(false)
+
+            val errorMessage = getString(errorMessageCode)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
+                 .show()
         }
     }
 

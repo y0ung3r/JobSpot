@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.replace
@@ -18,6 +20,7 @@ import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
 import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.extensions.afterTextChanged
+import com.anyjob.ui.extensions.onEditorActionReceived
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -71,8 +74,19 @@ class ConfirmationCodeValidationFragment : Fragment() {
     }
 
     private fun useCodeValidator() {
-        _binding.verificationCodeField.afterTextChanged {
-            code -> _viewModel.validateCode(code)
+        _binding.verificationCodeField.apply {
+            afterTextChanged {
+                code -> _viewModel.validateCode(code)
+            }
+
+            onEditorActionReceived(EditorInfo.IME_ACTION_SEND) { code ->
+                val codeIsValid = _viewModel.isConfirmationCodeValid.value
+
+                if (codeIsValid != null && codeIsValid) {
+                    setBusy(true)
+                    _activityViewModel.verifyCode(code)
+                }
+            }
         }
 
         _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment) { isConfirmationCodeValid ->
@@ -91,8 +105,12 @@ class ConfirmationCodeValidationFragment : Fragment() {
             }
         }
 
-        _activityViewModel.errorMessageCode.observe(this@ConfirmationCodeValidationFragment) {
+        _activityViewModel.verificationErrorMessageCode.observe(this@ConfirmationCodeValidationFragment) { errorMessageCode ->
             setBusy(false)
+
+            val errorMessage = getString(errorMessageCode)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
+                 .show()
         }
     }
 

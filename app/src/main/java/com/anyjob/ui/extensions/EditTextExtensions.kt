@@ -2,6 +2,7 @@ package com.anyjob.ui.extensions
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 
@@ -32,5 +33,19 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 fun EditText.attachMaskedTextChangedListener(listener: MaskedTextChangedListener) {
     addTextChangedListener(listener)
     onFocusChangeListener = listener
-    hint = listener.placeholder()
+}
+
+/**
+ * Метод-расширения, позволяющий выполнить действие при отправке действия с клавиатуры
+ */
+fun EditText.onEditorActionReceived(reactTo: Int, action: (text: String) -> Unit) {
+    setOnEditorActionListener { editText, actionId, _ ->
+        val text = editText.text.toString()
+
+        if (reactTo == actionId) {
+            action(text)
+        }
+
+        false
+    }
 }

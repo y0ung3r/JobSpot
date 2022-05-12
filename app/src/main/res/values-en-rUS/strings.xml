@@ -4,7 +4,7 @@
     <string name="phone_number_entry_fragment_title">Sign In</string>
     <string name="phone_number_entry_fragment_description">Please, enter your phone number</string>
     <string name="phone_number_prompt">Phone number</string>
-    <string name="get_confirmation_code_action_description">Get confirmation code</string>
+    <string name="get_confirmation_code_action_description">Next</string>
     <string name="welcome">Welcome!</string>
     <string name="invalid_phone_number_format">Invalid phone number format</string>
     <string name="confirmation_code_send_failed">An error occurred while sending the confirmation code</string>
@@ -13,7 +13,7 @@
     <string name="profile_fragment_title">Profile</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="explorer_activity_title">Explorer</string>
-    <string name="confirmation_code_fragment_title">Confirmation code</string>
+    <string name="confirmation_code_fragment_title">Phone number verification</string>
     <string name="confirmation_code_fragment_description">Enter your verification code sent to</string>
     <string name="confirmation_code_prompt">Verification code</string>
     <string name="confirm_entry_action">Confirm</string>
@@ -22,11 +22,12 @@
     <string name="middlename_prompt">Middlename (optional)</string>
     <string name="registration_fragment_title">Tell us about yourself</string>
     <string name="registration_fragment_description">We need to know very little about you!</string>
-    <string name="is_worker_prompt">I\'m worker</string>
+    <string name="is_worker_prompt">I want to use this app to find a job</string>
     <string name="authorization_server_error">Authorization server is not available now. Try later</string>
     <string name="unexpected_error">An unexpected error has occurred</string>
     <string name="invalid_confirmation_code_format">Invalid confirmation code</string>
     <string name="incorrect_confirmation_code">Incorrect confirmation code</string>
     <string name="confirmation_code_verification_error">An error occurred while checking the code</string>
     <string name="resend_code_action">Resend verification code</string>
+    <string name="verify_code_action">Verify</string>
 </resources>

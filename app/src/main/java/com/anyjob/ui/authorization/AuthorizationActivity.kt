@@ -26,20 +26,10 @@ class AuthorizationActivity : AppCompatActivity() {
         .commit()
     }
 
-    private fun useErrorsHandler() {
-        _viewModel.errorMessageCode.observe(this@AuthorizationActivity) { errorMessageCode ->
-            val errorMessage = getString(errorMessageCode)
-            Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_LONG)
-                 .show()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
         supportActionBar?.hide()
-
-        useErrorsHandler()
 
         navigateToPhoneNumberEntryFragment()
     }

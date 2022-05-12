@@ -46,22 +46,28 @@
         app:layout_constraintTop_toBottomOf="@+id/loading_bar"
         app:tint="@color/purple_500" />
 
-    <EditText
-        android:id="@+id/verification_code_field"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/verification_code_field_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:autofillHints="@string/confirmation_code_prompt"
-        android:ems="10"
         android:hint="@string/confirmation_code_prompt"
-        android:inputType="number"
-        android:minHeight="48dp"
-        android:imeOptions="actionSend"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmation_code_validation_fragment_description" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmation_code_validation_fragment_description">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/verification_code_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:imeOptions="actionSend"
+            android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/confirm_button"
@@ -71,10 +77,10 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:enabled="false"
-        android:text="@string/confirm_entry_action"
+        android:text="@string/verify_code_action"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/verification_code_field" />
+        app:layout_constraintTop_toBottomOf="@+id/verification_code_field_layout" />
 
     <ProgressBar
         android:id="@+id/loading_bar"
@@ -87,17 +93,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/resend_button"
-        style="@style/Widget.MaterialComponents.Button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:drawableLeft="@drawable/ic_baseline_autorenew_24"
-        android:drawableTint="@color/white"
         android:text="@string/resend_code_action"
+        app:icon="@drawable/ic_baseline_autorenew_24"
+        app:iconGravity="textStart"
+        app:iconTint="@color/purple_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/confirm_button" />
