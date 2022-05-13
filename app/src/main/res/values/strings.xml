@@ -22,7 +22,7 @@
     <string name="registration_fragment_title">Расскажите о себе</string>
     <string name="registration_fragment_description">Нам необходимо знать о Вас совсем немного!</string>
     <string name="is_worker_prompt">Хочу использовать эту площадку для поиска работы</string>
-    <string name="authorization_server_error">Сервер на данный момент недоступен. Попробуйте выполнить авторизацию позже</string>
+    <string name="authorization_server_error">Сервер на данный момент недоступен. Попробуйте позже</string>
     <string name="unexpected_error">Произошла непредвиденная ошибка</string>
     <string name="invalid_confirmation_code_format">Неправильный формат проверочного кода</string>
     <string name="incorrect_confirmation_code">Некорректный проверочный код</string>

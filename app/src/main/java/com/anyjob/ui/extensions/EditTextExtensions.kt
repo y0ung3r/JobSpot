@@ -2,6 +2,7 @@ package com.anyjob.ui.extensions
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import com.redmadrobot.inputmask.MaskedTextChangedListener
@@ -49,4 +50,14 @@ fun EditText.onEditorActionReceived(reactTo: Int, action: (text: String) -> Unit
 
         return@setOnEditorActionListener isReceived
     }
+}
+
+/**
+ * Метод-расширения, добавляющий поддержку масок на EditText
+ */
+fun EditText.setupMask(mask: String, onChanged: (maskFilled: Boolean, extractedValue: String, formattedValue: String) -> Unit) {
+    val editText = this
+    val maskedTextChangedListener = MaskedTextChangedListener(mask, editText)
+    maskedTextChangedListener.onTextChanged(onChanged)
+    editText.attachMaskedTextChangedListener(maskedTextChangedListener)
 }

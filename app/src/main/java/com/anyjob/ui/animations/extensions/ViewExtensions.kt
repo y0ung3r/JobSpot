@@ -27,7 +27,7 @@ private fun View.ensureVisibilityValid(mode: VisibilityMode) = when (mode) {
 }
 
 /**
- * Конфигурирует Fade анимацию
+ * Конфигурирует и запускает Fade анимацию
  * @param parameters Параметры анимации
  */
 fun View.fade(parameters: FadeParameters) {
@@ -43,7 +43,7 @@ fun View.fade(parameters: FadeParameters) {
 }
 
 /**
- * Конфигурирует Slide анимацию
+ * Конфигурирует и запускает Slide анимацию
  * @param parameters Параметры анимации
  */
 fun View.slide(parameters: SlideParameters) {
@@ -67,4 +67,17 @@ fun View.slide(parameters: SlideParameters) {
     beginAnimation(transitionSet) {
         visibility = parameters.mode.asVisibility()
     }
+}
+
+/**
+ * Запускает анимацию Slide с параметром animationLength = 300
+ * @param visibilityMode Указывает как отобразить анимацию: на скрытие или на появление
+ */
+fun View.slide(visibilityMode: VisibilityMode) {
+    val parameters = SlideParameters().apply {
+        mode = visibilityMode
+        animationLength = 300
+    }
+
+    slide(parameters)
 }

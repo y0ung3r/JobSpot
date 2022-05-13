@@ -8,11 +8,7 @@ class ConfirmationCodeValidationViewModel : ViewModel() {
     private val _isConfirmationCodeValid = MutableLiveData<Boolean>()
     val isConfirmationCodeValid: LiveData<Boolean> = _isConfirmationCodeValid
 
-    private fun isCodeValid(code: String): Boolean {
-        return code.isNotBlank()
-    }
-
     fun validateCode(code: String) {
-        _isConfirmationCodeValid.value = isCodeValid(code = code)
+        _isConfirmationCodeValid.value = code.isNotBlank()
     }
 }

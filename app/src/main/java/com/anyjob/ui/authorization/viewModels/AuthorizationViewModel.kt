@@ -12,20 +12,11 @@ import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationProvider
 import java.lang.IllegalArgumentException
 
 class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAuthorizationProvider) : ViewModel() {
-    private val _isCodeSent = MutableLiveData<Boolean>()
-    val isCodeSent: LiveData<Boolean> = _isCodeSent
+    private val _onCodeSent = MutableLiveData<Result<Boolean>>()
+    val onCodeSent: LiveData<Result<Boolean>> = _onCodeSent
 
-    private val _isCodeResent = MutableLiveData<Boolean>()
-    val isCodeResent: LiveData<Boolean> = _isCodeResent
-
-    private val _isCodeVerified = MutableLiveData<Boolean>()
-    val isCodeVerified: LiveData<Boolean> = _isCodeVerified
-
-    private val _sentErrorMessageCode = MutableLiveData<Int>()
-    val sentErrorMessageCode: LiveData<Int> = _sentErrorMessageCode
-
-    private val _verificationErrorMessageCode = MutableLiveData<Int>()
-    val verificationErrorMessageCode: LiveData<Int> = _verificationErrorMessageCode
+    private val _onCodeVerified = MutableLiveData<Result<Unit>>()
+    val onCodeVerified: LiveData<Result<Unit>> = _onCodeVerified
 
     private val _phoneNumber = MutableLiveData<String>()
     val phoneNumber: LiveData<String> = _phoneNumber
@@ -33,42 +24,24 @@ class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAutho
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.value = authorizationParameters.phoneNumber
 
-        authorizationProvider.sendCode(authorizationParameters) { result ->
-            result.onSuccess { isResent ->
-                _isCodeResent.value = isResent
-                _isCodeSent.value = true
-            }
-            .onFailure { exception ->
-                _sentErrorMessageCode.value = when (exception) {
-                    is InvalidCredentialsException -> R.string.invalid_phone_number_format
-                    is AuthorizationServerException -> R.string.authorization_server_error
-                    else -> R.string.confirmation_code_send_failed
-                }
-            }
+        authorizationProvider.sendCode(authorizationParameters) { sentResult ->
+            _onCodeSent.value = sentResult
         }
     }
 
     fun verifyCode(code: String) {
         try {
-            authorizationProvider.verifyCode(code) { result ->
-                result.onSuccess {
-                    _isCodeVerified.value = true
-                }
-                .onFailure { exception ->
-                    _verificationErrorMessageCode.value = when (exception) {
-                        is InvalidCredentialsException -> R.string.incorrect_confirmation_code
-                        else -> R.string.confirmation_code_verification_error
-                    }
-                }
+            authorizationProvider.verifyCode(code) { verifiedResult ->
+                _onCodeVerified.value = verifiedResult
             }
         }
 
         catch (exception: IllegalArgumentException) {
-            _verificationErrorMessageCode.value = R.string.invalid_confirmation_code_format
+            _onCodeVerified.value = Result.failure(exception)
         }
 
         catch (exception: AuthorizationException) {
-            _verificationErrorMessageCode.value = R.string.unexpected_error
+            _onCodeVerified.value = Result.failure(exception)
         }
     }
 }
