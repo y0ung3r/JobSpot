@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/authorization_navigation"
+    app:startDestination="@id/navigation_phone_number_entry_fragment">
+
+    <fragment
+        android:id="@+id/navigation_phone_number_entry_fragment"
+        android:name="com.anyjob.ui.authorization.PhoneNumberEntryFragment"
+        android:label="PhoneNumberEntryFragment" >
+        <action
+            android:id="@+id/path_to_confirmation_code_validation_fragment_action"
+            app:destination="@id/navigation_confirmation_code_validation_fragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_confirmation_code_validation_fragment"
+        android:name="com.anyjob.ui.authorization.ConfirmationCodeValidationFragment"
+        android:label="fragment_confirmation_code_validation"
+        tools:layout="@layout/fragment_confirmation_code_validation" >
+        <action
+            android:id="@+id/path_to_navigation_registration_fragment_action"
+            app:destination="@id/navigation_registration_fragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/path_to_explorer_activity_from_confirmation_code_validation_fragment"
+            app:destination="@id/navigation_explorer_activity"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_registration_fragment"
+        android:name="com.anyjob.ui.authorization.RegistrationFragment"
+        android:label="fragment_registration"
+        tools:layout="@layout/fragment_registration" >
+        <action
+            android:id="@+id/path_to_explorer_activity_from_registration_fragment"
+            app:destination="@id/navigation_explorer_activity"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+
+    <activity
+        android:id="@+id/navigation_explorer_activity"
+        android:name="com.anyjob.ui.explorer.ExplorerActivity"
+        android:label="ExplorerActivity" />
+</navigation>

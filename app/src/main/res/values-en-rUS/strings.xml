@@ -30,4 +30,5 @@
     <string name="confirmation_code_verification_error">An error occurred while checking the code</string>
     <string name="resend_code_action">Resend verification code</string>
     <string name="verify_code_action">Verify</string>
+    <string name="confirmation_code_resent_successfully">Verification code resent to</string>
 </resources>

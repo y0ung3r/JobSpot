@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: FirebaseAuth) : PhoneNumberAuthorizationProvider {
     private var _verificationId: String? = null
     private var _forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
-    private lateinit var _onCodeSent: (Result<Unit>) -> Unit
+    private lateinit var _onCodeSent: (Result<Boolean>) -> Unit
     private lateinit var _onCodeVerified: (Result<Unit>) -> Unit
 
     private val _phoneNumberAuthenticationCallbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
@@ -23,11 +23,13 @@ class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: Fir
         }
 
         override fun onCodeSent(verificationId: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken) {
+            val isResent = _forceResendingToken != null
+
             _verificationId = verificationId
             _forceResendingToken = forceResendingToken
 
             _onCodeSent.invoke(
-                Result.success(Unit)
+                Result.success(isResent)
             )
         }
 
@@ -93,7 +95,7 @@ class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: Fir
         )
     }
 
-    override fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Unit>) -> Unit) {
+    override fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Boolean>) -> Unit) {
         if (authorizationParameters !is FirebasePhoneNumberAuthorizationParameters) {
             throw IllegalArgumentException("Для авторизации через Firebase необходимо использовать ${FirebasePhoneNumberAuthorizationParameters::class.simpleName}")
         }

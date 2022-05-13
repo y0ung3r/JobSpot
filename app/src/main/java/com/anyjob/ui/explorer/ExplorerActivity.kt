@@ -2,7 +2,9 @@ package com.anyjob.ui.explorer
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -12,6 +14,11 @@ import com.anyjob.databinding.ActivityExplorerBinding
 class ExplorerActivity : AppCompatActivity() {
     private val _binding: ActivityExplorerBinding by lazy {
         ActivityExplorerBinding.inflate(layoutInflater)
+    }
+
+    private val _navigationController: NavController by lazy {
+        val navigationHost = supportFragmentManager.findFragmentById(_binding.explorerFragmentsContainer.id) as NavHostFragment
+        navigationHost.navController
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +32,8 @@ class ExplorerActivity : AppCompatActivity() {
             R.id.navigation_profile
         )
 
-        val navigationController = findNavController(R.id.explorer_fragments_container)
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
-        setupActionBarWithNavController(navigationController, applicationBarConfiguration)
-        _binding.navigationView.setupWithNavController(navigationController)
+        setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
+        _binding.navigationView.setupWithNavController(_navigationController)
     }
 }

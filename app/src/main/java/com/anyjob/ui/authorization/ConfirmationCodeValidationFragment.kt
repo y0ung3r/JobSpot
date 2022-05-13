@@ -1,7 +1,6 @@
 package com.anyjob.ui.authorization
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +8,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.replace
+import androidx.navigation.fragment.findNavController
 import com.anyjob.R
+import com.anyjob.data.authorization.firebase.FirebasePhoneNumberAuthorizationParameters
 import com.anyjob.databinding.FragmentConfirmationCodeValidationBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
-import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.onEditorActionReceived
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
@@ -29,6 +27,9 @@ class ConfirmationCodeValidationFragment : Fragment() {
     private val _viewModel by viewModel<ConfirmationCodeValidationViewModel>()
 
     private lateinit var _binding: FragmentConfirmationCodeValidationBinding
+    private val _navigationController by lazy {
+        findNavController()
+    }
 
     private fun setBusy(isBusy: Boolean) {
         val visibilityMode = when (isBusy) {
@@ -47,23 +48,10 @@ class ConfirmationCodeValidationFragment : Fragment() {
         )
     }
 
-    private fun navigateToRegistrationFragment() {
-        val activity = requireActivity()
-        val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-
-        fragmentTransaction.replace<RegistrationFragment>(
-            R.id.authorization_fragments_container
-        )
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        .commit()
-    }
-
     private fun navigateToExplorerActivity() {
-        val activity = requireActivity()
-        startActivity(
-            Intent(context, ExplorerActivity::class.java)
-        )
+        _navigationController.navigate(R.id.path_to_explorer_activity_from_confirmation_code_validation_fragment)
 
+        val activity = requireActivity()
         activity.setResult(Activity.RESULT_OK)
         activity.finish()
     }
@@ -98,10 +86,32 @@ class ConfirmationCodeValidationFragment : Fragment() {
         }
     }
 
+    private fun useOnCodeResentObserver() {
+        _activityViewModel.isCodeResent.observe(this@ConfirmationCodeValidationFragment) { isCodeSent ->
+            setBusy(false)
+
+            if (isCodeSent) {
+                val message = "${getString(R.string.confirmation_code_resent_successfully)} ${_activityViewModel.phoneNumber.value}"
+                Toast.makeText(context, message, Toast.LENGTH_LONG)
+                     .show()
+
+                _binding.resendButton.isEnabled = false
+            }
+        }
+
+        _activityViewModel.sentErrorMessageCode.observe(this@ConfirmationCodeValidationFragment) { errorMessageCode ->
+            setBusy(false)
+
+            val errorMessage = getString(errorMessageCode)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
+                 .show()
+        }
+    }
+
     private fun useOnCodeVerifiedObserver() {
         _activityViewModel.isCodeVerified.observe(this@ConfirmationCodeValidationFragment) { isCodeVerified ->
             if (isCodeVerified) {
-                navigateToRegistrationFragment()
+                _navigationController.navigate(R.id.path_to_navigation_registration_fragment_action)
             }
         }
 
@@ -123,6 +133,23 @@ class ConfirmationCodeValidationFragment : Fragment() {
         }
     }
 
+    private fun useResendConfirmationCodeCommand() {
+        _binding.resendButton.setOnClickListener {
+            setBusy(true)
+
+            val phoneNumber = _activityViewModel.phoneNumber.value
+
+            if (phoneNumber != null) {
+                val authorizationParameters = FirebasePhoneNumberAuthorizationParameters(
+                    phoneNumber = phoneNumber,
+                    activity = requireActivity()
+                )
+
+                _activityViewModel.sendVerificationCode(authorizationParameters)
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentConfirmationCodeValidationBinding.inflate(inflater, container, false)
 
@@ -130,8 +157,10 @@ class ConfirmationCodeValidationFragment : Fragment() {
 
         useCodeValidator()
         useOnCodeVerifiedObserver()
+        useOnCodeResentObserver()
 
         useVerifyConfirmationCodeCommand()
+        useResendConfirmationCodeCommand()
 
         return _binding.root
     }

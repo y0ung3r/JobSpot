@@ -29,4 +29,5 @@
     <string name="confirmation_code_verification_error">Произошла ошибка при проверке кода</string>
     <string name="resend_code_action">Отправить код повторно</string>
     <string name="verify_code_action">Проверить</string>
+    <string name="confirmation_code_resent_successfully">Проверочный код повторно выслан на</string>
 </resources>

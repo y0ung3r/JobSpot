@@ -15,6 +15,9 @@ class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAutho
     private val _isCodeSent = MutableLiveData<Boolean>()
     val isCodeSent: LiveData<Boolean> = _isCodeSent
 
+    private val _isCodeResent = MutableLiveData<Boolean>()
+    val isCodeResent: LiveData<Boolean> = _isCodeResent
+
     private val _isCodeVerified = MutableLiveData<Boolean>()
     val isCodeVerified: LiveData<Boolean> = _isCodeVerified
 
@@ -31,7 +34,8 @@ class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAutho
         _phoneNumber.value = authorizationParameters.phoneNumber
 
         authorizationProvider.sendCode(authorizationParameters) { result ->
-            result.onSuccess {
+            result.onSuccess { isResent ->
+                _isCodeResent.value = isResent
                 _isCodeSent.value = true
             }
             .onFailure { exception ->

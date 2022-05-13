@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.replace
+import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.data.authorization.firebase.FirebasePhoneNumberAuthorizationParameters
 import com.anyjob.databinding.FragmentPhoneNumberEntryBinding
@@ -17,11 +16,9 @@ import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
-import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.attachMaskedTextChangedListener
 import com.anyjob.ui.extensions.onEditorActionReceived
 import com.anyjob.ui.extensions.onTextChanged
-import com.google.firebase.auth.*
 import com.redmadrobot.inputmask.MaskedTextChangedListener
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -31,6 +28,9 @@ class PhoneNumberEntryFragment : Fragment() {
     private val _viewModel by viewModel<PhoneNumberEntryViewModel>()
 
     private lateinit var _binding: FragmentPhoneNumberEntryBinding
+    private val _navigationController by lazy {
+        findNavController()
+    }
 
     private fun setBusy(isBusy: Boolean) {
         val visibilityMode = when (isBusy) {
@@ -47,17 +47,6 @@ class PhoneNumberEntryFragment : Fragment() {
                 animationLength = 300
             }
         )
-    }
-
-    private fun navigateToConfirmationCodeValidationFragment() {
-        val activity = requireActivity()
-        val fragmentTransaction = activity.supportFragmentManager.beginTransaction()
-
-        fragmentTransaction.replace<ConfirmationCodeValidationFragment>(
-            R.id.authorization_fragments_container
-        )
-        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-        .commit()
     }
 
     private fun usePhoneNumberValidator() {
@@ -93,7 +82,7 @@ class PhoneNumberEntryFragment : Fragment() {
     private fun useOnCodeSentObserver() {
         _activityViewModel.isCodeSent.observe(this@PhoneNumberEntryFragment) { isCodeSent ->
             if (isCodeSent) {
-                navigateToConfirmationCodeValidationFragment()
+                _navigationController.navigate(R.id.path_to_confirmation_code_validation_fragment_action)
             }
         }
 

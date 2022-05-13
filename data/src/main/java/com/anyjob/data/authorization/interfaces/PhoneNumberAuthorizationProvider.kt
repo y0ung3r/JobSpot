@@ -16,5 +16,5 @@ interface PhoneNumberAuthorizationProvider {
      * Отправляет код с помощью указанных параметров
      * @param authorizationParameters Параметры авторизации
      */
-    fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Unit>) -> Unit)
+    fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Boolean>) -> Unit)
 }

@@ -40,12 +40,13 @@ fun EditText.attachMaskedTextChangedListener(listener: MaskedTextChangedListener
  */
 fun EditText.onEditorActionReceived(reactTo: Int, action: (text: String) -> Unit) {
     setOnEditorActionListener { editText, actionId, _ ->
+        val isReceived = reactTo == actionId
         val text = editText.text.toString()
 
-        if (reactTo == actionId) {
+        if (isReceived) {
             action(text)
         }
 
-        false
+        return@setOnEditorActionListener isReceived
     }
 }
