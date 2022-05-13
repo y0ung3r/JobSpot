@@ -2,6 +2,7 @@ package com.anyjob.ui.authorization
 
 import android.app.Activity
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,15 +88,27 @@ class ConfirmationCodeValidationFragment : Fragment() {
     }
 
     private fun useOnCodeResentObserver() {
-        _activityViewModel.isCodeResent.observe(this@ConfirmationCodeValidationFragment) { isCodeSent ->
+        _activityViewModel.isCodeResent.observe(this@ConfirmationCodeValidationFragment) { isCodeResent ->
             setBusy(false)
 
-            if (isCodeSent) {
+            if (isCodeResent) {
                 val message = "${getString(R.string.confirmation_code_resent_successfully)} ${_activityViewModel.phoneNumber.value}"
                 Toast.makeText(context, message, Toast.LENGTH_LONG)
                      .show()
 
-                _binding.resendButton.isEnabled = false
+                val cooldownTimer = object : CountDownTimer(60000L, 1000L) {
+                    override fun onTick(milliseconds: Long) {
+                        val seconds = milliseconds / 1000
+                        _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds})"
+                    }
+
+                    override fun onFinish() {
+                        _binding.resendButton.isEnabled = true
+                        _binding.resendButton.text = getString(R.string.resend_code_action)
+                    }
+                }
+
+                cooldownTimer.start()
             }
         }
 
@@ -136,6 +149,7 @@ class ConfirmationCodeValidationFragment : Fragment() {
     private fun useResendConfirmationCodeCommand() {
         _binding.resendButton.setOnClickListener {
             setBusy(true)
+            _binding.resendButton.isEnabled = false
 
             val phoneNumber = _activityViewModel.phoneNumber.value
 
