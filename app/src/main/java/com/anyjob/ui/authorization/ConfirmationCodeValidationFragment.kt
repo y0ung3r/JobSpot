@@ -96,7 +96,6 @@ class ConfirmationCodeValidationFragment : Fragment() {
         }
 
         _binding.loadingBar.slide(VisibilityMode.Hide)
-
         _binding.verificationCodeField.isEnabled = true
         _binding.confirmButton.isEnabled = true
     }
@@ -133,12 +132,11 @@ class ConfirmationCodeValidationFragment : Fragment() {
             )
 
             showToast(errorMessage)
-
-            _binding.verificationCodeField.isEnabled = true
-            _binding.confirmButton.isEnabled = true
         }
 
         _binding.loadingBar.slide(VisibilityMode.Hide)
+        _binding.verificationCodeField.isEnabled = true
+        _binding.confirmButton.isEnabled = true
     }
 
     private fun onConfirmButtonClick(button: View) {
