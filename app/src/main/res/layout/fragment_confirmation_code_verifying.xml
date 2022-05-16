@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.authorization.ConfirmationCodeValidationFragment">
+    tools:context=".ui.authorization.ConfirmationCodeVerifyingFragment">
 
     <TextView
         android:id="@+id/confirmation_code_validation_fragment_title"

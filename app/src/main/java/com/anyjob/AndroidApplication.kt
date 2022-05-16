@@ -1,9 +1,8 @@
 package com.anyjob
 
 import android.app.Application
-import com.anyjob.koin.appModule
-import com.anyjob.koin.domainModule
-import com.anyjob.koin.persistenceModule
+import com.anyjob.data.dataModule
+import com.anyjob.domain.domainModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -18,8 +17,8 @@ class AndroidApplication : Application() {
             modules(
                 listOf(
                     appModule,
-                    domainModule,
-                    persistenceModule
+                    dataModule,
+                    domainModule
                 )
             )
         }

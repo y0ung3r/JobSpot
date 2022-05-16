@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class ConfirmationCodeValidationViewModel : ViewModel() {
+class ConfirmationCodeVerifyingViewModel : ViewModel() {
     private val _isConfirmationCodeValid = MutableLiveData<Boolean>()
     val isConfirmationCodeValid: LiveData<Boolean> = _isConfirmationCodeValid
 

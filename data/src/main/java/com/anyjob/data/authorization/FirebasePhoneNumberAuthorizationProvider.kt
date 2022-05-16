@@ -1,17 +1,23 @@
-package com.anyjob.data.authorization.firebase
+package com.anyjob.data.authorization
 
-import com.anyjob.data.authorization.PhoneNumberAuthorizationParameters
-import com.anyjob.data.authorization.exceptions.AuthorizationException
-import com.anyjob.data.authorization.exceptions.AuthorizationServerException
-import com.anyjob.data.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationProvider
+import com.anyjob.data.profile.entities.UserEntity
+import com.anyjob.data.profile.interfaces.UserDataSource
+import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
+import com.anyjob.domain.authorization.exceptions.AuthorizationCanceledException
+import com.anyjob.domain.authorization.exceptions.AuthorizationException
+import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
+import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
+import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import java.lang.IllegalArgumentException
 import java.util.concurrent.TimeUnit
 
-class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: FirebaseAuth) : PhoneNumberAuthorizationProvider {
+internal class FirebasePhoneNumberAuthorizationProvider(
+    private val firebaseProvider: FirebaseAuth,
+    private val userDataSource: UserDataSource
+) : PhoneNumberAuthorizationProvider {
     private var _verificationId: String? = null
     private var _forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null
     private lateinit var _onCodeSent: (Result<Boolean>) -> Unit
@@ -61,21 +67,55 @@ class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: Fir
         return optionsBuilder.build()
     }
 
+    private fun ensureUserCreated() {
+        val firebaseUser = firebaseProvider.currentUser!!
+        val userId = firebaseUser.uid
+
+        userDataSource.getUser(userId) { user ->
+            if (user == null) {
+                val userEntity = UserEntity(
+                    id = userId,
+                    phoneNumber = firebaseUser.phoneNumber!!
+                )
+
+                userDataSource.addUser(userEntity).addOnFailureListener {
+                    _onCodeVerified.invoke(
+                        Result.failure(
+                            AuthorizationException("Произошла непредвиденная ошибка при авторизации")
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     private fun signIn(credentials: PhoneAuthCredential) {
         firebaseProvider.signInWithCredential(credentials)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful){
-                                _onCodeVerified.invoke(
-                                    Result.success(Unit)
-                                )
+                        .addOnSuccessListener {
+                            ensureUserCreated()
+
+                            _onCodeVerified.invoke(
+                                Result.success(Unit)
+                            )
+                        }
+                        .addOnFailureListener { exception ->
+                            val authorizationException = when (exception) {
+                                is FirebaseAuthInvalidCredentialsException -> InvalidCredentialsException("Передан некорректный проверочный код")
+                                else -> AuthorizationException("Произошла непредвиденная ошибка при авторизации")
                             }
-                            else if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                                _onCodeVerified.invoke(
-                                    Result.failure(
-                                        InvalidCredentialsException("Передан некорректный проверочный код")
-                                    )
+
+                            _onCodeVerified.invoke(
+                                Result.failure(
+                                    authorizationException
                                 )
-                            }
+                            )
+                        }
+                        .addOnCanceledListener {
+                            _onCodeVerified.invoke(
+                                Result.failure(
+                                    AuthorizationCanceledException()
+                                )
+                            )
                         }
     }
 
@@ -108,5 +148,9 @@ class FirebasePhoneNumberAuthorizationProvider(private val firebaseProvider: Fir
                 _forceResendingToken
             )
         )
+    }
+
+    override fun signOut() {
+        firebaseProvider.signOut()
     }
 }

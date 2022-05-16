@@ -3,15 +3,13 @@ package com.anyjob.ui.authorization.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.anyjob.R
-import com.anyjob.data.authorization.PhoneNumberAuthorizationParameters
-import com.anyjob.data.authorization.exceptions.AuthorizationException
-import com.anyjob.data.authorization.exceptions.AuthorizationServerException
-import com.anyjob.data.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.interfaces.PhoneNumberAuthorizationProvider
+import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
+import com.anyjob.domain.authorization.exceptions.AuthorizationException
+import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
+import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
 import java.lang.IllegalArgumentException
 
-class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAuthorizationProvider) : ViewModel() {
+class AuthorizationViewModel(private val sendVerificationCodeUseCase: SendVerificationCodeUseCase, private val verifyCodeUseCase: VerifyCodeUseCase) : ViewModel() {
     private val _onCodeSent = MutableLiveData<Result<Boolean>>()
     val onCodeSent: LiveData<Result<Boolean>> = _onCodeSent
 
@@ -21,17 +19,20 @@ class AuthorizationViewModel(private val authorizationProvider: PhoneNumberAutho
     private val _phoneNumber = MutableLiveData<String>()
     val phoneNumber: LiveData<String> = _phoneNumber
 
+    private val _resendTimeout = MutableLiveData<Long>()
+    val resendTimeout: LiveData<Long> = _resendTimeout
+
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.value = authorizationParameters.phoneNumber
 
-        authorizationProvider.sendCode(authorizationParameters) { sentResult ->
+        sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
             _onCodeSent.value = sentResult
         }
     }
 
     fun verifyCode(code: String) {
         try {
-            authorizationProvider.verifyCode(code) { verifiedResult ->
+            verifyCodeUseCase.execute(code) { verifiedResult ->
                 _onCodeVerified.value = verifiedResult
             }
         }

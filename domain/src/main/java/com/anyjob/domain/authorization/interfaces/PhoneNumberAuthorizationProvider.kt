@@ -1,6 +1,6 @@
-package com.anyjob.data.authorization.interfaces
+package com.anyjob.domain.authorization.interfaces
 
-import com.anyjob.data.authorization.PhoneNumberAuthorizationParameters
+import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
 
 /**
  * Определяет интерфейс авторизации с помощью номера телефона
@@ -17,4 +17,9 @@ interface PhoneNumberAuthorizationProvider {
      * @param authorizationParameters Параметры авторизации
      */
     fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Boolean>) -> Unit)
+
+    /**
+     * Выполняет выход из системы для текущего пользователя
+     */
+    fun signOut();
 }

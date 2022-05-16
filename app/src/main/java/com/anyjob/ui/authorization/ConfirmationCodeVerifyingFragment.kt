@@ -11,24 +11,25 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
-import com.anyjob.data.authorization.exceptions.AuthorizationServerException
-import com.anyjob.data.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.firebase.FirebasePhoneNumberAuthorizationParameters
-import com.anyjob.databinding.FragmentConfirmationCodeValidationBinding
+import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
+import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
+import com.anyjob.data.authorization.FirebasePhoneNumberAuthorizationParameters
+import com.anyjob.databinding.FragmentConfirmationCodeVerifyingBinding
+import com.anyjob.domain.authorization.exceptions.AuthorizationCanceledException
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
-import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
+import com.anyjob.ui.authorization.viewModels.ConfirmationCodeVerifyingViewModel
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.onEditorActionReceived
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class ConfirmationCodeValidationFragment : Fragment() {
+class ConfirmationCodeVerifyingFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<AuthorizationViewModel>()
-    private val _viewModel by viewModel<ConfirmationCodeValidationViewModel>()
+    private val _viewModel by viewModel<ConfirmationCodeVerifyingViewModel>()
 
-    private lateinit var _binding: FragmentConfirmationCodeValidationBinding
+    private lateinit var _binding: FragmentConfirmationCodeVerifyingBinding
     private val _navigationController by lazy {
         findNavController()
     }
@@ -88,6 +89,7 @@ class ConfirmationCodeValidationFragment : Fragment() {
                 when (exception) {
                     is InvalidCredentialsException -> R.string.incorrect_confirmation_code
                     is IllegalArgumentException -> R.string.invalid_confirmation_code_format
+                    is AuthorizationCanceledException -> R.string.authorization_canceled_error
                     else -> R.string.confirmation_code_verification_error
                 }
             )
@@ -163,13 +165,13 @@ class ConfirmationCodeValidationFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentConfirmationCodeValidationBinding.inflate(inflater, container, false)
+        _binding = FragmentConfirmationCodeVerifyingBinding.inflate(inflater, container, false)
 
         appendPhoneNumberToDescription()
 
-        _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeValidationFragment, ::onCodeValidating)
-        _activityViewModel.onCodeVerified.observe(this@ConfirmationCodeValidationFragment, ::onCodeVerified)
-        _activityViewModel.onCodeSent.observe(this@ConfirmationCodeValidationFragment, ::onCodeResent)
+        _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeValidating)
+        _activityViewModel.onCodeVerified.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeVerified)
+        _activityViewModel.onCodeSent.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeResent)
 
         _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
         _binding.resendButton.setOnClickListener(::onResendButtonClick)

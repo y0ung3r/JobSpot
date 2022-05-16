@@ -1,7 +1,7 @@
-package com.anyjob.data.authorization.firebase
+package com.anyjob.data.authorization
 
 import android.app.Activity
-import com.anyjob.data.authorization.PhoneNumberAuthorizationParameters
+import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
 
 /**
  * Параметры авторизации по номеру телефона через Firebase

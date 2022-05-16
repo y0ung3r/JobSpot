@@ -9,9 +9,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
-import com.anyjob.data.authorization.exceptions.AuthorizationServerException
-import com.anyjob.data.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.firebase.FirebasePhoneNumberAuthorizationParameters
+import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
+import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
+import com.anyjob.data.authorization.FirebasePhoneNumberAuthorizationParameters
 import com.anyjob.databinding.FragmentPhoneNumberEntryBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.slide
@@ -56,7 +56,7 @@ class PhoneNumberEntryFragment : Fragment() {
 
     private fun onCodeSent(result: Result<Boolean>) {
         result.onSuccess {
-            _navigationController.navigate(R.id.path_to_confirmation_code_validation_fragment_action)
+            _navigationController.navigate(R.id.path_to_confirmation_code_verifying_fragment_action)
         }
         .onFailure { exception ->
             val errorMessage = getString(

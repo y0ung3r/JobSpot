@@ -30,4 +30,5 @@
     <string name="resend_code_action">Отправить код повторно</string>
     <string name="verify_code_action">Проверить</string>
     <string name="confirmation_code_resent_successfully">Проверочный код повторно выслан на</string>
+    <string name="authorization_canceled_error">Авторизация отменена пользователем</string>
 </resources>

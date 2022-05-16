@@ -1,7 +1,7 @@
-package com.anyjob.koin
+package com.anyjob
 
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
-import com.anyjob.ui.authorization.viewModels.ConfirmationCodeValidationViewModel
+import com.anyjob.ui.authorization.viewModels.ConfirmationCodeVerifyingViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
 import com.anyjob.ui.authorization.viewModels.RegistrationViewModel
 import com.anyjob.ui.explorer.dashboard.viewModels.DashboardViewModel
@@ -13,7 +13,8 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel {
         AuthorizationViewModel(
-            authorizationProvider = get()
+            sendVerificationCodeUseCase = get(),
+            verifyCodeUseCase = get()
         )
     }
 
@@ -22,7 +23,7 @@ val appModule = module {
     }
 
     viewModel {
-        ConfirmationCodeValidationViewModel()
+        ConfirmationCodeVerifyingViewModel()
     }
 
     viewModel {

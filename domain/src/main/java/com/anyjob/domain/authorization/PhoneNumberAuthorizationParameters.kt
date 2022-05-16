@@ -1,4 +1,4 @@
-package com.anyjob.data.authorization
+package com.anyjob.domain.authorization
 
 /**
  * Параметры авторизации по номеру телефона

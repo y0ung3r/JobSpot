@@ -1,9 +1,9 @@
 package com.anyjob.ui.explorer.profile.models
 
 /**
- * Информация о авторизованном пользователе
+ * Информация об авторизованном пользователе
  */
-data class LoggedInUser(
+data class AuthorizedUser(
     val fullname: String,
     val phoneNumber: String
 )

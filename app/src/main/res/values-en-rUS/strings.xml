@@ -31,4 +31,5 @@
     <string name="resend_code_action">Resend verification code</string>
     <string name="verify_code_action">Verify</string>
     <string name="confirmation_code_resent_successfully">Verification code resent to</string>
+    <string name="authorization_canceled_error">Authorization canceled by user</string>
 </resources>
