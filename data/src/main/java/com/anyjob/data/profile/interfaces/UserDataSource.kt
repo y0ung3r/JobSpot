@@ -10,9 +10,8 @@ internal interface UserDataSource {
     /**
      * Возвращает пользователя по идентификатору
      * @param id Идентификатор
-     * @param onSuccess Событие, вызываемое в случае успешного выполнения запроса
      */
-    fun getUser(id: String, onSuccess: (user: UserEntity?) -> Unit)
+    suspend fun getUser(id: String) : Result<UserEntity?>
 
     /**
      * Добавляет пользователя

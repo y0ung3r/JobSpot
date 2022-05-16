@@ -71,12 +71,12 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         val firebaseUser = firebaseProvider.currentUser!!
         val userId = firebaseUser.uid
 
-        userDataSource.getUser(userId) { user ->
-            if (user == null) {
-                val userEntity = UserEntity(
-                    id = userId,
+        userDataSource.getUser(userId).onSuccess { foundUser ->
+            if (foundUser == null) {
+                val userEntity = UserEntity().apply {
+                    id = userId
                     phoneNumber = firebaseUser.phoneNumber!!
-                )
+                }
 
                 userDataSource.addUser(userEntity).addOnFailureListener {
                     _onCodeVerified.invoke(

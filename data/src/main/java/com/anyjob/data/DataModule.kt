@@ -15,8 +15,7 @@ val dataModule = module {
     }
 
     single {
-        // TODO: Скрыть ссылку на базу данных
-        FirebaseDatabase.getInstance("https://anyjob-fbf2f-default-rtdb.europe-west1.firebasedatabase.app/").reference
+        FirebaseDatabase.getInstance().reference
     }
 
     single {

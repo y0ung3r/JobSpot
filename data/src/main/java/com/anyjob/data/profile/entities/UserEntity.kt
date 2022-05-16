@@ -5,26 +5,36 @@ import java.io.Serializable
 
 /**
  * Сущность пользователя
- * @param id Идентификатор
- * @param phoneNumber Номер телефона
  */
-internal data class UserEntity(
+internal class UserEntity : Serializable {
+    /**
+     * Идентификатор
+     */
     @get:Exclude
-    val id: String,
-    val phoneNumber: String
-) : Serializable {
+    lateinit var id: String
+
+    /**
+     * Номер телефона
+     */
+    lateinit var phoneNumber: String
+
     /**
      * Фамилия
      */
-    var lastname: String? = null
+    lateinit var lastname: String
 
     /**
      * Имя
      */
-    var firstname: String? = null
+    lateinit var firstname: String
 
     /**
      * Отчество
      */
     var middlename: String? = null
+
+    /**
+     * Определяет оказывает ли текущий пользователь услуги
+     */
+    var isWorker: Boolean = false
 }
