@@ -54,7 +54,7 @@ class PhoneNumberEntryFragment : Fragment() {
         }
     }
 
-    private fun onCodeSent(result: Result<Boolean>) {
+    private fun onCodeSent(result: Result<Unit>) {
         result.onSuccess {
             _navigationController.navigate(R.id.path_to_confirmation_code_verifying_fragment_action)
         }

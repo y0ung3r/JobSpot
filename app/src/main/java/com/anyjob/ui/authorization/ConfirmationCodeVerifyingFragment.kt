@@ -102,27 +102,25 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
         _binding.confirmButton.isEnabled = true
     }
 
-    private fun onCodeResent(result: Result<Boolean>) {
-        result.onSuccess { isCodeResent ->
-            if (isCodeResent) {
-                _binding.resendButton.isEnabled = false
+    private fun onCodeResent(result: Result<Unit>) {
+        result.onSuccess {
+            _binding.resendButton.isEnabled = false
 
-                showToast("${getString(R.string.confirmation_code_resent_successfully)} ${_activityViewModel.phoneNumber.value}")
+            showToast("${getString(R.string.confirmation_code_resent_successfully)} ${_activityViewModel.phoneNumber.value}")
 
-                val cooldownTimer = object : CountDownTimer(60000L, 1000L) {
-                    override fun onTick(milliseconds: Long) {
-                        val seconds = milliseconds / 1000
-                        _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds})"
-                    }
-
-                    override fun onFinish() {
-                        _binding.resendButton.isEnabled = true
-                        _binding.resendButton.text = getString(R.string.resend_code_action)
-                    }
+            val cooldownTimer = object : CountDownTimer(60000L, 1000L) {
+                override fun onTick(milliseconds: Long) {
+                    val seconds = milliseconds / 1000
+                    _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds})"
                 }
 
-                cooldownTimer.start()
+                override fun onFinish() {
+                    _binding.resendButton.isEnabled = true
+                    _binding.resendButton.text = getString(R.string.resend_code_action)
+                }
             }
+
+            cooldownTimer.start()
         }
         .onFailure { exception ->
             val errorMessage = getString(
@@ -155,12 +153,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
             _binding.verificationCodeField.isEnabled = false
             _binding.confirmButton.isEnabled = false
 
-            val authorizationParameters = FirebasePhoneNumberAuthorizationParameters(
-                phoneNumber = phoneNumber,
-                activity = requireActivity()
-            )
-
-            _activityViewModel.sendVerificationCode(authorizationParameters)
+            _activityViewModel.resendVerificationCode()
         }
     }
 
@@ -171,7 +164,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
 
         _viewModel.isConfirmationCodeValid.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeValidating)
         _activityViewModel.onCodeVerified.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeVerified)
-        _activityViewModel.onCodeSent.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeResent)
+        _activityViewModel.onCodeResent.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeResent)
 
         _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
         _binding.resendButton.setOnClickListener(::onResendButtonClick)

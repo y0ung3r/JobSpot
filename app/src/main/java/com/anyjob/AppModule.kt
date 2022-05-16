@@ -14,7 +14,8 @@ val appModule = module {
     viewModel {
         AuthorizationViewModel(
             sendVerificationCodeUseCase = get(),
-            verifyCodeUseCase = get()
+            verifyCodeUseCase = get(),
+            resendVerificationCodeUseCase = get()
         )
     }
 

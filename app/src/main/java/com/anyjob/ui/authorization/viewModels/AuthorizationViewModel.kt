@@ -3,15 +3,23 @@ package com.anyjob.ui.authorization.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
-import com.anyjob.domain.authorization.exceptions.AuthorizationException
+import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
-import java.lang.IllegalArgumentException
+import kotlinx.coroutines.launch
 
-class AuthorizationViewModel(private val sendVerificationCodeUseCase: SendVerificationCodeUseCase, private val verifyCodeUseCase: VerifyCodeUseCase) : ViewModel() {
-    private val _onCodeSent = MutableLiveData<Result<Boolean>>()
-    val onCodeSent: LiveData<Result<Boolean>> = _onCodeSent
+class AuthorizationViewModel(
+    private val sendVerificationCodeUseCase: SendVerificationCodeUseCase,
+    private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
+    private val verifyCodeUseCase: VerifyCodeUseCase
+) : ViewModel() {
+    private val _onCodeSent = MutableLiveData<Result<Unit>>()
+    val onCodeSent: LiveData<Result<Unit>> = _onCodeSent
+
+    private val _onCodeResent = MutableLiveData<Result<Unit>>()
+    val onCodeResent: LiveData<Result<Unit>> = _onCodeResent
 
     private val _onCodeVerified = MutableLiveData<Result<Unit>>()
     val onCodeVerified: LiveData<Result<Unit>> = _onCodeVerified
@@ -25,24 +33,39 @@ class AuthorizationViewModel(private val sendVerificationCodeUseCase: SendVerifi
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.value = authorizationParameters.phoneNumber
 
-        sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
-            _onCodeSent.value = sentResult
+        try {
+            sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
+                _onCodeSent.value = sentResult
+            }
+        }
+
+        catch (exception: Exception) {
+            _onCodeSent.value = Result.failure(exception)
+        }
+    }
+
+    fun resendVerificationCode() {
+        try {
+            resendVerificationCodeUseCase.execute { resentResult ->
+                _onCodeResent.value = resentResult
+            }
+        }
+
+        catch (exception: Exception) {
+            _onCodeResent.value = Result.failure(exception)
         }
     }
 
     fun verifyCode(code: String) {
-        try {
-            verifyCodeUseCase.execute(code) { verifiedResult ->
-                _onCodeVerified.value = verifiedResult
+        viewModelScope.launch {
+            try {
+                verifyCodeUseCase.execute(code)
+                _onCodeVerified.value = Result.success(Unit)
             }
-        }
 
-        catch (exception: IllegalArgumentException) {
-            _onCodeVerified.value = Result.failure(exception)
-        }
-
-        catch (exception: AuthorizationException) {
-            _onCodeVerified.value = Result.failure(exception)
+            catch (exception: Exception) {
+                _onCodeVerified.value = Result.failure(exception)
+            }
         }
     }
 }
