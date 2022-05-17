@@ -1,8 +1,10 @@
 package com.anyjob.data.authorization
 
 import androidx.core.os.OperationCanceledException
+import com.anyjob.data.FirebaseContext
+import com.anyjob.data.extensions.get
+import com.anyjob.data.extensions.save
 import com.anyjob.data.profile.entities.UserEntity
-import com.anyjob.data.profile.interfaces.UserDataSource
 import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
 import com.anyjob.domain.authorization.exceptions.AuthorizationCanceledException
 import com.anyjob.domain.authorization.exceptions.AuthorizationException
@@ -18,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 internal class FirebasePhoneNumberAuthorizationProvider(
     private val firebaseProvider: FirebaseAuth,
-    private val userDataSource: UserDataSource
+    private val context: FirebaseContext
 ) : PhoneNumberAuthorizationProvider {
     private lateinit var _authorizationParameters: PhoneNumberAuthorizationParameters
     private var _verificationId: String? = null
@@ -52,7 +54,7 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         }
     }
 
-    private fun createPhoneNumberAuthenticationOptions(authorizationParameters: FirebasePhoneNumberAuthorizationParameters, forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null): PhoneAuthOptions {
+    private fun createPhoneNumberAuthorizationOptions(authorizationParameters: FirebasePhoneNumberAuthorizationParameters, forceResendingToken: PhoneAuthProvider.ForceResendingToken? = null): PhoneAuthOptions {
         val optionsBuilder = PhoneAuthOptions.newBuilder(firebaseProvider)
 
         optionsBuilder.setActivity(authorizationParameters.activity)
@@ -70,15 +72,14 @@ internal class FirebasePhoneNumberAuthorizationProvider(
     private suspend fun ensureUserCreated() {
         val firebaseUser = firebaseProvider.currentUser!!
         val userId = firebaseUser.uid
-        val foundUser = userDataSource.getUser(userId)
+        val foundUser = context.users.get<UserEntity>(userId)
 
         if (foundUser == null) {
-            val userEntity = UserEntity().apply {
-                id = userId
+            val userEntity = UserEntity(userId).apply {
                 phoneNumber = firebaseUser.phoneNumber!!
             }
 
-            userDataSource.addUser(userEntity)
+            context.users.save(userId, userEntity)
         }
     }
 
@@ -122,7 +123,7 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         _onCodeSent = onCodeSent
 
         PhoneAuthProvider.verifyPhoneNumber(
-            createPhoneNumberAuthenticationOptions(
+            createPhoneNumberAuthorizationOptions(
                 _authorizationParameters as FirebasePhoneNumberAuthorizationParameters,
                 _forceResendingToken
             )
