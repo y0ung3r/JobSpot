@@ -75,7 +75,8 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         val foundUser = context.users.get<UserEntity>(userId)
 
         if (foundUser == null) {
-            val userEntity = UserEntity(userId).apply {
+            val userEntity = UserEntity().apply {
+                id = userId
                 phoneNumber = firebaseUser.phoneNumber!!
             }
 

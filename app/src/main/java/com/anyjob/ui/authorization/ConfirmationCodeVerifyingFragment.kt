@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
@@ -58,14 +57,14 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
             _binding.loadingBar.slide(VisibilityMode.Show)
 
             _binding.verificationCodeField.isEnabled = false
-            _binding.confirmButton.isEnabled = false
+            _binding.verifyButton.isEnabled = false
 
             _activityViewModel.verifyCode(code)
         }
     }
 
     private fun onCodeValidating(isValid: Boolean) {
-        _binding.confirmButton.isEnabled = isValid
+        _binding.verifyButton.isEnabled = isValid
 
         if (!isValid) {
             _binding.verificationCodeField.error = getString(R.string.invalid_confirmation_code_format)
@@ -95,7 +94,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
 
         _binding.loadingBar.slide(VisibilityMode.Hide)
         _binding.verificationCodeField.isEnabled = true
-        _binding.confirmButton.isEnabled = true
+        _binding.verifyButton.isEnabled = true
     }
 
     private fun onCodeResent(result: Result<Unit>) {
@@ -132,7 +131,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
 
         _binding.loadingBar.slide(VisibilityMode.Hide)
         _binding.verificationCodeField.isEnabled = true
-        _binding.confirmButton.isEnabled = true
+        _binding.verifyButton.isEnabled = true
     }
 
     private fun onConfirmButtonClick(button: View) {
@@ -147,7 +146,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
             _binding.loadingBar.slide(VisibilityMode.Show)
 
             _binding.verificationCodeField.isEnabled = false
-            _binding.confirmButton.isEnabled = false
+            _binding.verifyButton.isEnabled = false
 
             _activityViewModel.resendVerificationCode()
         }
@@ -162,7 +161,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
         _activityViewModel.onCodeVerified.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeVerified)
         _activityViewModel.onCodeResent.observe(this@ConfirmationCodeVerifyingFragment, ::onCodeResent)
 
-        _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
+        _binding.verifyButton.setOnClickListener(::onConfirmButtonClick)
         _binding.resendButton.setOnClickListener(::onResendButtonClick)
 
         _binding.verificationCodeField.apply {

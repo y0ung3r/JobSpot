@@ -32,4 +32,6 @@
     <string name="verify_code_action">Verify</string>
     <string name="confirmation_code_resent_successfully">Verification code resent to</string>
     <string name="authorization_canceled_error">Authorization canceled by user</string>
+    <string name="invalid_lastname">Invalid lastname</string>
+    <string name="invalid_firstname">Invalid firstname</string>
 </resources>

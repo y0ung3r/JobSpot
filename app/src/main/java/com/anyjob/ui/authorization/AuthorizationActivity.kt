@@ -18,4 +18,10 @@ class AuthorizationActivity : AppCompatActivity() {
         setContentView(_binding.root)
         supportActionBar?.hide()
     }
+
+    override fun onStart() {
+        super.onStart()
+
+
+    }
 }
