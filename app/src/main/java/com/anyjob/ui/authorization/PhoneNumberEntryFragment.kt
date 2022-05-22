@@ -19,6 +19,7 @@ import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
 import com.anyjob.ui.extensions.onEditorActionReceived
 import com.anyjob.ui.extensions.setupMask
+import com.anyjob.ui.extensions.showToast
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -67,8 +68,7 @@ class PhoneNumberEntryFragment : Fragment() {
                 }
             )
 
-            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG)
-                 .show()
+            showToast(errorMessage)
         }
 
         _binding.loadingBar.slide(VisibilityMode.Hide)

@@ -11,17 +11,17 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
-import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
-import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
-import com.anyjob.data.authorization.FirebasePhoneNumberAuthorizationParameters
 import com.anyjob.databinding.FragmentConfirmationCodeVerifyingBinding
 import com.anyjob.domain.authorization.exceptions.AuthorizationCanceledException
+import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
+import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeVerifyingViewModel
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.onEditorActionReceived
+import com.anyjob.ui.extensions.showToast
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,10 +32,6 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
     private lateinit var _binding: FragmentConfirmationCodeVerifyingBinding
     private val _navigationController by lazy {
         findNavController()
-    }
-
-    private fun showToast(message: String, duration: Int = Toast.LENGTH_LONG) {
-        Toast.makeText(context, message, duration).show()
     }
 
     private fun appendPhoneNumberToDescription() {
@@ -111,7 +107,7 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
             val cooldownTimer = object : CountDownTimer(60000L, 1000L) {
                 override fun onTick(milliseconds: Long) {
                     val seconds = milliseconds / 1000
-                    _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds})"
+                    _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds + 1})"
                 }
 
                 override fun onFinish() {
