@@ -33,26 +33,14 @@ class AuthorizationViewModel(
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.value = authorizationParameters.phoneNumber
 
-        try {
-            sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
-                _onCodeSent.value = sentResult
-            }
-        }
-
-        catch (exception: Exception) {
-            _onCodeSent.value = Result.failure(exception)
+        sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
+            _onCodeSent.value = sentResult
         }
     }
 
     fun resendVerificationCode() {
-        try {
-            resendVerificationCodeUseCase.execute { resentResult ->
-                _onCodeResent.value = resentResult
-            }
-        }
-
-        catch (exception: Exception) {
-            _onCodeResent.value = Result.failure(exception)
+        resendVerificationCodeUseCase.execute { resentResult ->
+            _onCodeResent.value = resentResult
         }
     }
 

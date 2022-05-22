@@ -115,7 +115,13 @@ internal class FirebasePhoneNumberAuthorizationProvider(
 
     override fun sendCode(authorizationParameters: PhoneNumberAuthorizationParameters, onCodeSent: (Result<Unit>) -> Unit) {
         if (authorizationParameters !is FirebasePhoneNumberAuthorizationParameters) {
-            throw IllegalArgumentException("Для авторизации через Firebase необходимо использовать ${FirebasePhoneNumberAuthorizationParameters::class.simpleName}")
+            val exception = IllegalArgumentException("Для авторизации через Firebase необходимо использовать ${FirebasePhoneNumberAuthorizationParameters::class.simpleName}")
+
+            onCodeSent.invoke(
+                Result.failure(exception)
+            )
+
+            return
         }
 
         _authorizationParameters = authorizationParameters
@@ -131,7 +137,13 @@ internal class FirebasePhoneNumberAuthorizationProvider(
 
     override fun resendCode(onCodeResent: (Result<Unit>) -> Unit) {
         if (_forceResendingToken == null) {
-            throw IllegalAccessException("Невозможно выполнить процедуру повторной отправки проверочного кода")
+            val exception = IllegalAccessException("Невозможно выполнить процедуру повторной отправки проверочного кода")
+
+            onCodeResent.invoke(
+                Result.failure(exception)
+            )
+
+            return
         }
 
         sendCode(
