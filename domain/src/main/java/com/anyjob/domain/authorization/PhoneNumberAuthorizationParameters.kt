@@ -6,4 +6,9 @@ package com.anyjob.domain.authorization
  */
 open class PhoneNumberAuthorizationParameters(
     open val phoneNumber: String
-)
+) {
+    /**
+     * Время ожидания (в секундах)
+     */
+    var timeout: Long = 60L
+}

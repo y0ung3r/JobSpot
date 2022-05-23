@@ -8,9 +8,4 @@ import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
  * @param phoneNumber Номер телефона
  * @param activity Activity, выполняющий авторизацию через Firebase
  */
-class FirebasePhoneNumberAuthorizationParameters(override val phoneNumber: String, val activity: Activity) : PhoneNumberAuthorizationParameters(phoneNumber) {
-    /**
-     * Время ожидания (в секундах)
-     */
-    var timeout: Long = 60L
-}
+class FirebasePhoneNumberAuthorizationParameters(override val phoneNumber: String, val activity: Activity) : PhoneNumberAuthorizationParameters(phoneNumber)

@@ -32,6 +32,7 @@ class AuthorizationViewModel(
 
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.value = authorizationParameters.phoneNumber
+        _resendTimeout.value = authorizationParameters.timeout
 
         sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
             _onCodeSent.value = sentResult
