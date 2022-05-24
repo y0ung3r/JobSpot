@@ -65,7 +65,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:imeOptions="actionSend"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="6" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

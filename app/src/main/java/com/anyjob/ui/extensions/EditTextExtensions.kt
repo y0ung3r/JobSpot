@@ -1,6 +1,7 @@
 package com.anyjob.ui.extensions
 
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -60,4 +61,23 @@ fun EditText.setupMask(mask: String, onChanged: (maskFilled: Boolean, extractedV
     val maskedTextChangedListener = MaskedTextChangedListener(mask, editText)
     maskedTextChangedListener.onTextChanged(onChanged)
     editText.attachMaskedTextChangedListener(maskedTextChangedListener)
+}
+
+/**
+ * Метод-расширения, возвращающий фильтр указанного типа
+ */
+inline fun <reified TInputFilter> EditText.getFilter(): TInputFilter? {
+    val filter = filters.firstOrNull {
+        filter -> filter is TInputFilter
+    }
+
+    return filter as TInputFilter?
+}
+
+/**
+ * Метод-расширения, возвращающий максимальное количество символов, которое можно вписать в текстовое поле
+ */
+fun EditText.getMaxLength(): Int {
+    val lengthFilter = getFilter<InputFilter.LengthFilter>() ?: return Int.MAX_VALUE;
+    return lengthFilter.max
 }
