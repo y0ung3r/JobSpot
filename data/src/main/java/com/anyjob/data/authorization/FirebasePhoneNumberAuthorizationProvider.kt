@@ -73,9 +73,9 @@ internal class FirebasePhoneNumberAuthorizationProvider(
     private suspend fun ensureUserCreated() {
         val authorizedUser = firebaseProvider.currentUser!!
         val userId = authorizedUser.uid
-        val firestoreUser = context.users.get<UserEntity>(userId)
+        val storeUser = context.users.get<UserEntity>(userId)
 
-        if (firestoreUser == null) {
+        if (storeUser == null) {
             val userEntity = UserEntity().apply {
                 id = userId
                 phoneNumber = authorizedUser.phoneNumber!!
@@ -158,16 +158,15 @@ internal class FirebasePhoneNumberAuthorizationProvider(
     override suspend fun getAuthorizedUser(): User? {
         val authorizedUser = firebaseProvider.currentUser ?: return null
         val userId = authorizedUser.uid
-        val firestoreUser = context.users.get<UserEntity>(userId) ?: return null
-        val phoneNumber = firestoreUser.phoneNumber!!
+        val storeUser = context.users.get<UserEntity>(userId) ?: return null
 
         return User(
             id = userId,
-            phoneNumber = phoneNumber,
-            lastname = firestoreUser.lastname,
-            firstname = firestoreUser.firstname,
-            middlename = firestoreUser.middlename,
-            isWorker = firestoreUser.isWorker
+            phoneNumber = storeUser.phoneNumber!!,
+            lastname = storeUser.lastname,
+            firstname = storeUser.firstname,
+            middlename = storeUser.middlename,
+            isWorker = storeUser.isWorker
         )
     }
 
