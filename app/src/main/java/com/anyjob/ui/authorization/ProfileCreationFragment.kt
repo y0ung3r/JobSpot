@@ -6,15 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.anyjob.R
-import com.anyjob.databinding.FragmentRegistrationBinding
-import com.anyjob.ui.authorization.viewModels.RegistrationViewModel
+import com.anyjob.databinding.FragmentProfileCreationBinding
+import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.extensions.afterTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RegistrationFragment : Fragment() {
-    private val _viewModel by viewModel<RegistrationViewModel>()
-    private lateinit var _binding: FragmentRegistrationBinding
+class ProfileCreationFragment : Fragment() {
+    private val _viewModel by viewModel<ProfileCreationViewModel>()
+    private lateinit var _binding: FragmentProfileCreationBinding
 
     private fun isFieldValid(field: TextInputEditText): Boolean {
         return field.error == null || (field.error != null && field.error.isBlank())
@@ -46,14 +47,19 @@ class RegistrationFragment : Fragment() {
         updateConfirmButton()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
+    private fun onConfirmButtonClick(button: View) {
 
-        _viewModel.isLastnameFilled.observe(this@RegistrationFragment, ::onLastnameValidating)
-        _viewModel.isFirstnameFilled.observe(this@RegistrationFragment, ::onFirstnameValidating)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentProfileCreationBinding.inflate(inflater, container, false)
+
+        _viewModel.isLastnameFilled.observe(this@ProfileCreationFragment, ::onLastnameValidating)
+        _viewModel.isFirstnameFilled.observe(this@ProfileCreationFragment, ::onFirstnameValidating)
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)
         _binding.firstnameField.afterTextChanged(::onFirstnameChanged)
+        _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
 
         return _binding.root
     }

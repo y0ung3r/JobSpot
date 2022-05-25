@@ -1,5 +1,6 @@
 package com.anyjob.domain
 
+import com.anyjob.domain.authorization.useCases.CreateProfileUseCase
 import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
@@ -21,6 +22,12 @@ val domainModule = module {
     factory {
         ResendVerificationCodeUseCase(
             authorizationProvider = get()
+        )
+    }
+
+    factory {
+        CreateProfileUseCase(
+            userRepository = get()
         )
     }
 }

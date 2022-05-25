@@ -25,7 +25,7 @@
         tools:layout="@layout/fragment_confirmation_code_verifying" >
         <action
             android:id="@+id/path_to_navigation_registration_fragment_action"
-            app:destination="@id/navigation_registration_fragment"
+            app:destination="@id/navigation_profile_creation_fragment"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
@@ -40,10 +40,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_registration_fragment"
-        android:name="com.anyjob.ui.authorization.RegistrationFragment"
-        android:label="fragment_registration"
-        tools:layout="@layout/fragment_registration" >
+        android:id="@+id/navigation_profile_creation_fragment"
+        android:name="com.anyjob.ui.authorization.ProfileCreationFragment"
+        android:label="fragment_profile_creation"
+        tools:layout="@layout/fragment_profile_creation">
         <action
             android:id="@+id/path_to_explorer_activity_from_registration_fragment"
             app:destination="@id/navigation_explorer_activity"

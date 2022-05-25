@@ -3,7 +3,7 @@ package com.anyjob
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeVerifyingViewModel
 import com.anyjob.ui.authorization.viewModels.PhoneNumberEntryViewModel
-import com.anyjob.ui.authorization.viewModels.RegistrationViewModel
+import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.dashboard.viewModels.DashboardViewModel
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
 import com.anyjob.ui.explorer.profile.viewModels.ProfileViewModel
@@ -28,7 +28,9 @@ val appModule = module {
     }
 
     viewModel {
-        RegistrationViewModel()
+        ProfileCreationViewModel(
+            createProfileUseCase = get()
+        )
     }
 
     viewModel {

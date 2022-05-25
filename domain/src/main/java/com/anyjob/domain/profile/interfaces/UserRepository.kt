@@ -1,14 +1,14 @@
 package com.anyjob.domain.profile.interfaces
 
-import com.anyjob.domain.profile.models.User
+import com.anyjob.domain.authorization.ProfileCreationParameters
 
 /**
  * Определяет репозиторий пользователя
  */
 interface UserRepository {
     /**
-     * Обновляет информацию о пользователе
-     * @param user Пользователь с обновленными свойствами
+     * Создает личный кабинет для пользователя
+     * @param parameters Личные данные пользователя
      */
-    suspend fun updatePersonalInformation(user: User)
+    suspend fun createProfile(parameters: ProfileCreationParameters)
 }
