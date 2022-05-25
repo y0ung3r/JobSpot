@@ -31,29 +31,34 @@ class AuthorizationViewModel(
     val resendTimeout: LiveData<Long> = _resendTimeout
 
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
-        _phoneNumber.value = authorizationParameters.phoneNumber
-        _resendTimeout.value = authorizationParameters.timeout
+        _phoneNumber.postValue(authorizationParameters.phoneNumber)
+        _resendTimeout.postValue(authorizationParameters.timeout)
 
-        sendVerificationCodeUseCase.execute(authorizationParameters) { sentResult ->
-            _onCodeSent.value = sentResult
+        sendVerificationCodeUseCase.execute(authorizationParameters) {
+            _onCodeSent.postValue(it)
         }
     }
 
     fun resendVerificationCode() {
-        resendVerificationCodeUseCase.execute { resentResult ->
-            _onCodeResent.value = resentResult
+        resendVerificationCodeUseCase.execute {
+            _onCodeResent.postValue(it)
         }
     }
 
     fun verifyCode(code: String) {
         viewModelScope.launch {
-            try {
+            kotlin.runCatching {
                 verifyCodeUseCase.execute(code)
-                _onCodeVerified.value = Result.success(Unit)
             }
-
-            catch (exception: Exception) {
-                _onCodeVerified.value = Result.failure(exception)
+            .onSuccess {
+                _onCodeVerified.postValue(
+                    Result.success(Unit)
+                )
+            }
+            .onFailure { exception ->
+                _onCodeVerified.postValue(
+                    Result.failure(exception)
+                )
             }
         }
     }

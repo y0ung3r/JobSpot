@@ -11,6 +11,7 @@ import com.anyjob.domain.authorization.exceptions.AuthorizationException
 import com.anyjob.domain.authorization.exceptions.AuthorizationServerException
 import com.anyjob.domain.authorization.exceptions.InvalidCredentialsException
 import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
+import com.anyjob.domain.profile.models.User
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -70,14 +71,14 @@ internal class FirebasePhoneNumberAuthorizationProvider(
     }
 
     private suspend fun ensureUserCreated() {
-        val firebaseUser = firebaseProvider.currentUser!!
-        val userId = firebaseUser.uid
-        val foundUser = context.users.get<UserEntity>(userId)
+        val authorizedUser = firebaseProvider.currentUser!!
+        val userId = authorizedUser.uid
+        val firestoreUser = context.users.get<UserEntity>(userId)
 
-        if (foundUser == null) {
+        if (firestoreUser == null) {
             val userEntity = UserEntity().apply {
                 id = userId
-                phoneNumber = firebaseUser.phoneNumber!!
+                phoneNumber = authorizedUser.phoneNumber!!
             }
 
             context.users.save(userId, userEntity)
@@ -151,6 +152,22 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         sendCode(
             _authorizationParameters,
             onCodeResent
+        )
+    }
+
+    override suspend fun getAuthorizedUser(): User? {
+        val authorizedUser = firebaseProvider.currentUser ?: return null
+        val userId = authorizedUser.uid
+        val firestoreUser = context.users.get<UserEntity>(userId) ?: return null
+        val phoneNumber = firestoreUser.phoneNumber!!
+
+        return User(
+            id = userId,
+            phoneNumber = phoneNumber,
+            lastname = firestoreUser.lastname,
+            firstname = firestoreUser.firstname,
+            middlename = firestoreUser.middlename,
+            isWorker = firestoreUser.isWorker
         )
     }
 

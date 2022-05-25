@@ -15,10 +15,14 @@ class RegistrationViewModel : ViewModel() {
     val isFieldsValidated: LiveData<Boolean> = _isDataValid
 
     fun validateLastname(lastname: String) {
-        _isLastnameFilled.value = lastname.isNotBlank()
+        _isLastnameFilled.postValue(
+            lastname.isNotBlank()
+        )
     }
 
     fun validateFirstname(firstname: String) {
-        _isFirstnameFilled.value = firstname.isNotBlank()
+        _isFirstnameFilled.postValue(
+            firstname.isNotBlank()
+        )
     }
 }
