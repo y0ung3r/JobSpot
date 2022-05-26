@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.anyjob.R
 import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.domain.profile.models.User
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.extensions.afterTextChanged
 import com.google.android.material.textfield.TextInputEditText
@@ -47,6 +48,15 @@ class ProfileCreationFragment : Fragment() {
         updateConfirmButton()
     }
 
+    private fun onProfileCreated(result: Result<User>) {
+        result.onSuccess {
+
+        }
+        .onFailure { exception ->
+
+        }
+    }
+
     private fun onConfirmButtonClick(button: View) {
 
     }
@@ -56,6 +66,7 @@ class ProfileCreationFragment : Fragment() {
 
         _viewModel.isLastnameFilled.observe(this@ProfileCreationFragment, ::onLastnameValidating)
         _viewModel.isFirstnameFilled.observe(this@ProfileCreationFragment, ::onFirstnameValidating)
+        _viewModel.onProfileCreated.observe(this@ProfileCreationFragment, ::onProfileCreated)
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)
         _binding.firstnameField.afterTextChanged(::onFirstnameChanged)

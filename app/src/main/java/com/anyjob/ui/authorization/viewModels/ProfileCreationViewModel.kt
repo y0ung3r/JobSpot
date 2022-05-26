@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.authorization.useCases.CreateProfileUseCase
+import com.anyjob.domain.profile.models.User
 import kotlinx.coroutines.launch
 
 class ProfileCreationViewModel(private val createProfileUseCase: CreateProfileUseCase) : ViewModel() {
@@ -18,8 +19,11 @@ class ProfileCreationViewModel(private val createProfileUseCase: CreateProfileUs
     private val _isDataValid = MutableLiveData<Boolean>()
     val isFieldsValidated: LiveData<Boolean> = _isDataValid
 
-    private val _onProfileCreating = MutableLiveData<Result<Unit>>()
-    val onProfileCreating: LiveData<Result<Unit>> = _onProfileCreating
+    private val _onProfileCreated = MutableLiveData<Result<Unit>>()
+    val onProfileCreated: LiveData<Result<Unit>> = _onProfileCreated
+
+    private val _authorizedUser = MutableLiveData<User>()
+    val authorizedUser: LiveData<User> = _authorizedUser
 
     fun validateLastname(lastname: String) {
         _isLastnameFilled.postValue(
@@ -36,15 +40,16 @@ class ProfileCreationViewModel(private val createProfileUseCase: CreateProfileUs
     fun createProfile(parameters: ProfileCreationParameters) {
         viewModelScope.launch {
             kotlin.runCatching {
+
                 createProfileUseCase.execute(parameters)
             }
             .onSuccess {
-                _onProfileCreating.postValue(
+                _onProfileCreated.postValue(
                     Result.success(Unit)
                 )
             }
             .onFailure { exception ->
-                _onProfileCreating.postValue(
+                _onProfileCreated.postValue(
                     Result.failure(exception)
                 )
             }

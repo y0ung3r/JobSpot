@@ -8,6 +8,7 @@ import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
 import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
+import com.anyjob.domain.profile.models.User
 import kotlinx.coroutines.launch
 
 class AuthorizationViewModel(
