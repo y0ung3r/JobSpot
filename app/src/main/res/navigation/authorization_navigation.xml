@@ -57,4 +57,21 @@
         android:id="@+id/navigation_explorer_activity"
         android:name="com.anyjob.ui.explorer.ExplorerActivity"
         android:label="ExplorerActivity" />
+
+    <action
+        android:id="@+id/path_to_profile_creation_fragment_from_authorization_activity"
+        app:destination="@id/navigation_profile_creation_fragment"
+        app:enterAnim="@android:anim/slide_in_left"
+        app:exitAnim="@android:anim/slide_out_right"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    <action
+        android:id="@+id/path_to_explorer_activity_from_authorization_activity"
+        app:destination="@id/navigation_explorer_activity"
+        app:enterAnim="@android:anim/slide_in_left"
+        app:exitAnim="@android:anim/slide_out_right"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
 </navigation>

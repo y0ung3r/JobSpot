@@ -1,22 +1,40 @@
 package com.anyjob.ui.authorization
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
-import com.anyjob.domain.profile.models.User
+import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.extensions.afterTextChanged
+import com.anyjob.ui.extensions.observeOnce
+import com.anyjob.ui.extensions.showToast
 import com.google.android.material.textfield.TextInputEditText
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProfileCreationFragment : Fragment() {
+    private val _activityViewModel by sharedViewModel<AuthorizationViewModel>()
     private val _viewModel by viewModel<ProfileCreationViewModel>()
+
     private lateinit var _binding: FragmentProfileCreationBinding
+    private val _navigationController by lazy {
+        findNavController()
+    }
+
+    private fun navigateToExplorerActivity() {
+        _navigationController.navigate(R.id.path_to_explorer_activity_from_registration_fragment)
+
+        val activity = requireActivity()
+        activity.setResult(Activity.RESULT_OK)
+        activity.finish()
+    }
 
     private fun isFieldValid(field: TextInputEditText): Boolean {
         return field.error == null || (field.error != null && field.error.isBlank())
@@ -48,17 +66,34 @@ class ProfileCreationFragment : Fragment() {
         updateConfirmButton()
     }
 
-    private fun onProfileCreated(result: Result<User>) {
+    private fun onProfileCreated(result: Result<Unit>) {
         result.onSuccess {
-
+            navigateToExplorerActivity()
         }
-        .onFailure { exception ->
-
+        .onFailure {
+            val errorMessage = getString(R.string.unexpected_error)
+            showToast(errorMessage)
         }
+
+        _binding.confirmButton.isEnabled = true
     }
 
     private fun onConfirmButtonClick(button: View) {
+        _binding.confirmButton.isEnabled = false
 
+        _activityViewModel.getAuthorizedUser().observeOnce(this@ProfileCreationFragment) { authorizedUser ->
+            authorizedUser?.let {
+                val profileCreationParameters = ProfileCreationParameters(
+                    userId = it.id,
+                    lastname = _binding.lastnameField.text.toString(),
+                    firstname = _binding.firstnameField.text.toString(),
+                    middlename = _binding.middlenameField.text.toString(),
+                    isWorker = _binding.isWorkerCheckBox.isChecked
+                )
+
+                _viewModel.createProfile(profileCreationParameters)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

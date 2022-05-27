@@ -86,7 +86,15 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
 
     private fun onCodeVerified(result: Result<Unit>) {
         result.onSuccess {
-            navigateToRegisterFragment()
+            _activityViewModel.getAuthorizedUser().observe(this@ConfirmationCodeVerifyingFragment) { authorizedUser ->
+                val isNewUser = authorizedUser == null || authorizedUser.fullname.isBlank()
+
+                if (isNewUser) {
+                    return@observe navigateToRegisterFragment()
+                }
+
+                return@observe navigateToExplorerActivity()
+            }
         }
         .onFailure { exception ->
             val errorMessage = getString(

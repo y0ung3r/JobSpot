@@ -9,12 +9,15 @@ import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
 import com.anyjob.domain.profile.models.User
+import com.anyjob.domain.profile.useCases.GetAuthorizedUserUseCase
+import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import kotlinx.coroutines.launch
 
 class AuthorizationViewModel(
     private val sendVerificationCodeUseCase: SendVerificationCodeUseCase,
     private val resendVerificationCodeUseCase: ResendVerificationCodeUseCase,
-    private val verifyCodeUseCase: VerifyCodeUseCase
+    private val verifyCodeUseCase: VerifyCodeUseCase,
+    private val getAuthorizedUserUseCase: GetAuthorizedUserUseCase
 ) : ViewModel() {
     private val _onCodeSent = MutableLiveData<Result<Unit>>()
     val onCodeSent: LiveData<Result<Unit>> = _onCodeSent
@@ -30,6 +33,8 @@ class AuthorizationViewModel(
 
     private val _resendTimeout = MutableLiveData<Long>()
     val resendTimeout: LiveData<Long> = _resendTimeout
+
+    private val _authorizedUser = MutableLiveData<AuthorizedUser?>()
 
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.postValue(authorizationParameters.phoneNumber)
@@ -62,5 +67,30 @@ class AuthorizationViewModel(
                 )
             }
         }
+    }
+
+    fun getAuthorizedUser(): LiveData<AuthorizedUser?> {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                getAuthorizedUserUseCase.execute()
+            }
+            .onSuccess { user ->
+                var authorizedUser: AuthorizedUser? = null
+
+                if (user != null) {
+                    authorizedUser = AuthorizedUser(
+                        user.id,
+                        user.lastname,
+                        user.firstname,
+                        user.middlename,
+                        user.phoneNumber
+                    )
+                }
+
+                _authorizedUser.postValue(authorizedUser)
+            }
+        }
+
+        return _authorizedUser
     }
 }
