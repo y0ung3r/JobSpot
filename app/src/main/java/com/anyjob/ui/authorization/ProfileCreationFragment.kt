@@ -73,13 +73,21 @@ class ProfileCreationFragment : Fragment() {
         .onFailure {
             val errorMessage = getString(R.string.unexpected_error)
             showToast(errorMessage)
-        }
 
-        _binding.confirmButton.isEnabled = true
+            _binding.confirmButton.isEnabled = true
+            _binding.lastnameField.isEnabled = true
+            _binding.firstnameField.isEnabled = true
+            _binding.middlenameField.isEnabled = true
+            _binding.isWorkerCheckBox.isEnabled = true
+        }
     }
 
     private fun onConfirmButtonClick(button: View) {
         _binding.confirmButton.isEnabled = false
+        _binding.lastnameField.isEnabled = false
+        _binding.firstnameField.isEnabled = false
+        _binding.middlenameField.isEnabled = false
+        _binding.isWorkerCheckBox.isEnabled = false
 
         _activityViewModel.getAuthorizedUser().observeOnce(this@ProfileCreationFragment) { authorizedUser ->
             authorizedUser?.let {
