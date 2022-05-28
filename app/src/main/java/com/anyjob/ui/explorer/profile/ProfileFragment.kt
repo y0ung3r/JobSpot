@@ -16,10 +16,6 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
-        _viewModel.text.observe(viewLifecycleOwner) { content ->
-            _binding.textNotifications.text = content
-        }
-
         return _binding.root
     }
 }

@@ -20,10 +20,7 @@ import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ConfirmationCodeVerifyingViewModel
-import com.anyjob.ui.extensions.afterTextChanged
-import com.anyjob.ui.extensions.getMaxLength
-import com.anyjob.ui.extensions.onEditorActionReceived
-import com.anyjob.ui.extensions.showToast
+import com.anyjob.ui.extensions.*
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -86,14 +83,12 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
 
     private fun onCodeVerified(result: Result<Unit>) {
         result.onSuccess {
-            _activityViewModel.getAuthorizedUser().observe(this@ConfirmationCodeVerifyingFragment) { authorizedUser ->
-                val isNewUser = authorizedUser == null || authorizedUser.fullname.isBlank()
-
-                if (isNewUser) {
-                    return@observe navigateToRegisterFragment()
+            _activityViewModel.getAuthorizedUser().observeOnce(this@ConfirmationCodeVerifyingFragment) { authorizedUser ->
+                if (authorizedUser != null && authorizedUser.fullname.isNotBlank()) {
+                    return@observeOnce navigateToExplorerActivity()
                 }
 
-                return@observe navigateToExplorerActivity()
+                return@observeOnce navigateToRegisterFragment()
             }
         }
         .onFailure { exception ->
