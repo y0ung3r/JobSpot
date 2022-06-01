@@ -38,7 +38,6 @@ class AuthorizationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
-        supportActionBar?.hide()
 
         _binding.authorizationFragmentsContainer.visibility = View.INVISIBLE
     }

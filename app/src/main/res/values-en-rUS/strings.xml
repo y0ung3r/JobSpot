@@ -34,4 +34,5 @@
     <string name="authorization_canceled_error">Authorization canceled by user</string>
     <string name="invalid_lastname">Invalid lastname</string>
     <string name="invalid_firstname">Invalid firstname</string>
+    <string name="settings_drawer_item">Settings</string>
 </resources>

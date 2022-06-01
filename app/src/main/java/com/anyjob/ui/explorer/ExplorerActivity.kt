@@ -1,14 +1,10 @@
 package com.anyjob.ui.explorer
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
 
 class ExplorerActivity : AppCompatActivity() {
@@ -21,12 +17,18 @@ class ExplorerActivity : AppCompatActivity() {
         navigationHost.navController
     }
 
+    private fun onDrawerOpenButtonClick(view: View) {
+        _binding.drawerLayout.open()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
-        supportActionBar?.hide()
+        setSupportActionBar(_binding.toolbar)
 
-        val navigationItems = setOf(
+        _binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
+
+        /*val navigationItems = setOf(
             R.id.navigation_home,
             R.id.navigation_dashboard,
             R.id.navigation_profile
@@ -34,6 +36,6 @@ class ExplorerActivity : AppCompatActivity() {
 
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
         setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
-        _binding.navigationView.setupWithNavController(_navigationController)
+        _binding.navigationView.setupWithNavController(_navigationController)*/
     }
 }

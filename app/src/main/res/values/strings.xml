@@ -33,4 +33,5 @@
     <string name="authorization_canceled_error">Авторизация отменена пользователем</string>
     <string name="invalid_lastname">Фамилия указана некорректно</string>
     <string name="invalid_firstname">Имя указано некорректно</string>
+    <string name="settings_drawer_item">Настройки</string>
 </resources>
