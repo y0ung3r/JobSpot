@@ -10,11 +10,16 @@ import com.anyjob.databinding.FragmentHomeBinding
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class HomeFragment : Fragment() {
     private val _viewModel by viewModel<HomeViewModel>()
     private lateinit var _binding: FragmentHomeBinding
+
+    private var _centeredMarker: Marker? = null
 
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -22,6 +27,17 @@ class HomeFragment : Fragment() {
 
     private fun onMapReady(googleMap: GoogleMap) {
         googleMap.uiSettings.isMyLocationButtonEnabled = true
+
+        googleMap.setOnCameraMoveListener {
+            _centeredMarker?.remove()
+
+            val markerOptions = MarkerOptions()
+                .position(googleMap.cameraPosition.target)
+                .anchor(0.5f, .05f)
+
+            _centeredMarker = googleMap.addMarker(markerOptions)
+        }
+
         //googleMap.isMyLocationEnabled = true
     }
 
