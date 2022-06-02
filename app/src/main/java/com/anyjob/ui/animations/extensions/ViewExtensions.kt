@@ -6,6 +6,7 @@ import android.animation.PropertyValuesHolder
 import android.util.Range
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
 import androidx.transition.*
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.drag.DragTo
