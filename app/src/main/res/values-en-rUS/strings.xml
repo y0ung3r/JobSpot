@@ -35,4 +35,6 @@
     <string name="invalid_lastname">Invalid lastname</string>
     <string name="invalid_firstname">Invalid firstname</string>
     <string name="settings_drawer_item">Settings</string>
+    <string name="address_title">Address</string>
+    <string name="search_history_drawer_item">Search history</string>
 </resources>

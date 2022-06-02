@@ -35,4 +35,6 @@
     <string name="invalid_lastname">Фамилия указана некорректно</string>
     <string name="invalid_firstname">Имя указано некорректно</string>
     <string name="settings_drawer_item">Настройки</string>
+    <string name="address_title">Адрес</string>
+    <string name="search_history_drawer_item">История поиска</string>
 </resources>

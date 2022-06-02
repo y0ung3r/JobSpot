@@ -31,7 +31,7 @@
             android:background="@android:color/transparent"
             android:elevation="0dp"
             app:navigationIcon="@drawable/ic_menu_24"
-            app:title="Адрес"
+            app:title="@string/address_title"
             app:subtitle="ул. Пушкина, дом 25" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

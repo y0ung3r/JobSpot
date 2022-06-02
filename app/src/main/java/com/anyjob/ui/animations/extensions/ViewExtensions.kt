@@ -1,9 +1,14 @@
 package com.anyjob.ui.animations.extensions
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.util.Range
 import android.view.View
 import android.view.ViewGroup
 import androidx.transition.*
 import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.drag.DragTo
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.animations.slide.extensions.asGravity
@@ -80,4 +85,61 @@ fun View.slide(visibilityMode: VisibilityMode) {
     }
 
     slide(parameters)
+}
+
+fun View.drag(direction: DragTo, shadow: View? = null) {
+    val animatorSet = AnimatorSet()
+
+    var translation = 0.0f
+    var shadowOpacityFrom = 0.0f
+    var shadowOpacityTo = 0.0f
+    var shadowScale = 0.0f
+
+    when (direction) {
+        DragTo.Up ->  {
+            translation = -height / 10.0f
+            shadowOpacityFrom = 1.0f
+            shadowOpacityTo = 0.4f
+            shadowScale = 1.5f
+        }
+
+        DragTo.Down ->  {
+            translation = height / 25.0f
+            shadowOpacityFrom = 0.4f
+            shadowOpacityTo = 1.0f
+            shadowScale = 1.0f
+        }
+    }
+
+    val translateAnimation = ObjectAnimator.ofFloat(
+        this,
+        "translationY",
+        translation
+    )
+
+    if (shadow != null) {
+        val opacityAnimation = ObjectAnimator.ofFloat(
+            shadow,
+            "alpha",
+            shadowOpacityFrom,
+            shadowOpacityTo
+        )
+
+        val scaleAnimation = ObjectAnimator.ofPropertyValuesHolder(
+            shadow,
+            PropertyValuesHolder.ofFloat("scaleX", shadowScale),
+            PropertyValuesHolder.ofFloat("scaleY", shadowScale)
+        )
+
+        animatorSet.playTogether(
+            translateAnimation,
+            opacityAnimation,
+            scaleAnimation
+        )
+    }
+    else {
+        animatorSet.playTogether(translateAnimation)
+    }
+
+    animatorSet.start()
 }
