@@ -24,7 +24,6 @@ class ExplorerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
-        setSupportActionBar(_binding.toolbar)
 
         _binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 

@@ -9,6 +9,7 @@ import com.anyjob.R
 import com.anyjob.databinding.FragmentHomeBinding
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
@@ -26,6 +27,8 @@ class HomeFragment : Fragment() {
 
     private fun onMapReady(googleMap: GoogleMap) {
         googleMap.uiSettings.isMyLocationButtonEnabled = true
+        googleMap.uiSettings.isTiltGesturesEnabled = false
+
         googleMap.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
                 requireContext(),
