@@ -1,4 +1,4 @@
-package com.anyjob.ui.explorer.home
+package com.anyjob.ui.explorer.search
 
 import android.location.Geocoder
 import android.os.Bundle
@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
-import com.anyjob.databinding.FragmentHomeBinding
-import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
+import com.anyjob.databinding.FragmentSearchBinding
+import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,10 +21,10 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class HomeFragment : Fragment() {
+class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
-    private val _viewModel by viewModel<HomeViewModel>()
-    private lateinit var _binding: FragmentHomeBinding
+    private val _viewModel by viewModel<SearchViewModel>()
+    private lateinit var _binding: FragmentSearchBinding
 
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -66,7 +65,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         _mapView.getMapAsync(::onMapReady)
 

@@ -2,14 +2,18 @@ package com.anyjob.ui.explorer
 
 import android.location.Address
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
+import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class ExplorerActivity : AppCompatActivity() {
     private val _viewModel by viewModel<ExplorerViewModel>()
@@ -24,6 +28,20 @@ class ExplorerActivity : AppCompatActivity() {
 
     private fun onDrawerOpenButtonClick(view: View) {
         _binding.drawerLayout.open()
+    }
+
+    private fun onUserReady(user: AuthorizedUser?) {
+        if (user != null) {
+            val locale = Locale.getDefault()
+            val fullnameField = _binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
+            val phoneNumberField = _binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+
+            fullnameField.text = user.fullname
+            phoneNumberField.text = PhoneNumberUtils.formatNumber(
+                user.phoneNumber,
+                locale.country
+            )
+        }
     }
 
     private fun onAddressChanged(address: Address) {
@@ -46,6 +64,7 @@ class ExplorerActivity : AppCompatActivity() {
         _binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
         _viewModel.currentAddress.observe(this@ExplorerActivity, ::onAddressChanged)
+        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
 
         /*val navigationItems = setOf(
             R.id.navigation_home,

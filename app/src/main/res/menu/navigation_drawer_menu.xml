@@ -12,7 +12,7 @@
             android:title="@string/settings_drawer_item" />
 
         <item
-            android:id="@+id/sign_out_item"
+            android:id="@+id/search_history"
             android:icon="@drawable/ic_baseline_history_24"
             android:title="@string/search_history_drawer_item" />
 

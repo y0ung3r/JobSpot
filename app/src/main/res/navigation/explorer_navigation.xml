@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.anyjob.ui.explorer.home.HomeFragment"
+        android:name="com.anyjob.ui.explorer.search.SearchFragment"
         android:label="@string/home_fragment_title"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_search" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
