@@ -1,14 +1,12 @@
 package com.anyjob.ui.explorer.home
 
-import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentHomeBinding
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
@@ -16,6 +14,10 @@ import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -36,6 +38,7 @@ class HomeFragment : Fragment() {
         )
 
         googleMap.uiSettings.isMyLocationButtonEnabled = true
+        googleMap.uiSettings.isRotateGesturesEnabled = false
         googleMap.uiSettings.isTiltGesturesEnabled = false
 
         googleMap.setMapStyle(
@@ -46,12 +49,16 @@ class HomeFragment : Fragment() {
         )
 
         googleMap.setOnCameraIdleListener {
-            val position = googleMap.cameraPosition.target
-            val addresses = geocoder.getFromLocation(position.latitude, position.longitude, 1)
+            lifecycleScope.launch {
+                val position = googleMap.cameraPosition.target
+                val addresses = withContext(Dispatchers.Default) {
+                    geocoder.getFromLocation(position.latitude, position.longitude, 1)
+                }
 
-            if (addresses.any()) {
-                val address = addresses[0]
-                _activityViewModel.updateCurrentAddress(address)
+                if (addresses.any()) {
+                    val address = addresses[0]
+                    _activityViewModel.updateCurrentAddress(address)
+                }
             }
         }
 
