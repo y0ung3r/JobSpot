@@ -1,31 +1,40 @@
 package com.anyjob.ui.explorer.home
 
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.anyjob.R
 import com.anyjob.databinding.FragmentHomeBinding
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
+import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.gms.maps.model.Marker
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class HomeFragment : Fragment() {
+    private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
     private val _viewModel by viewModel<HomeViewModel>()
     private lateinit var _binding: FragmentHomeBinding
-
-    private var _centeredMarker: Marker? = null
 
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
     }
 
     private fun onMapReady(googleMap: GoogleMap) {
+        val geocoder = Geocoder(
+            requireContext(),
+            Locale.getDefault()
+        )
+
         googleMap.uiSettings.isMyLocationButtonEnabled = true
         googleMap.uiSettings.isTiltGesturesEnabled = false
 
@@ -35,6 +44,17 @@ class HomeFragment : Fragment() {
                 R.raw.map_style
             )
         )
+
+        googleMap.setOnCameraIdleListener {
+            val position = googleMap.cameraPosition.target
+            val addresses = geocoder.getFromLocation(position.latitude, position.longitude, 1)
+
+            if (addresses.any()) {
+                val address = addresses[0]
+                _activityViewModel.updateCurrentAddress(address)
+            }
+        }
+
         //googleMap.isMyLocationEnabled = true
     }
 

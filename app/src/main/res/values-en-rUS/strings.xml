@@ -37,4 +37,5 @@
     <string name="settings_drawer_item">Settings</string>
     <string name="address_title">Address</string>
     <string name="search_history_drawer_item">Search history</string>
+    <string name="address_not_exists_error">Address not exists</string>
 </resources>

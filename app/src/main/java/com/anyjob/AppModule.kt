@@ -7,6 +7,7 @@ import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.dashboard.viewModels.DashboardViewModel
 import com.anyjob.ui.explorer.home.viewModels.HomeViewModel
 import com.anyjob.ui.explorer.profile.viewModels.ProfileViewModel
+import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -31,6 +32,12 @@ val appModule = module {
     viewModel {
         ProfileCreationViewModel(
             createProfileUseCase = get()
+        )
+    }
+
+    viewModel {
+        ExplorerViewModel(
+            getAuthorizedUserUseCase = get()
         )
     }
 
