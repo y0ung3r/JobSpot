@@ -1,10 +1,14 @@
 package com.anyjob.ui.explorer.search
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
@@ -30,7 +34,35 @@ class SearchFragment : Fragment() {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
     }
 
+    private val _locationPermissions = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+        if (!isGranted) {
+            ensureLocationPermissionsGranted()
+        }
+    }
+
+    private fun ensureLocationPermissionsGranted() {
+        val coarseLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val fineLocationGranted = ContextCompat.checkSelfPermission(
+            requireContext(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!coarseLocationGranted) {
+            _locationPermissions.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+
+        if (!fineLocationGranted) {
+            _locationPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
     private fun onMapReady(googleMap: GoogleMap) {
+        ensureLocationPermissionsGranted()
+
         val geocoder = Geocoder(
             requireContext(),
             Locale.getDefault()
@@ -39,6 +71,7 @@ class SearchFragment : Fragment() {
         googleMap.uiSettings.isMyLocationButtonEnabled = true
         googleMap.uiSettings.isRotateGesturesEnabled = false
         googleMap.uiSettings.isTiltGesturesEnabled = false
+        googleMap.isMyLocationEnabled = true
 
         googleMap.setMapStyle(
             MapStyleOptions.loadRawResourceStyle(
@@ -60,8 +93,6 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-
-        //googleMap.isMyLocationEnabled = true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

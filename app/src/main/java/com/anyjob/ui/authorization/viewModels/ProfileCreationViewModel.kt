@@ -23,8 +23,6 @@ class ProfileCreationViewModel(
     private val _onProfileCreated = MutableLiveData<Result<Unit>>()
     val onProfileCreated: LiveData<Result<Unit>> = _onProfileCreated
 
-
-
     fun validateLastname(lastname: String) {
         _isLastnameFilled.postValue(
             lastname.isNotBlank()
