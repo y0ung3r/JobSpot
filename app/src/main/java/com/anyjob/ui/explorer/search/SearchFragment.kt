@@ -15,7 +15,6 @@ import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -39,7 +38,11 @@ class SearchFragment : Fragment() {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
     }
 
-    private lateinit var _locationProvider: FusedLocationProviderClient
+    private val _locationProvider by lazy {
+        LocationServices.getFusedLocationProviderClient(
+            requireActivity()
+        )
+    }
 
     private val _locationPermissions = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (!isGranted) {
@@ -48,19 +51,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun ensureLocationPermissionsGranted() {
-        val coarseLocationGranted = ContextCompat.checkSelfPermission(
-            requireContext(),
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
         val fineLocationGranted = ContextCompat.checkSelfPermission(
             requireContext(),
             Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-
-        if (!coarseLocationGranted) {
-            _locationPermissions.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
-        }
 
         if (!fineLocationGranted) {
             _locationPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -110,9 +104,6 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        _locationProvider = LocationServices.getFusedLocationProviderClient(
-            requireActivity()
-        )
 
         _mapView.getMapAsync(::onMapReady)
 
