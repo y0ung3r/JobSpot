@@ -6,6 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ui.explorer.search.SearchFragment">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:cardCornerRadius="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/containedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Вызов" />
+
+    </androidx.cardview.widget.CardView>
+
     <com.anyjob.ui.controls.MapPin
         android:id="@+id/map_pin"
         android:layout_width="match_parent"
@@ -32,9 +51,11 @@
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/white"
         android:clickable="true"
+        android:contentDescription="currentLocation"
         android:src="@drawable/ic_current_location_24"
         app:borderWidth="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
