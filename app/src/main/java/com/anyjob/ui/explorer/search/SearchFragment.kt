@@ -15,8 +15,12 @@ import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +28,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+
 
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
@@ -33,6 +38,8 @@ class SearchFragment : Fragment() {
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
     }
+
+    private lateinit var _locationProvider: FusedLocationProviderClient
 
     private val _locationPermissions = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (!isGranted) {
@@ -63,6 +70,13 @@ class SearchFragment : Fragment() {
     private fun onMapReady(googleMap: GoogleMap) {
         ensureLocationPermissionsGranted()
 
+        googleMap.setMapStyle(
+            MapStyleOptions.loadRawResourceStyle(
+                requireContext(),
+                R.raw.map_style
+            )
+        )
+
         val geocoder = Geocoder(
             requireContext(),
             Locale.getDefault()
@@ -73,12 +87,11 @@ class SearchFragment : Fragment() {
         googleMap.uiSettings.isTiltGesturesEnabled = false
         googleMap.isMyLocationEnabled = true
 
-        googleMap.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(
-                requireContext(),
-                R.raw.map_style
-            )
-        )
+        _locationProvider.lastLocation.addOnSuccessListener { location ->
+            val coordinates = LatLng(location.latitude, location.longitude)
+            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, 20f)
+            googleMap.animateCamera(cameraUpdate)
+        }
 
         googleMap.setOnCameraIdleListener {
             lifecycleScope.launch {
@@ -97,6 +110,9 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _locationProvider = LocationServices.getFusedLocationProviderClient(
+            requireActivity()
+        )
 
         _mapView.getMapAsync(::onMapReady)
 
