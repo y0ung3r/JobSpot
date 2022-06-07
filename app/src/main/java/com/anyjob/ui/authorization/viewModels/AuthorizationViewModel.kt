@@ -1,9 +1,6 @@
 package com.anyjob.ui.authorization.viewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.anyjob.domain.authorization.PhoneNumberAuthorizationParameters
 import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
@@ -33,8 +30,6 @@ class AuthorizationViewModel(
 
     private val _resendTimeout = MutableLiveData<Long>()
     val resendTimeout: LiveData<Long> = _resendTimeout
-
-    private val _authorizedUser = MutableLiveData<AuthorizedUser?>()
 
     fun sendVerificationCode(authorizationParameters: PhoneNumberAuthorizationParameters) {
         _phoneNumber.postValue(authorizationParameters.phoneNumber)
@@ -69,28 +64,20 @@ class AuthorizationViewModel(
         }
     }
 
-    fun getAuthorizedUser(): LiveData<AuthorizedUser?> {
-        viewModelScope.launch {
-            kotlin.runCatching {
-                getAuthorizedUserUseCase.execute()
-            }
-            .onSuccess { user ->
-                var authorizedUser: AuthorizedUser? = null
+    fun getAuthorizedUser(): LiveData<AuthorizedUser?> = liveData {
+        val userSource = getAuthorizedUserUseCase.execute()
+        var authorizedUser: AuthorizedUser? = null
 
-                if (user != null) {
-                    authorizedUser = AuthorizedUser(
-                        user.id,
-                        user.lastname,
-                        user.firstname,
-                        user.middlename,
-                        user.phoneNumber
-                    )
-                }
-
-                _authorizedUser.postValue(authorizedUser)
-            }
+        if (userSource != null) {
+            authorizedUser = AuthorizedUser(
+                userSource.id,
+                userSource.lastname,
+                userSource.firstname,
+                userSource.middlename,
+                userSource.phoneNumber
+            )
         }
 
-        return _authorizedUser
+        emit(authorizedUser)
     }
 }
