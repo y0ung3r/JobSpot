@@ -50,10 +50,12 @@ class ExplorerActivity : AppCompatActivity() {
         val isAddressExists = street != null && street.isNotBlank() && houseNumber != null && houseNumber.isNotBlank()
 
         if (isAddressExists) {
-            _binding.toolbar.subtitle = "$street, $houseNumber"
+            _binding.toolbar.title = "$street, $houseNumber"
+            _binding.toolbar.subtitle = getString(R.string.address_title)
         }
         else {
-            _binding.toolbar.subtitle = getString(R.string.address_not_exists_error)
+            _binding.toolbar.title = getString(R.string.address_not_exists_error)
+            _binding.toolbar.subtitle = null
         }
     }
 

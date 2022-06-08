@@ -35,7 +35,15 @@
     <string name="invalid_lastname">Фамилия указана некорректно</string>
     <string name="invalid_firstname">Имя указано некорректно</string>
     <string name="settings_drawer_item">Настройки</string>
-    <string name="address_title">Адрес</string>
+    <string name="address_title">Ваш адрес</string>
     <string name="search_history_drawer_item">История поиска</string>
     <string name="address_not_exists_error">Не удалось определить адрес</string>
+    <string name="current_location_description">Текущее местоположение</string>
+    <string name="two_kilometers_chip_text">2 км</string>
+    <string name="five_kilometers_chip_text">5 км</string>
+    <string name="ten_kilometers_chip_text">10 км</string>
+    <string name="search_radius_title">Радиус поиска</string>
+    <string name="service_title">Услуга</string>
+    <string name="start_searching_text">Начать поиск</string>
+    <string name="select_service_text">Выберите услугу</string>
 </resources>

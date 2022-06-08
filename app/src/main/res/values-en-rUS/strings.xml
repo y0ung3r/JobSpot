@@ -35,7 +35,15 @@
     <string name="invalid_lastname">Invalid lastname</string>
     <string name="invalid_firstname">Invalid firstname</string>
     <string name="settings_drawer_item">Settings</string>
-    <string name="address_title">Address</string>
+    <string name="address_title">Your address</string>
     <string name="search_history_drawer_item">Search history</string>
     <string name="address_not_exists_error">Address not exists</string>
+    <string name="current_location_description">Current location</string>
+    <string name="two_kilometers_chip_text">2 km</string>
+    <string name="five_kilometers_chip_text">5 km</string>
+    <string name="ten_kilometers_chip_text">10 km</string>
+    <string name="search_radius_title">Search radius</string>
+    <string name="service_title">Service</string>
+    <string name="start_searching_text">Find worker</string>
+    <string name="select_service_text">Select a service</string>
 </resources>

@@ -15,12 +15,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
+import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.fade
+import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -31,7 +35,6 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
     private val _viewModel by viewModel<SearchViewModel>()
@@ -40,6 +43,10 @@ class SearchFragment : Fragment() {
 
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+    }
+
+    private val _bottomSheetBehavior by lazy {
+        BottomSheetBehavior.from(_binding.bottomSheetLayout)
     }
 
     private val _locationProvider by lazy {
@@ -118,6 +125,23 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun drawRadiusOnMapIfSearchParametersExpanded(position: LatLng) {
+        _googleMap.clear()
+
+        if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            val searchRadiusOptions = CircleOptions().apply {
+                center(position)
+                radius(20.0)
+                strokeColor(R.color.purple_500)
+                fillColor(R.color.half_transparent_purple)
+
+                strokeWidth(10.0f)
+            }
+
+            _googleMap.addCircle(searchRadiusOptions)
+        }
+    }
+
     private fun onMapReady(googleMap: GoogleMap) {
         _googleMap = googleMap
 
@@ -148,6 +172,7 @@ class SearchFragment : Fragment() {
                 if (addresses.any()) {
                     val address = addresses[0]
                     _activityViewModel.updateCurrentAddress(address)
+                    drawRadiusOnMapIfSearchParametersExpanded(position)
                 }
             }
         }
@@ -164,6 +189,8 @@ class SearchFragment : Fragment() {
 
         _mapView.getMapAsync(::onMapReady)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
+
+        _bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         return _binding.root
     }
