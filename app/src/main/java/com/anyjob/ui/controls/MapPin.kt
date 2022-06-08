@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.view.updateMargins
+import androidx.core.view.updatePadding
 import com.anyjob.R
 import com.anyjob.ui.animations.drag.DragTo
 import com.anyjob.ui.animations.extensions.drag
@@ -21,30 +22,29 @@ constructor(
     context: Context,
     attributes: AttributeSet? = null
 ) : RelativeLayout(context, attributes) {
+    private val _anchor = ImageView(context)
     private val _pinView = ImageView(context)
     private val _shadowView = ImageView(context)
 
     override fun onFinishInflate() {
         super.onFinishInflate()
 
+        _anchor.id = View.generateViewId()
         _pinView.id = View.generateViewId()
-        _pinView.setImageResource(R.drawable.map_pin)
+        _pinView.setBackgroundResource(R.drawable.map_pin)
         _shadowView.setBackgroundResource(R.drawable.map_pin_shadow)
 
         val width = ViewGroup.LayoutParams.WRAP_CONTENT
         val height = ViewGroup.LayoutParams.WRAP_CONTENT
-        val pinParameters = LayoutParams(width, height)
+        val anchorParameters = LayoutParams(width, height)
+        anchorParameters.addRule(CENTER_IN_PARENT, TRUE)
 
-        pinParameters.addRule(CENTER_IN_PARENT, TRUE)
-
-        val shadowParameters = LayoutParams(pinParameters)
-        shadowParameters.addRule(BELOW, _pinView.id)
-
-        shadowParameters.updateMargins(
-            top = -_shadowView.background.intrinsicHeight.div(2)
-        )
+        val pinParameters = LayoutParams(anchorParameters)
+        val shadowParameters = LayoutParams(anchorParameters)
+        pinParameters.addRule(ABOVE, _anchor.id)
 
         val position = -1 // to add last
+        addView(_anchor, position, anchorParameters)
         addView(_pinView, position, pinParameters)
         addView(_shadowView, position, shadowParameters)
     }

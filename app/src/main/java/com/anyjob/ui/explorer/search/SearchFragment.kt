@@ -23,12 +23,14 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+
 
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
@@ -161,7 +163,7 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         _mapView.getMapAsync(::onMapReady)
-        _binding.toCurrentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
+        _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
 
         return _binding.root
     }
