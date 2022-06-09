@@ -21,6 +21,7 @@ import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import com.anyjob.ui.extensions.showToast
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -110,9 +111,13 @@ class SearchFragment : Fragment() {
         if (shouldShowFinePermissionRationale || shouldShowCoarsePermissionRationale) {
             val builder = AlertDialog.Builder(context)
 
-            builder.setTitle("Доступ к геолокации")
-                   .setMessage("Разрешите доступ к геопозиции, иначе приложение не сможет определить где Вы находитесь")
-                   .setPositiveButton("Хорошо") { _, _ ->
+            val headerText = getString(R.string.access_to_geolocation_alert_header)
+            val descriptionText = getString(R.string.access_to_geolocation_alert_description)
+            val positiveButtonText = getString(R.string.access_to_geolocation_alert_positive_button)
+
+            builder.setTitle(headerText)
+                   .setMessage(descriptionText)
+                   .setPositiveButton(positiveButtonText) { _, _ ->
                        requestLocationPermissions()
                    }
 
@@ -166,6 +171,7 @@ class SearchFragment : Fragment() {
             )
         }
 
+        // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.add(
             _googleMap.addCircle(searchRadiusOptions).also {
                 ValueAnimator().apply {
@@ -233,13 +239,22 @@ class SearchFragment : Fragment() {
         _googleMap.setOnCameraIdleListener {
             lifecycleScope.launch {
                 val position = _googleMap.cameraPosition.target
-                val addresses = withContext(Dispatchers.Default) {
-                    geocoder.getFromLocation(position.latitude, position.longitude, 1)
+
+                try {
+                    val addresses = withContext(Dispatchers.Default) {
+                        geocoder.getFromLocation(position.latitude, position.longitude, 1)
+                    }
+
+                    if (addresses.any()) {
+                        val address = addresses[0]
+                        _activityViewModel.updateCurrentAddress(address)
+                    }
                 }
 
-                if (addresses.any()) {
-                    val address = addresses[0]
-                    _activityViewModel.updateCurrentAddress(address)
+                catch (exception: Exception) {
+                    showToast(
+                        getString(R.string.address_not_exists_error)
+                    )
                 }
 
                 if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
@@ -277,6 +292,7 @@ class SearchFragment : Fragment() {
 
         _bottomSheetBehavior.apply {
             addBottomSheetCallback(_bottomSheetCallback)
+            isGestureInsetBottomIgnored = true
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 

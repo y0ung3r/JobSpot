@@ -46,4 +46,7 @@
     <string name="service_title">Услуга</string>
     <string name="start_searching_text">Начать поиск</string>
     <string name="select_service_text">Выберите услугу</string>
+    <string name="access_to_geolocation_alert_header">Доступ к геолокации</string>
+    <string name="access_to_geolocation_alert_description">Разрешите доступ к геопозиции, иначе приложение не сможет определить где Вы находитесь</string>
+    <string name="access_to_geolocation_alert_positive_button">OK</string>
 </resources>

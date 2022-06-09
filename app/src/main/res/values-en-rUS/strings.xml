@@ -46,4 +46,7 @@
     <string name="service_title">Service</string>
     <string name="start_searching_text">Find worker</string>
     <string name="select_service_text">Select a service</string>
+    <string name="access_to_geolocation_alert_header">Access to geolocation</string>
+    <string name="access_to_geolocation_alert_description">Allow access to the geolocation, otherwise the application will not be able to determine where you are</string>
+    <string name="access_to_geolocation_alert_positive_button">OK</string>
 </resources>
