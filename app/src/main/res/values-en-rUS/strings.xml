@@ -49,4 +49,5 @@
     <string name="access_to_geolocation_alert_header">Access to geolocation</string>
     <string name="access_to_geolocation_alert_description">Allow access to the geolocation, otherwise the application will not be able to determine where you are</string>
     <string name="access_to_geolocation_alert_positive_button">OK</string>
+    <string name="go_to_settings">Go to settings</string>
 </resources>

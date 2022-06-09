@@ -9,8 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +17,7 @@ import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
+import com.anyjob.ui.controls.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.showToast
@@ -48,8 +47,8 @@ class SearchFragment : Fragment() {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
     }
 
-    private val _bottomSheetBehavior by lazy {
-        BottomSheetBehavior.from(_binding.bottomSheet.bottomSheetLayout)
+    private val _searchBottomSheetBehavior by lazy {
+        BottomSheetBehavior.from(_binding.searchBottomSheet.bottomSheetLayout)
     }
 
     private var _searchRadiiViews = ArrayList<Circle>()
@@ -60,12 +59,12 @@ class SearchFragment : Fragment() {
         else -> 2000.0f
     }
 
-    private val _bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+    private val _searchBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             when (newState) {
                 BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
                     _googleMap.cameraPosition.target,
-                    getSearchRadius(_binding.bottomSheet.availableRadii.checkedChipId)
+                    getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
                 )
 
                 BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
@@ -85,7 +84,7 @@ class SearchFragment : Fragment() {
 
     private val _locationPermissions = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (!isGranted) {
-            showRationaleDialogIfNeeded()
+            showLocationPermissionsRationaleDialog()
         }
     }
 
@@ -93,35 +92,10 @@ class SearchFragment : Fragment() {
         _locationPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION)
     }
 
-    private fun showRationaleDialogIfNeeded() {
+    private fun showLocationPermissionsRationaleDialog() {
         val context = requireContext()
-        val activity = requireActivity()
-
-        val shouldShowFinePermissionRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-            activity,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-
-        val shouldShowCoarsePermissionRationale = ActivityCompat.shouldShowRequestPermissionRationale(
-            activity,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-
-        if (shouldShowFinePermissionRationale || shouldShowCoarsePermissionRationale) {
-            val builder = AlertDialog.Builder(context)
-
-            val headerText = getString(R.string.access_to_geolocation_alert_header)
-            val descriptionText = getString(R.string.access_to_geolocation_alert_description)
-            val positiveButtonText = getString(R.string.access_to_geolocation_alert_positive_button)
-
-            builder.setTitle(headerText)
-                   .setMessage(descriptionText)
-                   .setPositiveButton(positiveButtonText) { _, _ ->
-                       requestLocationPermissions()
-                   }
-
-            val rationaleDialog = builder.create()
-            return rationaleDialog.show()
+        GeolocationUnavailableBottomSheetDialog(context).apply {
+            show()
         }
     }
 
@@ -143,7 +117,7 @@ class SearchFragment : Fragment() {
 
     private fun moveCameraToUserLocation() {
         if (isPermissionsDenied()) {
-            return _locationPermissions.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            return requestLocationPermissions()
         }
 
         if (!_googleMap.isMyLocationEnabled) {
@@ -170,7 +144,6 @@ class SearchFragment : Fragment() {
             )
         }
 
-        // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.add(
             _googleMap.addCircle(searchRadiusOptions).also {
                 startRadar(
@@ -188,7 +161,6 @@ class SearchFragment : Fragment() {
     }
 
     private fun removeLastSearchRadius() {
-        // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.lastOrNull()?.also {
             startRadar(
                 RadarParameters().apply {
@@ -250,10 +222,10 @@ class SearchFragment : Fragment() {
                 }
 
                 finally {
-                    if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    if (_searchBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
                         drawSearchRadius(
                             position,
-                            getSearchRadius(_binding.bottomSheet.availableRadii.checkedChipId)
+                            getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
                         )
                     }
                 }
@@ -286,13 +258,13 @@ class SearchFragment : Fragment() {
         _mapView.getMapAsync(::onMapReady)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
 
-        _bottomSheetBehavior.apply {
-            addBottomSheetCallback(_bottomSheetCallback)
+        _searchBottomSheetBehavior.apply {
+            addBottomSheetCallback(_searchBottomSheetCallback)
             isGestureInsetBottomIgnored=true
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        _binding.bottomSheet.availableRadii.setOnCheckedStateChangeListener(::onUserChangeRadius)
+        _binding.searchBottomSheet.availableRadii.setOnCheckedStateChangeListener(::onUserChangeRadius)
 
         return _binding.root
     }
