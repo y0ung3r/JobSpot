@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
+import com.anyjob.ui.controls.bottomSheets.AddressesBottomSheetDialog
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -59,11 +60,20 @@ class ExplorerActivity : AppCompatActivity() {
         }
     }
 
+    private fun onAddressTitleClick(view: View) {
+        AddressesBottomSheetDialog(
+            this@ExplorerActivity,
+            R.style.Theme_AnyJob_BottomSheetDialog
+        )
+        .show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
 
         _binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
+        _binding.toolbar.setOnClickListener(::onAddressTitleClick)
 
         _viewModel.currentAddress.observe(this@ExplorerActivity, ::onAddressChanged)
         _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)

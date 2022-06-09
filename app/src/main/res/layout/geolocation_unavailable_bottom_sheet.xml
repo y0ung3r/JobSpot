@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:layout_insetEdge="bottom"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-    app:behavior_peekHeight="96dp"
-    app:behavior_hideable="false">
+    app:layout_insetEdge="bottom">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottom_sheet"
@@ -39,11 +36,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/access_to_geolocation_alert_header"
                 android:gravity="center"
-                android:textStyle="bold"
+                android:text="@string/access_to_geolocation_alert_header"
                 android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="wrap_content"
@@ -53,8 +50,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/access_to_geolocation_alert_description"
                 android:gravity="center"
+                android:text="@string/access_to_geolocation_alert_description"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
 
@@ -75,21 +72,21 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/go_to_settings_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/go_to_settings"
-                android:textSize="20sp"
+                android:letterSpacing="0"
                 android:paddingTop="14dp"
                 android:paddingBottom="14dp"
+                android:text="@string/go_to_settings"
                 android:textColor="@color/white"
-                android:letterSpacing="0"
-                app:cornerRadius="20dp"
+                android:textSize="20sp"
                 app:backgroundTint="@color/black"
+                app:cornerRadius="20dp"
                 app:icon="@drawable/ic_baseline_settings_24"
-                app:iconTint="@color/white"
                 app:iconGravity="textStart"
-                app:rippleColor="@android:color/darker_gray"
-                style="@style/Widget.MaterialComponents.Button.TextButton" />
+                app:iconTint="@color/white"
+                app:rippleColor="@android:color/darker_gray" />
 
         </LinearLayout>
 

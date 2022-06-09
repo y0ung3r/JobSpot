@@ -17,7 +17,7 @@ import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
-import com.anyjob.ui.controls.GeolocationUnavailableBottomSheetDialog
+import com.anyjob.ui.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.showToast
@@ -94,9 +94,12 @@ class SearchFragment : Fragment() {
 
     private fun showLocationPermissionsRationaleDialog() {
         val context = requireContext()
-        GeolocationUnavailableBottomSheetDialog(context).apply {
-            show()
-        }
+
+        GeolocationUnavailableBottomSheetDialog(
+            context,
+            R.style.Theme_AnyJob_BottomSheetDialog
+        )
+        .show()
     }
 
     private fun isPermissionsDenied(): Boolean {
@@ -222,18 +225,13 @@ class SearchFragment : Fragment() {
                 }
 
                 finally {
-                    if (_searchBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                        drawSearchRadius(
-                            position,
-                            getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
-                        )
-                    }
+                    _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
         }
 
         _googleMap.setOnCameraMoveStartedListener {
-            removeLastSearchRadius()
+            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
 
         moveCameraToUserLocation()

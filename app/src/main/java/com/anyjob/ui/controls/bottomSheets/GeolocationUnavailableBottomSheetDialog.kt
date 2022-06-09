@@ -1,4 +1,4 @@
-package com.anyjob.ui.controls
+package com.anyjob.ui.controls.bottomSheets
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.anyjob.databinding.GeolocationUnavailableBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class GeolocationUnavailableBottomSheetDialog(context: Context) : BottomSheetDialog(context) {
+class GeolocationUnavailableBottomSheetDialog(context: Context, theme: Int) : BottomSheetDialog(context, theme) {
     private val _binding: GeolocationUnavailableBottomSheetBinding by lazy {
         GeolocationUnavailableBottomSheetBinding.inflate(layoutInflater)
     }

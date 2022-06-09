@@ -8,6 +8,10 @@
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 
+    <style name="BottomSheetDialogStyle">
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
     <style name="ChipChoiceStyle" parent="Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/chip_choice_colors</item>
         <item name="android:textColor">@color/white</item>
