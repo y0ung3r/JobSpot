@@ -148,9 +148,11 @@
                     android:textSize="20sp"
                     android:paddingTop="14dp"
                     android:paddingBottom="14dp"
+                    android:textColor="@color/white"
                     app:cornerRadius="25dp"
                     app:backgroundTint="@color/black"
                     app:icon="@drawable/ic_baseline_search_24"
+                    app:iconTint="@color/white"
                     app:iconGravity="textStart" />
 
             </LinearLayout>

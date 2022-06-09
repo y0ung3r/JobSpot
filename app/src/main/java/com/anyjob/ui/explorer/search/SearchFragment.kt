@@ -4,7 +4,6 @@ import android.Manifest
 import android.animation.FloatEvaluator
 import android.animation.ValueAnimator
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
@@ -14,7 +13,6 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.animation.addPauseListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -54,7 +52,7 @@ class SearchFragment : Fragment() {
         BottomSheetBehavior.from(_binding.bottomSheetLayout)
     }
 
-    private var _searchRadiusView: Circle? = null
+    private var _searchRadiiViews = ArrayList<Circle>()
 
     private fun getSearchRadius(chipId: Int): Float = when (chipId) {
         R.id.five_kilometers_chip -> 5000.0f
@@ -70,7 +68,7 @@ class SearchFragment : Fragment() {
                     getSearchRadius(_binding.availableRadii.checkedChipId)
                 )
 
-                else -> _googleMap.clear() //removeSearchRadius()
+                else -> removeSearchRadius()
             }
         }
 
@@ -156,48 +154,44 @@ class SearchFragment : Fragment() {
     }
 
     private fun drawSearchRadius(position: LatLng, radius: Float) {
-        _googleMap.clear() // removeSearchRadius()
+        removeSearchRadius()
 
         val searchRadiusOptions = CircleOptions().apply {
             center(position)
             strokeColor(Color.TRANSPARENT)
-            fillColor(R.color.light_purple)
-        }
-
-        _searchRadiusView = _googleMap.addCircle(searchRadiusOptions)
-
-        // TODO: перекинуть анимацию в animation package
-
-        _searchRadiusView?.also {
-            ValueAnimator().apply {
-                setFloatValues(0.0f, radius)
-                duration = 2000
-                interpolator = AccelerateDecelerateInterpolator()
-                setEvaluator(
-                    FloatEvaluator()
+            fillColor(
+                Color.parseColor(
+                    getString(R.color.light_purple)
                 )
-                addUpdateListener { valueAnimator ->
-                    val ratio = valueAnimator.animatedFraction * radius
-                    it.radius = ratio.toDouble()
-                }
-                start()
-            }
-        }
-    }
-
-    private fun removeSearchRadius() {
-        if (_searchRadiusView == null) {
-            throw Resources.NotFoundException(
-                SearchFragment::_searchRadiusView.name
             )
         }
 
+        _searchRadiiViews.add(
+            _googleMap.addCircle(searchRadiusOptions).also {
+                ValueAnimator().apply {
+                    setFloatValues(0.0f, radius)
+                    duration = 2000
+                    interpolator = AccelerateDecelerateInterpolator()
+                    setEvaluator(
+                        FloatEvaluator()
+                    )
+                    addUpdateListener { valueAnimator ->
+                        val ratio = valueAnimator.animatedFraction * radius
+                        it.radius = ratio.toDouble()
+                    }
+                    start()
+                }
+            }
+        )
+    }
+
+    private fun removeSearchRadius() {
         // TODO: перекинуть анимацию в animation package
-        _searchRadiusView?.also {
+        _searchRadiiViews.lastOrNull()?.also {
             val radius = it.radius.toFloat()
             ValueAnimator().apply {
-                setFloatValues(radius, 0.0f)
-                duration = 2000
+                setFloatValues(0.0f, radius)
+                duration = 1000
                 interpolator = AccelerateDecelerateInterpolator()
                 setEvaluator(
                     FloatEvaluator()
@@ -205,11 +199,13 @@ class SearchFragment : Fragment() {
                 addUpdateListener { valueAnimator ->
                     val ratio = valueAnimator.animatedFraction * radius
                     it.radius = ratio.toDouble()
+
+                    if (it.radius == 0.0) {
+                        it.remove()
+                        _searchRadiiViews.remove(it)
+                    }
                 }
-                addPauseListener { valueAnimator ->
-                    it.remove()
-                }
-                start()
+                reverse()
             }
         }
     }
@@ -256,7 +252,7 @@ class SearchFragment : Fragment() {
         }
 
         _googleMap.setOnCameraMoveStartedListener {
-            _googleMap.clear() // removeSearchRadius()
+            removeSearchRadius()
         }
 
         moveCameraToUserLocation()
