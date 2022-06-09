@@ -101,6 +101,7 @@
                             android:textSize="16sp" />
 
                         <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/available_radii"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:singleSelection="true"
@@ -116,12 +117,14 @@
                                 android:text="@string/two_kilometers_chip_text" />
 
                             <com.google.android.material.chip.Chip
+                                android:id="@+id/five_kilometers_chip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 style="@style/ChipChoiceStyle"
                                 android:text="@string/five_kilometers_chip_text" />
 
                             <com.google.android.material.chip.Chip
+                                android:id="@+id/ten_kilometers_chip"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 style="@style/ChipChoiceStyle"

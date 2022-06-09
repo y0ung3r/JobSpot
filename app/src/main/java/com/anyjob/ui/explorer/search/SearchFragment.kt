@@ -1,29 +1,33 @@
 package com.anyjob.ui.explorer.search
 
 import android.Manifest
+import android.animation.FloatEvaluator
+import android.animation.ValueAnimator
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.animation.addPauseListener
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
-import com.anyjob.ui.animations.VisibilityMode
-import com.anyjob.ui.animations.extensions.fade
-import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -34,6 +38,7 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+
 
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
@@ -49,14 +54,23 @@ class SearchFragment : Fragment() {
         BottomSheetBehavior.from(_binding.bottomSheetLayout)
     }
 
+    private var _searchRadiusView: Circle? = null
+
+    private fun getSearchRadius(chipId: Int): Float = when (chipId) {
+        R.id.five_kilometers_chip -> 5000.0f
+        R.id.ten_kilometers_chip -> 10000.0f
+        else -> 2000.0f
+    }
+
     private val _bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
             when (newState) {
                 BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
-                    _googleMap.cameraPosition.target
+                    _googleMap.cameraPosition.target,
+                    getSearchRadius(_binding.availableRadii.checkedChipId)
                 )
 
-                else -> _googleMap.clear()
+                else -> _googleMap.clear() //removeSearchRadius()
             }
         }
 
@@ -141,18 +155,63 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun drawSearchRadius(position: LatLng) {
-        _googleMap.clear()
+    private fun drawSearchRadius(position: LatLng, radius: Float) {
+        _googleMap.clear() // removeSearchRadius()
 
         val searchRadiusOptions = CircleOptions().apply {
             center(position)
-            radius(20.0)
-            strokeColor(android.R.color.transparent)
-            fillColor(R.color.half_transparent_purple)
-            strokeWidth(10.0f)
+            strokeColor(Color.TRANSPARENT)
+            fillColor(R.color.light_purple)
         }
 
-        _googleMap.addCircle(searchRadiusOptions)
+        _searchRadiusView = _googleMap.addCircle(searchRadiusOptions)
+
+        // TODO: перекинуть анимацию в animation package
+
+        _searchRadiusView?.also {
+            ValueAnimator().apply {
+                setFloatValues(0.0f, radius)
+                duration = 2000
+                interpolator = AccelerateDecelerateInterpolator()
+                setEvaluator(
+                    FloatEvaluator()
+                )
+                addUpdateListener { valueAnimator ->
+                    val ratio = valueAnimator.animatedFraction * radius
+                    it.radius = ratio.toDouble()
+                }
+                start()
+            }
+        }
+    }
+
+    private fun removeSearchRadius() {
+        if (_searchRadiusView == null) {
+            throw Resources.NotFoundException(
+                SearchFragment::_searchRadiusView.name
+            )
+        }
+
+        // TODO: перекинуть анимацию в animation package
+        _searchRadiusView?.also {
+            val radius = it.radius.toFloat()
+            ValueAnimator().apply {
+                setFloatValues(radius, 0.0f)
+                duration = 2000
+                interpolator = AccelerateDecelerateInterpolator()
+                setEvaluator(
+                    FloatEvaluator()
+                )
+                addUpdateListener { valueAnimator ->
+                    val ratio = valueAnimator.animatedFraction * radius
+                    it.radius = ratio.toDouble()
+                }
+                addPauseListener { valueAnimator ->
+                    it.remove()
+                }
+                start()
+            }
+        }
     }
 
     private fun onMapReady(googleMap: GoogleMap) {
@@ -188,9 +247,16 @@ class SearchFragment : Fragment() {
                 }
 
                 if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    drawSearchRadius(position)
+                    drawSearchRadius(
+                        position,
+                        getSearchRadius(_binding.availableRadii.checkedChipId)
+                    )
                 }
             }
+        }
+
+        _googleMap.setOnCameraMoveStartedListener {
+            _googleMap.clear() // removeSearchRadius()
         }
 
         moveCameraToUserLocation()
@@ -198,6 +264,13 @@ class SearchFragment : Fragment() {
 
     private fun onCurrentLocationButtonClick(button: View) {
         moveCameraToUserLocation()
+    }
+
+    private fun onUserChangeRadius(chipGroup: View, selectedChipId: Int) {
+        drawSearchRadius(
+            _googleMap.cameraPosition.target,
+            getSearchRadius(selectedChipId)
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -210,6 +283,8 @@ class SearchFragment : Fragment() {
             addBottomSheetCallback(_bottomSheetCallback)
             state = BottomSheetBehavior.STATE_EXPANDED
         }
+
+        _binding.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
 
         return _binding.root
     }
