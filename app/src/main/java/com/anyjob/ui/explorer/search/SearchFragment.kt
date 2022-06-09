@@ -68,7 +68,7 @@ class SearchFragment : Fragment() {
                     getSearchRadius(_binding.availableRadii.checkedChipId)
                 )
 
-                else -> removeSearchRadius()
+                BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
             }
         }
 
@@ -154,7 +154,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun drawSearchRadius(position: LatLng, radius: Float) {
-        removeSearchRadius()
+        removeLastSearchRadius()
 
         val searchRadiusOptions = CircleOptions().apply {
             center(position)
@@ -185,13 +185,13 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private fun removeSearchRadius() {
+    private fun removeLastSearchRadius() {
         // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.lastOrNull()?.also {
             val radius = it.radius.toFloat()
             ValueAnimator().apply {
                 setFloatValues(0.0f, radius)
-                duration = 1000
+                duration = 500
                 interpolator = AccelerateDecelerateInterpolator()
                 setEvaluator(
                     FloatEvaluator()
@@ -252,7 +252,7 @@ class SearchFragment : Fragment() {
         }
 
         _googleMap.setOnCameraMoveStartedListener {
-            removeSearchRadius()
+            removeLastSearchRadius()
         }
 
         moveCameraToUserLocation()
