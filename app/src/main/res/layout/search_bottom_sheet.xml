@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_insetEdge="bottom"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    app:behavior_peekHeight="96dp"
+    app:behavior_hideable="false">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="@color/white"
+        app:contentPaddingBottom="2dp"
+        app:contentPaddingLeft="8dp"
+        app:contentPaddingRight="8dp"
+        app:contentPaddingTop="2dp"
+        app:shapeAppearanceOverlay="@style/BottomSheetStyle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/bottom_sheet_lever" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/select_service_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/select_service_text"
+                android:gravity="start|center_vertical"
+                android:backgroundTint="@color/light_gray"
+                android:textColor="@color/black"
+                android:padding="14dp"
+                android:letterSpacing="0"
+                android:textSize="20sp"
+                app:rippleColor="@android:color/darker_gray"
+                app:cornerRadius="20dp"
+                app:icon="@drawable/ic_arrow_forward_24"
+                app:iconGravity="end"
+                app:iconTint="@color/black"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="8dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/light_gray"
+                app:contentPadding="14dp"
+                app:contentPaddingBottom="8dp"
+                app:cardCornerRadius="25dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/search_radius_title"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/available_radii"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:singleSelection="true"
+                        app:selectionRequired="true"
+                        android:layout_marginBottom="0dp"
+                        app:checkedChip="@id/two_kilometers_chip">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/two_kilometers_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/two_kilometers_chip_text" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/five_kilometers_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/five_kilometers_chip_text" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/ten_kilometers_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/ten_kilometers_chip_text" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="8dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/start_searching_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/start_searching_text"
+                android:textSize="20sp"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:textColor="@color/white"
+                android:letterSpacing="0"
+                app:cornerRadius="20dp"
+                app:backgroundTint="@color/black"
+                app:icon="@drawable/ic_baseline_search_24"
+                app:iconTint="@color/white"
+                app:iconGravity="textStart"
+                app:rippleColor="@android:color/darker_gray"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>

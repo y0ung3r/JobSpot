@@ -54,7 +54,7 @@ class ExplorerActivity : AppCompatActivity() {
             _binding.toolbar.subtitle = getString(R.string.address_title)
         }
         else {
-            _binding.toolbar.title = getString(R.string.address_not_exists_error)
+            _binding.toolbar.title = getString(R.string.failed_to_determine_address)
             _binding.toolbar.subtitle = null
         }
     }

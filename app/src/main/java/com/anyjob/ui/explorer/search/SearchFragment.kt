@@ -50,7 +50,7 @@ class SearchFragment : Fragment() {
     }
 
     private val _bottomSheetBehavior by lazy {
-        BottomSheetBehavior.from(_binding.bottomSheetLayout)
+        BottomSheetBehavior.from(_binding.bottomSheet.bottomSheetLayout)
     }
 
     private var _searchRadiiViews = ArrayList<Circle>()
@@ -66,7 +66,7 @@ class SearchFragment : Fragment() {
             when (newState) {
                 BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
                     _googleMap.cameraPosition.target,
-                    getSearchRadius(_binding.availableRadii.checkedChipId)
+                    getSearchRadius(_binding.bottomSheet.availableRadii.checkedChipId)
                 )
 
                 BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
@@ -253,15 +253,17 @@ class SearchFragment : Fragment() {
 
                 catch (exception: Exception) {
                     showToast(
-                        getString(R.string.address_not_exists_error)
+                        getString(R.string.failed_to_determine_address)
                     )
                 }
 
-                if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                    drawSearchRadius(
-                        position,
-                        getSearchRadius(_binding.availableRadii.checkedChipId)
-                    )
+                finally {
+                    if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                        drawSearchRadius(
+                            position,
+                            getSearchRadius(_binding.bottomSheet.availableRadii.checkedChipId)
+                        )
+                    }
                 }
             }
         }
@@ -277,10 +279,12 @@ class SearchFragment : Fragment() {
         moveCameraToUserLocation()
     }
 
-    private fun onUserChangeRadius(chipGroup: View, selectedChipId: Int) {
+    private fun onUserChangeRadius(chipGroup: View, selectedChips: List<Int>) {
         drawSearchRadius(
             _googleMap.cameraPosition.target,
-            getSearchRadius(selectedChipId)
+            getSearchRadius(
+                selectedChips.first()
+            )
         )
     }
 
@@ -292,11 +296,11 @@ class SearchFragment : Fragment() {
 
         _bottomSheetBehavior.apply {
             addBottomSheetCallback(_bottomSheetCallback)
-            isGestureInsetBottomIgnored = true
+            isGestureInsetBottomIgnored=true
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        _binding.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
+        _binding.bottomSheet.availableRadii.setOnCheckedStateChangeListener(::onUserChangeRadius)
 
         return _binding.root
     }

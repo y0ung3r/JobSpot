@@ -37,7 +37,7 @@
     <string name="settings_drawer_item">Настройки</string>
     <string name="address_title">Ваш адрес</string>
     <string name="search_history_drawer_item">История поиска</string>
-    <string name="address_not_exists_error">Не удалось определить адрес</string>
+    <string name="failed_to_determine_address">Не удалось определить адрес</string>
     <string name="current_location_description">Текущее местоположение</string>
     <string name="two_kilometers_chip_text">2 км</string>
     <string name="five_kilometers_chip_text">5 км</string>
