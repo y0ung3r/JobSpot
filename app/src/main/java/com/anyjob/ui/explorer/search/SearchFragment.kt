@@ -1,8 +1,6 @@
 package com.anyjob.ui.explorer.search
 
 import android.Manifest
-import android.animation.FloatEvaluator
-import android.animation.ValueAnimator
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
@@ -10,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -19,6 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
+import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.radar.extensions.startRadar
+import com.anyjob.ui.animations.radar.RadarParameters
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.showToast
@@ -37,7 +37,6 @@ import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
-
 
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
@@ -174,19 +173,16 @@ class SearchFragment : Fragment() {
         // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.add(
             _googleMap.addCircle(searchRadiusOptions).also {
-                ValueAnimator().apply {
-                    setFloatValues(0.0f, radius)
-                    duration = 2000
-                    interpolator = AccelerateDecelerateInterpolator()
-                    setEvaluator(
-                        FloatEvaluator()
-                    )
-                    addUpdateListener { valueAnimator ->
-                        val ratio = valueAnimator.animatedFraction * radius
-                        it.radius = ratio.toDouble()
+                startRadar(
+                    RadarParameters().apply {
+                        mode = VisibilityMode.Show
+                        animationLength = 2000
+                        maxRadius = radius
+                        onUpdate = { radiusFraction ->
+                            it.radius = radiusFraction
+                        }
                     }
-                    start()
-                }
+                )
             }
         )
     }
@@ -194,25 +190,21 @@ class SearchFragment : Fragment() {
     private fun removeLastSearchRadius() {
         // TODO: перекинуть анимацию в animation package
         _searchRadiiViews.lastOrNull()?.also {
-            val radius = it.radius.toFloat()
-            ValueAnimator().apply {
-                setFloatValues(0.0f, radius)
-                duration = 500
-                interpolator = AccelerateDecelerateInterpolator()
-                setEvaluator(
-                    FloatEvaluator()
-                )
-                addUpdateListener { valueAnimator ->
-                    val ratio = valueAnimator.animatedFraction * radius
-                    it.radius = ratio.toDouble()
+            startRadar(
+                RadarParameters().apply {
+                    mode = VisibilityMode.Hide
+                    animationLength = 500
+                    maxRadius = it.radius.toFloat()
+                    onUpdate = { radiusFraction ->
+                        it.radius = radiusFraction
 
-                    if (it.radius == 0.0) {
-                        it.remove()
-                        _searchRadiiViews.remove(it)
+                        if (it.radius == 0.0) {
+                            it.remove()
+                            _searchRadiiViews.remove(it)
+                        }
                     }
                 }
-                reverse()
-            }
+            )
         }
     }
 
