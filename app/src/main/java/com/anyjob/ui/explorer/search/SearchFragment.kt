@@ -49,6 +49,22 @@ class SearchFragment : Fragment() {
         BottomSheetBehavior.from(_binding.bottomSheetLayout)
     }
 
+    private val _bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            when (newState) {
+                BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
+                    _googleMap.cameraPosition.target
+                )
+
+                else -> _googleMap.clear()
+            }
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            // Ignore...
+        }
+    }
+
     private val _locationProvider by lazy {
         LocationServices.getFusedLocationProviderClient(
             requireActivity()
@@ -125,21 +141,18 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun drawRadiusOnMapIfSearchParametersExpanded(position: LatLng) {
+    private fun drawSearchRadius(position: LatLng) {
         _googleMap.clear()
 
-        if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            val searchRadiusOptions = CircleOptions().apply {
-                center(position)
-                radius(20.0)
-                strokeColor(R.color.purple_500)
-                fillColor(R.color.half_transparent_purple)
-
-                strokeWidth(10.0f)
-            }
-
-            _googleMap.addCircle(searchRadiusOptions)
+        val searchRadiusOptions = CircleOptions().apply {
+            center(position)
+            radius(20.0)
+            strokeColor(android.R.color.transparent)
+            fillColor(R.color.half_transparent_purple)
+            strokeWidth(10.0f)
         }
+
+        _googleMap.addCircle(searchRadiusOptions)
     }
 
     private fun onMapReady(googleMap: GoogleMap) {
@@ -172,7 +185,10 @@ class SearchFragment : Fragment() {
                 if (addresses.any()) {
                     val address = addresses[0]
                     _activityViewModel.updateCurrentAddress(address)
-                    drawRadiusOnMapIfSearchParametersExpanded(position)
+                }
+
+                if (_bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    drawSearchRadius(position)
                 }
             }
         }
@@ -190,7 +206,10 @@ class SearchFragment : Fragment() {
         _mapView.getMapAsync(::onMapReady)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
 
-        _bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        _bottomSheetBehavior.apply {
+            addBottomSheetCallback(_bottomSheetCallback)
+            state = BottomSheetBehavior.STATE_EXPANDED
+        }
 
         return _binding.root
     }
