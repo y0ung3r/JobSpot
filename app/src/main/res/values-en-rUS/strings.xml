@@ -14,7 +14,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="explorer_activity_title">Explorer</string>
     <string name="confirmation_code_fragment_title">Phone number verification</string>
-    <string name="confirmation_code_fragment_description">Enter your verification code sent to</string>
     <string name="confirmation_code_prompt">Verification code</string>
     <string name="confirm_entry_action">Confirm</string>
     <string name="lastname_prompt">Lastname</string>
@@ -30,7 +29,7 @@
     <string name="confirmation_code_verification_error">An error occurred while checking the code</string>
     <string name="resend_code_action">Resend verification code</string>
     <string name="verify_code_action">Verify</string>
-    <string name="confirmation_code_resent_successfully">Verification code resent to</string>
+    <string name="confirmation_code_resent_successfully">Verification code resent to %1$s</string>
     <string name="authorization_canceled_error">Authorization canceled by user</string>
     <string name="invalid_lastname">Invalid lastname</string>
     <string name="invalid_firstname">Invalid firstname</string>
@@ -50,4 +49,7 @@
     <string name="access_to_geolocation_alert_description">Allow access to the geolocation, otherwise the application will not be able to determine where you are</string>
     <string name="access_to_geolocation_alert_positive_button">OK</string>
     <string name="go_to_settings">Go to settings</string>
+    <string name="cancel_search">Cancel search</string>
+    <string name="search_in_progress">Search in progress</string>
+    <string name="confirmation_code_fragment_description">Enter your verification code sent to %1$s</string>
 </resources>

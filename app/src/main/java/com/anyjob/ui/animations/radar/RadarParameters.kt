@@ -25,5 +25,5 @@ class RadarParameters : AnimationParameters() {
     /**
      *  Делегат, вызываемый с каждый шагом анимации
      */
-    var onUpdate: ((radiusFraction: Double) -> Unit)? = null
+    var onUpdate: ((radiusFraction: Double, invertedRadiusFraction: Double) -> Unit)? = null
 }

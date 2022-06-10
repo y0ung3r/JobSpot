@@ -4,22 +4,30 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.fade
+import com.anyjob.ui.animations.extensions.slide
+import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
+import com.anyjob.ui.animations.slide.SlideFrom
+import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import com.anyjob.ui.extensions.getZoomLevel
 import com.anyjob.ui.extensions.showToast
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -61,13 +69,15 @@ class SearchFragment : Fragment() {
 
     private val _searchBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            when (newState) {
-                BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
-                    _googleMap.cameraPosition.target,
-                    getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
-                )
+            if (bottomSheet.visibility == View.VISIBLE) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
+                        _googleMap.cameraPosition.target,
+                        getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
+                    )
 
-                BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
+                    BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
+                }
             }
         }
 
@@ -118,6 +128,12 @@ class SearchFragment : Fragment() {
         return !finePermissionGranted || !coarsePermissionGranted
     }
 
+    private fun moveCamera(location: LatLng, zoom: Float) {
+        val coordinates = LatLng(location.latitude, location.longitude)
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, zoom)
+        _googleMap.animateCamera(cameraUpdate)
+    }
+
     private fun moveCameraToUserLocation() {
         if (isPermissionsDenied()) {
             return requestLocationPermissions()
@@ -128,39 +144,58 @@ class SearchFragment : Fragment() {
         }
 
         _locationProvider.lastLocation.addOnSuccessListener { location ->
-            val coordinates = LatLng(location.latitude, location.longitude)
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, 19f)
-            _googleMap.animateCamera(cameraUpdate)
+            moveCamera(
+                LatLng(location.latitude, location.longitude),
+                19.0f
+            )
         }
     }
 
-    private fun drawSearchRadius(position: LatLng, radius: Float) {
+    private fun drawSearchRadius(position: LatLng, radius: Float, radarParameters: RadarParameters? = null): Circle {
         removeLastSearchRadius()
 
-        val searchRadiusOptions = CircleOptions().apply {
-            center(position)
-            strokeColor(Color.TRANSPARENT)
-            fillColor(
-                Color.parseColor(
-                    getString(R.color.light_purple)
-                )
-            )
-        }
-
-        _searchRadiiViews.add(
-            _googleMap.addCircle(searchRadiusOptions).also {
-                startRadar(
-                    RadarParameters().apply {
-                        mode = VisibilityMode.Show
-                        animationLength = 2000
-                        maxRadius = radius
-                        onUpdate = { radiusFraction ->
-                            it.radius = radiusFraction
-                        }
-                    }
+        val searchRadius = _googleMap.addCircle(
+            CircleOptions().apply {
+                center(position)
+                strokeColor(Color.TRANSPARENT)
+                fillColor(
+                    Color.parseColor(
+                        getString(R.color.light_purple)
+                    )
                 )
             }
         )
+
+        startRadar(
+            RadarParameters().apply {
+                mode = VisibilityMode.Show
+
+                if (radarParameters != null) {
+                    infinity = radarParameters.infinity
+                    animationLength = radarParameters.animationLength
+                }
+                else {
+                    infinity = false
+                    animationLength = 2000
+                }
+
+                maxRadius = radius
+
+                val fillColor = Color.alpha(searchRadius.fillColor)
+                onUpdate = { radiusFraction, invertedRadiusFraction ->
+                    searchRadius.radius = radiusFraction
+
+                    if (infinity) {
+                        val alpha = (invertedRadiusFraction / radius * fillColor).toInt()
+                        searchRadius.fillColor = ColorUtils.setAlphaComponent(searchRadius.fillColor, alpha)
+                    }
+                }
+            }
+        )
+
+        _searchRadiiViews.add(searchRadius)
+
+        return searchRadius
     }
 
     private fun removeLastSearchRadius() {
@@ -170,7 +205,7 @@ class SearchFragment : Fragment() {
                     mode = VisibilityMode.Hide
                     animationLength = 500
                     maxRadius = it.radius.toFloat()
-                    onUpdate = { radiusFraction ->
+                    onUpdate = { radiusFraction, _ ->
                         it.radius = radiusFraction
 
                         if (it.radius == 0.0) {
@@ -241,11 +276,57 @@ class SearchFragment : Fragment() {
         moveCameraToUserLocation()
     }
 
-    private fun onUserChangeRadius(chipGroup: View, selectedChips: List<Int>) {
+    private fun onUserChangeRadius(chipGroup: View, selectedChip: Int) {
         drawSearchRadius(
             _googleMap.cameraPosition.target,
-            getSearchRadius(
-                selectedChips.first()
+            getSearchRadius(selectedChip)
+        )
+    }
+
+    private fun onUserStartSearchingButtonClick(button: View) {
+        _binding.currentLocationButton.slide(
+            SlideParameters().apply {
+                from = SlideFrom.Bottom
+                mode = VisibilityMode.Hide
+                animationLength = 700
+            }
+        )
+
+        _binding.searchBottomSheet.bottomSheetLayout.slide(
+            SlideParameters().apply {
+                from = SlideFrom.Left
+                mode = VisibilityMode.Hide
+                animationLength = 700
+            }
+        )
+
+        _binding.searchProgressBottomSheet.bottomSheetLayout.slide(
+            SlideParameters().apply {
+                from = SlideFrom.Right
+                mode = VisibilityMode.Show
+                animationLength = 700
+            }
+        )
+
+        _googleMap.uiSettings.isScrollGesturesEnabled = false
+        _googleMap.uiSettings.isZoomGesturesEnabled = false
+
+        val radius = getSearchRadius(
+            _binding.searchBottomSheet.availableRadii.checkedChipId
+        )
+
+        val position = _googleMap.cameraPosition.target
+        val radarParameters = RadarParameters().apply {
+            infinity = true
+            animationLength = 3500
+        }
+
+        drawSearchRadius(position, radius, radarParameters)
+
+        moveCamera(
+            position,
+            getZoomLevel(
+                radius.toDouble()
             )
         )
     }
@@ -262,7 +343,8 @@ class SearchFragment : Fragment() {
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        _binding.searchBottomSheet.availableRadii.setOnCheckedStateChangeListener(::onUserChangeRadius)
+        _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
+        _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearchingButtonClick)
 
         return _binding.root
     }

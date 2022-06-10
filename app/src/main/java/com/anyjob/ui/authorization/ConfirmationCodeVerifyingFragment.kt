@@ -34,7 +34,11 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
     }
 
     private fun appendPhoneNumberToDescription() {
-        val description = "${getString(R.string.confirmation_code_fragment_description)} ${_activityViewModel.phoneNumber.value}"
+        val description = getString(
+            R.string.confirmation_code_fragment_description,
+            _activityViewModel.phoneNumber.value
+        )
+
         _binding.confirmationCodeValidationFragmentDescription.text = description
     }
 
@@ -113,7 +117,12 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
         result.onSuccess {
             _binding.resendButton.isEnabled = false
 
-            showToast("${getString(R.string.confirmation_code_resent_successfully)} ${_activityViewModel.phoneNumber.value}")
+            showToast(
+                getString(
+                    R.string.confirmation_code_resent_successfully,
+                    _activityViewModel.phoneNumber.value
+                )
+            )
 
             val resendTimeout = _activityViewModel.resendTimeout.value!!.times(1000L)
             val cooldownTimer = object : CountDownTimer(resendTimeout, 1000L) {

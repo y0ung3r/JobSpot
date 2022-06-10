@@ -25,9 +25,11 @@ fun startRadar(parameters: RadarParameters) {
 
         addUpdateListener {
             val ratio = it.animatedFraction * parameters.maxRadius
+            val invertedRatio = (1.0f - it.animatedFraction) * parameters.maxRadius
 
             parameters.onUpdate?.invoke(
-                ratio.toDouble()
+                ratio.toDouble(),
+                invertedRatio.toDouble()
             )
         }
 

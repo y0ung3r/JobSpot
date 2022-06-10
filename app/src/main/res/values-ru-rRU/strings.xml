@@ -14,7 +14,7 @@
     <string name="dashboard_fragment_title">Поиск</string>
     <string name="profile_fragment_title">Профиль</string>
     <string name="confirmation_code_fragment_title">Проверка номера телефона</string>
-    <string name="confirmation_code_fragment_description">Введите код подтверждения, который был отправлен на</string>
+    <string name="confirmation_code_fragment_description">"Введите код подтверждения, который был отправлен на "</string>
     <string name="confirmation_code_prompt">Проверочный код</string>
     <string name="confirm_entry_action">Подтвердить</string>
     <string name="lastname_prompt">Фамилия</string>
@@ -30,7 +30,7 @@
     <string name="confirmation_code_verification_error">Произошла ошибка при проверке кода</string>
     <string name="resend_code_action">Отправить код повторно</string>
     <string name="verify_code_action">Проверить</string>
-    <string name="confirmation_code_resent_successfully">Проверочный код повторно выслан на</string>
+    <string name="confirmation_code_resent_successfully">Проверочный код повторно выслан на %1$s</string>
     <string name="authorization_canceled_error">Авторизация отменена пользователем</string>
     <string name="invalid_lastname">Фамилия указана некорректно</string>
     <string name="invalid_firstname">Имя указано некорректно</string>
@@ -50,4 +50,6 @@
     <string name="access_to_geolocation_alert_description">Разрешите доступ к геопозиции, иначе приложение не сможет определить где Вы находитесь</string>
     <string name="access_to_geolocation_alert_positive_button">OK</string>
     <string name="go_to_settings">Перейти в настройки</string>
+    <string name="cancel_search">Отменить поиск</string>
+    <string name="search_in_progress">Поиск специалиста</string>
 </resources>

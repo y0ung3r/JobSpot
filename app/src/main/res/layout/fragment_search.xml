@@ -26,6 +26,11 @@
         android:id="@+id/search_bottom_sheet"
         layout="@layout/search_bottom_sheet" />
 
+    <include
+        android:id="@+id/search_progress_bottom_sheet"
+        layout="@layout/search_progress_bottom_sheet"
+        android:visibility="gone" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/current_location_button"
         android:layout_width="wrap_content"
@@ -38,6 +43,7 @@
         android:src="@drawable/ic_current_location_24"
         app:borderWidth="0dp"
         app:fabSize="mini"
+        android:gravity="bottom|start"
         app:layout_anchor="@id/bottom_sheet"
         app:layout_anchorGravity="start"
         app:layout_dodgeInsetEdges="bottom"
