@@ -41,7 +41,7 @@
     <string name="current_location_description">Текущее местоположение</string>
     <string name="two_kilometers_chip_text">2 км</string>
     <string name="five_kilometers_chip_text">5 км</string>
-    <string name="ten_kilometers_chip_text">10 км</string>
+    <string name="three_kilometers_chip_text">3 км</string>
     <string name="search_radius_title">Радиус поиска</string>
     <string name="service_title">Услуга</string>
     <string name="start_searching_text">Начать поиск</string>
@@ -53,4 +53,6 @@
     <string name="cancel_search">Отменить поиск</string>
     <string name="search_in_progress">Поиск специалиста</string>
     <string name="search_progress_description">в радиусе %1$s км</string>
+    <string name="one_kilometer_chip_text">1 км</string>
+    <string name="five_hundred_meters_chip_text">500 м</string>
 </resources>

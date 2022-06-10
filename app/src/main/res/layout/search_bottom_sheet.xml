@@ -87,7 +87,21 @@
                         app:singleSelection="true"
                         app:selectionRequired="true"
                         android:layout_marginBottom="0dp"
-                        app:checkedChip="@id/two_kilometers_chip">
+                        app:checkedChip="@id/five_hundred_meters_chip">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/five_hundred_meters_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/five_hundred_meters_chip_text" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/one_kilometer_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/one_kilometer_chip_text" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/two_kilometers_chip"
@@ -97,18 +111,18 @@
                             android:text="@string/two_kilometers_chip_text" />
 
                         <com.google.android.material.chip.Chip
+                            android:id="@+id/three_kilometers_chip"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/ChipChoiceStyle"
+                            android:text="@string/three_kilometers_chip_text" />
+
+                        <com.google.android.material.chip.Chip
                             android:id="@+id/five_kilometers_chip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             style="@style/ChipChoiceStyle"
                             android:text="@string/five_kilometers_chip_text" />
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/ten_kilometers_chip"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            style="@style/ChipChoiceStyle"
-                            android:text="@string/ten_kilometers_chip_text" />
 
                     </com.google.android.material.chip.ChipGroup>
 

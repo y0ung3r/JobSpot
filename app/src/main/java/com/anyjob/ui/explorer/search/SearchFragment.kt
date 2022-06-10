@@ -63,9 +63,11 @@ class SearchFragment : Fragment() {
     private var _searchRadiiViews = ArrayList<Circle>()
 
     private fun getSearchRadius(chipId: Int): Float = when (chipId) {
+        R.id.one_kilometer_chip -> 1000.0f
+        R.id.two_kilometers_chip -> 2000.0f
+        R.id.three_kilometers_chip -> 3000.0f
         R.id.five_kilometers_chip -> 5000.0f
-        R.id.ten_kilometers_chip -> 10000.0f
-        else -> 2000.0f
+        else -> 500.0f
     }
 
     private val _searchBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
@@ -145,9 +147,13 @@ class SearchFragment : Fragment() {
         }
 
         _locationProvider.lastLocation.addOnSuccessListener { location ->
+            val radius = getSearchRadius(
+                _binding.searchBottomSheet.availableRadii.checkedChipId
+            )
+
             moveCamera(
                 LatLng(location.latitude, location.longitude),
-                19.0f
+                getZoomLevel(radius)
             )
         }
     }
@@ -269,9 +275,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun onUserChangeRadius(chipGroup: View, selectedChip: Int) {
-        drawSearchRadius(
-            _googleMap.cameraPosition.target,
-            getSearchRadius(selectedChip)
+        val radius = getSearchRadius(selectedChip)
+        val location = _googleMap.cameraPosition.target
+
+        drawSearchRadius(location, radius)
+        moveCamera(
+            LatLng(location.latitude, location.longitude),
+            getZoomLevel(radius)
         )
     }
 
@@ -305,9 +315,7 @@ class SearchFragment : Fragment() {
 
         moveCamera(
             position,
-            getZoomLevel(
-                radius.toDouble()
-            )
+            getZoomLevel(radius)
         )
     }
 
@@ -332,9 +340,13 @@ class SearchFragment : Fragment() {
         removeLastSearchRadius()
 
         val position = _googleMap.cameraPosition.target
+        val radius = getSearchRadius(
+            _binding.searchBottomSheet.availableRadii.checkedChipId
+        )
+
         moveCamera(
             position,
-            19.0f
+            getZoomLevel(radius)
         )
     }
 
