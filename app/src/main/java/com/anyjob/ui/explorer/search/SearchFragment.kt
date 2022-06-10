@@ -167,22 +167,13 @@ class SearchFragment : Fragment() {
             }
         )
 
+        val animationParameters = radarParameters ?: RadarParameters()
+        val fillColor = Color.alpha(searchRadius.fillColor)
+
         startRadar(
-            RadarParameters().apply {
+            animationParameters.apply {
                 mode = VisibilityMode.Show
-
-                if (radarParameters != null) {
-                    infinity = radarParameters.infinity
-                    animationLength = radarParameters.animationLength
-                }
-                else {
-                    infinity = false
-                    animationLength = 2000
-                }
-
                 maxRadius = radius
-
-                val fillColor = Color.alpha(searchRadius.fillColor)
                 onUpdate = { radiusFraction, invertedRadiusFraction ->
                     searchRadius.radius = radiusFraction
 
@@ -292,9 +283,11 @@ class SearchFragment : Fragment() {
                 animationLength = 700
             }
         )
+
         _binding.searchBottomSheet.bottomSheetLayout.visibility = View.GONE
         _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
 
+        _binding.mapPin.isTouchEventsDisabled = true
         _googleMap.uiSettings.isScrollGesturesEnabled = false
         _googleMap.uiSettings.isZoomGesturesEnabled = false
 
@@ -332,6 +325,7 @@ class SearchFragment : Fragment() {
 
         _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+        _binding.mapPin.isTouchEventsDisabled = false
         _googleMap.uiSettings.isScrollGesturesEnabled = true
         _googleMap.uiSettings.isZoomGesturesEnabled = true
 

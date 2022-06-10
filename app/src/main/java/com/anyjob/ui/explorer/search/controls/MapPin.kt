@@ -21,6 +21,8 @@ constructor(
     private val _pinView = ImageView(context)
     private val _shadowView = ImageView(context)
 
+    var isTouchEventsDisabled = false
+
     override fun onFinishInflate() {
         super.onFinishInflate()
 
@@ -45,7 +47,7 @@ constructor(
     }
 
     override fun dispatchTouchEvent(motionEvent: MotionEvent?): Boolean {
-        if (motionEvent != null) {
+        if (motionEvent != null && !isTouchEventsDisabled) {
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> _pinView.drag(DragTo.Up, _shadowView)
                 MotionEvent.ACTION_UP -> _pinView.drag(DragTo.Down, _shadowView)
