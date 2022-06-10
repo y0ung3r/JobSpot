@@ -30,7 +30,11 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:elevation="0dp"
+            app:titleCentered="true"
+            app:subtitleCentered="true"
             app:navigationIcon="@drawable/ic_menu_24"
+            app:titleTextAppearance="@style/ToolbarTitleStyle"
+            app:subtitleTextAppearance="@style/ToolbarSubtitleStyle"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
             app:title="@string/failed_to_determine_address" />
 
