@@ -1,4 +1,4 @@
-package com.anyjob.ui.controls.bottomSheets
+package com.anyjob.ui.explorer.search.controls.bottomSheets
 
 import android.content.Context
 import android.content.Intent

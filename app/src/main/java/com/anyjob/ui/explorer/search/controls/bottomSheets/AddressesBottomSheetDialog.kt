@@ -1,14 +1,10 @@
-package com.anyjob.ui.controls.bottomSheets
+package com.anyjob.ui.explorer.search.controls.bottomSheets
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.content.res.Resources
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import com.anyjob.databinding.AddressesBottomSheetBinding
 import com.anyjob.ui.extensions.afterTextChanged
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class AddressesBottomSheetDialog(context: Context, theme: Int) : BottomSheetDialog(context, theme) {

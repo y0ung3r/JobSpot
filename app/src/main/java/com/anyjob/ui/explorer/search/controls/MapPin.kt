@@ -1,17 +1,12 @@
-package com.anyjob.ui.controls
+package com.anyjob.ui.explorer.search.controls
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Color.red
 import android.util.AttributeSet
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import androidx.core.view.updateMargins
-import androidx.core.view.updatePadding
 import com.anyjob.R
 import com.anyjob.ui.animations.drag.DragTo
 import com.anyjob.ui.animations.extensions.drag

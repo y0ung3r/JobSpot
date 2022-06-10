@@ -17,7 +17,7 @@ import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
-import com.anyjob.ui.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
+import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.showToast
@@ -258,7 +258,7 @@ class SearchFragment : Fragment() {
 
         _searchBottomSheetBehavior.apply {
             addBottomSheetCallback(_searchBottomSheetCallback)
-            isGestureInsetBottomIgnored=true
+            isGestureInsetBottomIgnored = true
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
