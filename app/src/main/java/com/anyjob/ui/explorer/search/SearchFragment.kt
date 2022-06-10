@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,9 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
-import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.extensions.slide
-import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
 import com.anyjob.ui.animations.slide.SlideFrom
@@ -57,6 +54,10 @@ class SearchFragment : Fragment() {
 
     private val _searchBottomSheetBehavior by lazy {
         BottomSheetBehavior.from(_binding.searchBottomSheet.bottomSheetLayout)
+    }
+
+    private val _searchProgressBottomSheetBehavior by lazy {
+        BottomSheetBehavior.from(_binding.searchProgressBottomSheet.bottomSheetLayout)
     }
 
     private var _searchRadiiViews = ArrayList<Circle>()
@@ -283,30 +284,16 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private fun onUserStartSearchingButtonClick(button: View) {
+    private fun onUserStartSearching(button: View) {
         _binding.currentLocationButton.slide(
-            SlideParameters().apply {
-                from = SlideFrom.Bottom
-                mode = VisibilityMode.Hide
-                animationLength = 700
-            }
-        )
-
-        _binding.searchBottomSheet.bottomSheetLayout.slide(
             SlideParameters().apply {
                 from = SlideFrom.Left
                 mode = VisibilityMode.Hide
                 animationLength = 700
             }
         )
-
-        _binding.searchProgressBottomSheet.bottomSheetLayout.slide(
-            SlideParameters().apply {
-                from = SlideFrom.Right
-                mode = VisibilityMode.Show
-                animationLength = 700
-            }
-        )
+        _binding.searchBottomSheet.bottomSheetLayout.visibility = View.GONE
+        _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
 
         _googleMap.uiSettings.isScrollGesturesEnabled = false
         _googleMap.uiSettings.isZoomGesturesEnabled = false
@@ -331,6 +318,32 @@ class SearchFragment : Fragment() {
         )
     }
 
+    private fun onUserCancelSearching(button: View) {
+        _binding.currentLocationButton.slide(
+            SlideParameters().apply {
+                from = SlideFrom.Left
+                mode = VisibilityMode.Show
+                animationLength = 700
+            }
+        )
+
+        _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.GONE
+        _binding.searchBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
+
+        _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        _googleMap.uiSettings.isScrollGesturesEnabled = true
+        _googleMap.uiSettings.isZoomGesturesEnabled = true
+
+        removeLastSearchRadius()
+
+        val position = _googleMap.cameraPosition.target
+        moveCamera(
+            position,
+            19.0f
+        )
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
@@ -343,8 +356,11 @@ class SearchFragment : Fragment() {
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
+        _searchProgressBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
-        _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearchingButtonClick)
+        _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearching)
+        _binding.searchProgressBottomSheet.cancelButton.setOnClickListener(::onUserCancelSearching)
 
         return _binding.root
     }
