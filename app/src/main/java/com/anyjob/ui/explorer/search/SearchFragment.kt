@@ -16,7 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.extensions.slide
+import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
 import com.anyjob.ui.animations.slide.SlideFrom
@@ -286,11 +288,10 @@ class SearchFragment : Fragment() {
     }
 
     private fun onUserStartSearching(button: View) {
-        _binding.currentLocationButton.slide(
-            SlideParameters().apply {
-                from = SlideFrom.Left
+        _binding.currentLocationButton.fade(
+            FadeParameters().apply {
                 mode = VisibilityMode.Hide
-                animationLength = 700
+                animationLength = 300
             }
         )
 
@@ -317,14 +318,17 @@ class SearchFragment : Fragment() {
             position,
             getZoomLevel(radius)
         )
+
+        _binding.searchProgressBottomSheet.searchInProgressTitle.text = getString(
+            R.string.search_progress_description
+        )
     }
 
     private fun onUserCancelSearching(button: View) {
-        _binding.currentLocationButton.slide(
-            SlideParameters().apply {
-                from = SlideFrom.Left
+        _binding.currentLocationButton.fade(
+            FadeParameters().apply {
                 mode = VisibilityMode.Show
-                animationLength = 700
+                animationLength = 300
             }
         )
 

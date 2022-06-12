@@ -25,27 +25,36 @@ private fun View.beginAnimation(transition: Transition, trigger: () -> Unit) {
 }
 
 /**
- * Устанавливает подходящее visibility для View, чтобы анимация запускалась правильно
- */
-private fun View.ensureVisibilityValid(mode: VisibilityMode) = when (mode) {
-    VisibilityMode.Show -> visibility = View.GONE
-    VisibilityMode.Hide -> visibility = View.VISIBLE
-}
-
-/**
  * Конфигурирует и запускает Fade анимацию
  * @param parameters Параметры анимации
  */
 fun View.fade(parameters: FadeParameters) {
-    val fadeTransition = AutoTransition().apply {
-        duration = parameters.animationLength
-        startDelay = parameters.delayBeforeStart
+    val fadeAnimator = animate()
+
+    when (parameters.mode) {
+        VisibilityMode.Show -> fadeAnimator.withStartAction {
+            visibility = View.VISIBLE
+            alpha = 0.0f
+        }
+        .alpha(1.0f)
+
+        VisibilityMode.Hide -> fadeAnimator.withStartAction {
+            visibility = View.VISIBLE
+            alpha = 1.0f
+        }
+        .alpha(0.0f)
+        .withEndAction {
+            visibility = View.GONE
+        }
     }
 
-    ensureVisibilityValid(parameters.mode)
-    beginAnimation(fadeTransition) {
-        visibility = parameters.mode.asVisibility()
-    }
+    fadeAnimator.setDuration(
+        parameters.animationLength
+    )
+    .setStartDelay(
+        parameters.delayBeforeStart
+    )
+    .start()
 }
 
 /**
@@ -69,7 +78,11 @@ fun View.slide(parameters: SlideParameters) {
         startDelay = parameters.delayBeforeStart
     }
 
-    ensureVisibilityValid(parameters.mode)
+    visibility = when (parameters.mode) {
+        VisibilityMode.Show -> View.GONE
+        VisibilityMode.Hide -> View.VISIBLE
+    }
+
     beginAnimation(transitionSet) {
         visibility = parameters.mode.asVisibility()
     }

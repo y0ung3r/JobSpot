@@ -3,23 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/explorer_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_search">
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/navigation_search"
         android:name="com.anyjob.ui.explorer.search.SearchFragment"
         android:label="@string/home_fragment_title"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+
+        <action
+            android:id="@+id/path_to_order_overview_fragment_from_navigation_search"
+            app:destination="@id/navigation_order_overview" />
+
+    </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.anyjob.ui.explorer.dashboard.DashboardFragment"
-        android:label="@string/dashboard_fragment_title"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_order_overview"
+        android:name="com.anyjob.ui.explorer.orderOverview.OrderOverviewFragment"
+        android:label="fragment_order_overview"
+        tools:layout="@layout/fragment_order_overview" />
 
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.anyjob.ui.explorer.profile.ProfileFragment"
-        android:label="@string/profile_fragment_title"
-        tools:layout="@layout/fragment_profile" />
 </navigation>
