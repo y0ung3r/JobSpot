@@ -48,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/firstname_prompt"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +69,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/middlename_prompt"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +84,31 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/select_home_address_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/light_gray"
+        android:gravity="start|center_vertical"
+        android:letterSpacing="0"
+        android:padding="16dp"
+        android:text="@string/home_address"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/ic_arrow_forward_24"
+        app:iconGravity="end"
+        app:iconTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/middlename_field_layout"
+        app:rippleColor="@android:color/darker_gray" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/confirm_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -92,9 +116,13 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:enabled="false"
+        android:letterSpacing="0"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:text="@string/confirm_entry_action"
+        android:textSize="20sp"
+        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/is_worker_check_box" />
 
@@ -103,7 +131,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:text="@string/registration_fragment_description"
         android:textSize="16sp"
@@ -123,7 +151,8 @@
         android:textColor="?android:attr/textColorSecondary"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/middlename_field_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/select_home_address_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

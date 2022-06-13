@@ -17,12 +17,9 @@ import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.fade
-import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.animations.fade.FadeParameters
-import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.animations.radar.RadarParameters
-import com.anyjob.ui.animations.slide.SlideFrom
-import com.anyjob.ui.animations.slide.SlideParameters
+import com.anyjob.ui.animations.radar.extensions.startRadar
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel

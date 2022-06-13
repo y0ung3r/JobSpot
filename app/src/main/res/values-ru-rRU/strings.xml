@@ -55,4 +55,5 @@
     <string name="search_progress_description">в радиусе %1$s км</string>
     <string name="one_kilometer_chip_text">1 км</string>
     <string name="five_hundred_meters_chip_text">500 м</string>
+    <string name="home_address">Адрес проживания</string>
 </resources>

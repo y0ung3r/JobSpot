@@ -3,7 +3,6 @@ package com.anyjob.ui.authorization
 import android.app.Activity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
-import com.anyjob.data.authorization.FirebasePhoneNumberAuthorizationParameters
 import com.anyjob.databinding.FragmentConfirmationCodeVerifyingBinding
 import com.anyjob.domain.authorization.exceptions.AuthorizationCanceledException
 import com.anyjob.domain.authorization.exceptions.AuthorizationServerException

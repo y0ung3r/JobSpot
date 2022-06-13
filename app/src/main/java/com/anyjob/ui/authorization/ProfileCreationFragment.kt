@@ -12,6 +12,7 @@ import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
@@ -104,6 +105,14 @@ class ProfileCreationFragment : Fragment() {
         }
     }
 
+    private fun onSelectHomeAddressButtonClick(button: View) {
+        AddressesBottomSheetDialog(
+            requireContext(),
+            R.style.Theme_AnyJob_BottomSheetDialog
+        )
+        .show()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileCreationBinding.inflate(inflater, container, false)
 
@@ -113,6 +122,7 @@ class ProfileCreationFragment : Fragment() {
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)
         _binding.firstnameField.afterTextChanged(::onFirstnameChanged)
+        _binding.selectHomeAddressButton.setOnClickListener(::onSelectHomeAddressButtonClick)
         _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
 
         return _binding.root

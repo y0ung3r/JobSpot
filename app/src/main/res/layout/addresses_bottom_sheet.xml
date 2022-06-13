@@ -50,8 +50,11 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/addresses_list"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                app:layoutManager="LinearLayoutManager" />
 
         </LinearLayout>
 

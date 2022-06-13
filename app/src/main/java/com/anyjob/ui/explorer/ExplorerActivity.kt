@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
-import com.anyjob.ui.explorer.search.controls.bottomSheets.AddressesBottomSheetDialog
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
