@@ -1,7 +1,8 @@
 package com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models
 
+import android.location.Address
+
 class UserAddress(
-    val formattedAddress: String,
-    val latitude: Double,
-    val longitude: Double
+    val source: Address,
+    val formattedAddress: String
 )

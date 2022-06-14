@@ -64,9 +64,8 @@ class AddressesAdapter(
                 view.setOnClickListener {
                     currentAddress?.also {
                         val userAddress = UserAddress(
-                            formattedAddress = addressTitle.text.toString(),
-                            latitude = it.latitude,
-                            longitude = it.longitude
+                            source = it,
+                            formattedAddress = addressTitle.text.toString()
                         )
 
                         onClick.invoke(userAddress)

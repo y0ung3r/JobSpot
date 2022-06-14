@@ -3,7 +3,9 @@ package com.anyjob.ui.explorer.search
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.location.Address
 import android.location.Geocoder
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -353,6 +355,17 @@ class SearchFragment : Fragment() {
         )
     }
 
+    private fun onAddressSelected(address: Address) {
+        val radius = getSearchRadius(
+            _binding.searchBottomSheet.availableRadii.checkedChipId
+        )
+
+        moveCamera(
+            LatLng(address.latitude, address.longitude),
+            getZoomLevel(radius)
+        )
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
@@ -370,6 +383,8 @@ class SearchFragment : Fragment() {
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
         _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearching)
         _binding.searchProgressBottomSheet.cancelButton.setOnClickListener(::onUserCancelSearching)
+
+        _activityViewModel.currentAddress.observe(this@SearchFragment, ::onAddressSelected)
 
         return _binding.root
     }

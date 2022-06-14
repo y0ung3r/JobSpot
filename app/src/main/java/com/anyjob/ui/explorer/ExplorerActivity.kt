@@ -12,6 +12,7 @@ import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
@@ -45,7 +46,7 @@ class ExplorerActivity : AppCompatActivity() {
         }
     }
 
-    private fun onAddressChanged(address: Address) {
+    private fun drawAddressToToolbar(address: Address) {
         val street = address.thoroughfare
         val houseNumber = address.subThoroughfare
         val isAddressExists = street != null && street.isNotBlank() && houseNumber != null && houseNumber.isNotBlank()
@@ -60,10 +61,19 @@ class ExplorerActivity : AppCompatActivity() {
         }
     }
 
+    private fun onAddressChanged(address: Address) {
+        drawAddressToToolbar(address)
+    }
+
+    private fun onAddressSelected(userAddress: UserAddress) {
+        _viewModel.updateCurrentAddress(userAddress.source)
+    }
+
     private fun onAddressTitleClick(view: View) {
         AddressesBottomSheetDialog(
             this@ExplorerActivity,
-            R.style.Theme_AnyJob_BottomSheetDialog
+            R.style.Theme_AnyJob_BottomSheetDialog,
+            ::onAddressSelected
         )
         .show()
     }
