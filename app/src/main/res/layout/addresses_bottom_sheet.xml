@@ -13,8 +13,8 @@
         android:layout_height="match_parent"
         app:cardBackgroundColor="@color/white"
         app:contentPaddingBottom="2dp"
-        app:contentPaddingLeft="8dp"
-        app:contentPaddingRight="8dp"
+        app:contentPaddingLeft="0dp"
+        app:contentPaddingRight="0dp"
         app:contentPaddingTop="2dp"
         app:shapeAppearanceOverlay="@style/BottomSheetStyle">
 

@@ -52,7 +52,7 @@
     <string name="cancel_search">Cancel search</string>
     <string name="search_in_progress">Search in progress</string>
     <string name="confirmation_code_fragment_description">Enter your verification code sent to %1$s</string>
-    <string name="search_progress_description">within a radius of %1$s km</string>
+    <string name="search_progress_description">within a radius of %1$s</string>
     <string name="one_kilometer_chip_text">1 km</string>
     <string name="five_hundred_meters_chip_text">500 m</string>
     <string name="home_address">Home address</string>

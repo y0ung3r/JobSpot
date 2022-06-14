@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.anyjob.R
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 
 object AddressDifferenceCallback : DiffUtil.ItemCallback<Address>() {
     override fun areItemsTheSame(oldItem: Address, newItem: Address): Boolean {
@@ -20,20 +21,58 @@ object AddressDifferenceCallback : DiffUtil.ItemCallback<Address>() {
     }
 }
 
-class AddressesAdapter(private val addresses: List<Address>, private val onClick: (address: Address) -> Unit) : ListAdapter<Address, AddressesAdapter.ViewHolder>(AddressDifferenceCallback) {
-    class ViewHolder(view: View, onClick: (address: Address) -> Unit) : RecyclerView.ViewHolder(view) {
+class AddressesAdapter(
+    private val addresses: List<Address>,
+    private val onClick: ((UserAddress) -> Unit)? = null
+) : ListAdapter<Address, AddressesAdapter.ViewHolder>(AddressDifferenceCallback) {
+    class ViewHolder(
+        private val view: View,
+        private val onClick: ((UserAddress) -> Unit)? = null
+    ) : RecyclerView.ViewHolder(view) {
         private val addressTitle: TextView = view.findViewById(R.id.address_title)
+        private val addressAdminArea: TextView = view.findViewById(R.id.address_admin_area)
         private var currentAddress: Address? = null
-
-        init {
-            view.setOnClickListener {
-                currentAddress?.also(onClick)
-            }
-        }
 
         fun bind(address: Address) {
             currentAddress = address
-            addressTitle.text = address.getAddressLine(0)
+
+            val houseAddressLines = listOfNotNull(
+                address.thoroughfare,
+                address.subThoroughfare
+            )
+
+            val city = address.locality
+            val adminAreaLines = listOfNotNull(
+                city,
+                address.adminArea,
+                address.subAdminArea
+            )
+
+            val houseAddress = houseAddressLines.joinToString(", ")
+            val region = adminAreaLines.joinToString(", ")
+
+            if (houseAddress.isNotBlank()) {
+                addressTitle.text = houseAddress
+                addressAdminArea.text = region
+            }
+            else {
+                addressTitle.text = city
+                addressAdminArea.text = adminAreaLines.drop(1).joinToString(", ")
+            }
+
+            if (onClick != null) {
+                view.setOnClickListener {
+                    currentAddress?.also {
+                        val userAddress = UserAddress(
+                            formattedAddress = addressTitle.text.toString(),
+                            latitude = it.latitude,
+                            longitude = it.longitude
+                        )
+
+                        onClick.invoke(userAddress)
+                    }
+                }
+            }
         }
     }
 

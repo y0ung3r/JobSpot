@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -299,9 +300,9 @@ class SearchFragment : Fragment() {
         _googleMap.uiSettings.isScrollGesturesEnabled = false
         _googleMap.uiSettings.isZoomGesturesEnabled = false
 
-        val radius = getSearchRadius(
-            _binding.searchBottomSheet.availableRadii.checkedChipId
-        )
+        val chipId = _binding.searchBottomSheet.availableRadii.checkedChipId
+        val chip = _binding.searchBottomSheet.availableRadii.findViewById<Chip>(chipId)
+        val radius = getSearchRadius(chipId)
 
         val position = _googleMap.cameraPosition.target
         val radarParameters = RadarParameters().apply {
@@ -316,8 +317,9 @@ class SearchFragment : Fragment() {
             getZoomLevel(radius)
         )
 
-        _binding.searchProgressBottomSheet.searchInProgressTitle.text = getString(
-            R.string.search_progress_description
+        _binding.searchProgressBottomSheet.searchInProgressDescription.text = getString(
+            R.string.search_progress_description,
+            chip.text
         )
     }
 

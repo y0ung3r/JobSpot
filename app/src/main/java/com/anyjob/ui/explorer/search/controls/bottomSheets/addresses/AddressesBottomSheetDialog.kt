@@ -5,9 +5,9 @@ import android.content.res.Resources
 import android.location.Address
 import android.location.Geocoder
 import android.os.Bundle
-import androidx.recyclerview.widget.ListAdapter
 import com.anyjob.databinding.AddressesBottomSheetBinding
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.adapters.AddressesAdapter
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.extensions.afterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +17,11 @@ import kotlinx.coroutines.withContext
 import java.lang.Exception
 import java.util.*
 
-class AddressesBottomSheetDialog(context: Context, theme: Int) : BottomSheetDialog(context, theme) {
+class AddressesBottomSheetDialog(
+    context: Context,
+    theme: Int,
+    private val onItemClick: ((UserAddress) -> Unit)? = null
+) : BottomSheetDialog(context, theme) {
     private val _binding: AddressesBottomSheetBinding by lazy {
         AddressesBottomSheetBinding.inflate(layoutInflater)
     }
@@ -38,8 +42,9 @@ class AddressesBottomSheetDialog(context: Context, theme: Int) : BottomSheetDial
                 }
 
                 _addressesAdapter = AddressesAdapter(
-                    addresses
-                ) {}
+                    addresses,
+                    onItemClick
+                )
 
                 _binding.addressesList.adapter = _addressesAdapter
                 _addressesAdapter.notifyDataSetChanged()
@@ -59,8 +64,9 @@ class AddressesBottomSheetDialog(context: Context, theme: Int) : BottomSheetDial
         _binding.addressField.afterTextChanged(::onAddressChanged)
 
         _addressesAdapter = AddressesAdapter(
-            ArrayList<Address>()
-        ) {}
+            ArrayList<Address>(),
+            onItemClick
+        )
 
         _binding.addressesList.adapter = _addressesAdapter
     }

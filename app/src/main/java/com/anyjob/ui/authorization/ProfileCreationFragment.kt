@@ -13,6 +13,7 @@ import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
@@ -23,6 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ProfileCreationFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<AuthorizationViewModel>()
     private val _viewModel by viewModel<ProfileCreationViewModel>()
+    private lateinit var _addressesBottomSheet: AddressesBottomSheetDialog
 
     private lateinit var _binding: FragmentProfileCreationBinding
     private val _navigationController by lazy {
@@ -105,12 +107,19 @@ class ProfileCreationFragment : Fragment() {
         }
     }
 
+    private fun onHomeAddressChanged(address: UserAddress) {
+        _binding.selectHomeAddressButton.text = address.formattedAddress
+        _addressesBottomSheet.dismiss()
+    }
+
     private fun onSelectHomeAddressButtonClick(button: View) {
-        AddressesBottomSheetDialog(
+        _addressesBottomSheet = AddressesBottomSheetDialog(
             requireContext(),
-            R.style.Theme_AnyJob_BottomSheetDialog
+            R.style.Theme_AnyJob_BottomSheetDialog,
+            ::onHomeAddressChanged
         )
-        .show()
+
+        _addressesBottomSheet.show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
