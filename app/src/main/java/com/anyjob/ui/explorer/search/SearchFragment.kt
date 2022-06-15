@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
@@ -22,7 +23,10 @@ import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.RadarParameters
 import com.anyjob.ui.animations.radar.extensions.startRadar
+import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
+import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.getZoomLevel
@@ -35,7 +39,9 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +55,13 @@ class SearchFragment : Fragment() {
     private val _viewModel by viewModel<SearchViewModel>()
     private lateinit var _binding: FragmentSearchBinding
     private lateinit var _googleMap: GoogleMap
+    private lateinit var _addressesBottomSheet: BottomSheetDialog
+    private var _searchRadiiViews = ArrayList<Circle>()
+
+    private val _toolbar by lazy {
+        val activity = requireActivity() as ExplorerActivity
+        return@lazy activity.binding.toolbar
+    }
 
     private val _mapView by lazy {
         childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -61,8 +74,6 @@ class SearchFragment : Fragment() {
     private val _searchProgressBottomSheetBehavior by lazy {
         BottomSheetBehavior.from(_binding.searchProgressBottomSheet.bottomSheetLayout)
     }
-
-    private var _searchRadiiViews = ArrayList<Circle>()
 
     private fun getSearchRadius(chipId: Int): Float = when (chipId) {
         R.id.one_kilometer_chip -> 1000.0f
@@ -131,6 +142,17 @@ class SearchFragment : Fragment() {
         ) == PackageManager.PERMISSION_GRANTED
 
         return !finePermissionGranted || !coarsePermissionGranted
+    }
+
+    private fun moveCamera(address: Address) {
+        val radius = getSearchRadius(
+            _binding.searchBottomSheet.availableRadii.checkedChipId
+        )
+
+        moveCamera(
+            LatLng(address.latitude, address.longitude),
+            getZoomLevel(radius)
+        )
     }
 
     private fun moveCamera(location: LatLng, zoom: Float) {
@@ -355,15 +377,19 @@ class SearchFragment : Fragment() {
         )
     }
 
-    private fun onAddressSelected(address: Address) {
-        val radius = getSearchRadius(
-            _binding.searchBottomSheet.availableRadii.checkedChipId
+    private fun onAddressSelected(userAddress: UserAddress) {
+        _addressesBottomSheet.dismiss()
+        moveCamera(userAddress.source)
+    }
+
+    private fun onAddressTitleClick(view: View) {
+        _addressesBottomSheet = AddressesBottomSheetDialog(
+            requireContext(),
+            R.style.Theme_AnyJob_BottomSheetDialog,
+            ::onAddressSelected
         )
 
-        moveCamera(
-            LatLng(address.latitude, address.longitude),
-            getZoomLevel(radius)
-        )
+        _addressesBottomSheet.show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -383,8 +409,7 @@ class SearchFragment : Fragment() {
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
         _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearching)
         _binding.searchProgressBottomSheet.cancelButton.setOnClickListener(::onUserCancelSearching)
-
-        _activityViewModel.currentAddress.observe(this@SearchFragment, ::onAddressSelected)
+        _toolbar.setOnClickListener(::onAddressTitleClick)
 
         return _binding.root
     }
