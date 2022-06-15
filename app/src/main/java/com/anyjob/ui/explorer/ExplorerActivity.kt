@@ -14,6 +14,7 @@ import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBo
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -27,6 +28,8 @@ class ExplorerActivity : AppCompatActivity() {
         val navigationHost = supportFragmentManager.findFragmentById(_binding.explorerFragmentsContainer.id) as NavHostFragment
         navigationHost.navController
     }
+
+    private lateinit var _addressesBottomSheet: BottomSheetDialog
 
     private fun onDrawerOpenButtonClick(view: View) {
         _binding.drawerLayout.open()
@@ -66,16 +69,18 @@ class ExplorerActivity : AppCompatActivity() {
     }
 
     private fun onAddressSelected(userAddress: UserAddress) {
-        _viewModel.updateCurrentAddress(userAddress.source)
+        //_viewModel.updateCurrentAddress(userAddress.source)
+        _addressesBottomSheet.dismiss()
     }
 
     private fun onAddressTitleClick(view: View) {
-        AddressesBottomSheetDialog(
+        _addressesBottomSheet = AddressesBottomSheetDialog(
             this@ExplorerActivity,
             R.style.Theme_AnyJob_BottomSheetDialog,
             ::onAddressSelected
         )
-        .show()
+
+        _addressesBottomSheet.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
