@@ -56,7 +56,7 @@
                 android:layout_centerHorizontal="true"
                 android:backgroundTint="@color/light_gray"
                 android:clickable="true"
-                android:src="@drawable/ic_cancel_24"
+                android:src="@drawable/icon_cancel"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 tools:ignore="SpeakableTextPresentCheck" />
@@ -86,7 +86,7 @@
                 android:layout_centerHorizontal="true"
                 android:backgroundTint="@color/light_gray"
                 android:clickable="true"
-                android:src="@drawable/ic_local_phone_24"
+                android:src="@drawable/icon_local_phone"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 tools:ignore="SpeakableTextPresentCheck" />

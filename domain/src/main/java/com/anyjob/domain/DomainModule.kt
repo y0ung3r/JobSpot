@@ -5,6 +5,7 @@ import com.anyjob.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
 import com.anyjob.domain.profile.useCases.GetAuthorizedUserUseCase
+import com.anyjob.domain.search.useCases.SearchWorkerUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -17,6 +18,13 @@ val domainModule = module {
     factory {
         VerifyCodeUseCase(
             authorizationProvider = get()
+        )
+    }
+
+    factory {
+        SearchWorkerUseCase(
+            orderRepository = get(),
+            finder = get()
         )
     }
 

@@ -90,7 +90,7 @@
                 android:textSize="20sp"
                 app:rippleColor="@android:color/darker_gray"
                 app:cornerRadius="20dp"
-                app:icon="@drawable/ic_cancel_24"
+                app:icon="@drawable/icon_cancel"
                 app:iconGravity="textStart"
                 app:iconTint="@color/black"
                 style="@style/Widget.MaterialComponents.Button.TextButton" />

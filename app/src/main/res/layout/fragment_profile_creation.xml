@@ -101,7 +101,7 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         app:cornerRadius="20dp"
-        app:icon="@drawable/ic_arrow_forward_24"
+        app:icon="@drawable/icon_forward"
         app:iconGravity="end"
         app:iconTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"

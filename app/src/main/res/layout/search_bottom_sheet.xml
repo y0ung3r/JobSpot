@@ -50,7 +50,7 @@
                 android:textSize="20sp"
                 app:rippleColor="@android:color/darker_gray"
                 app:cornerRadius="20dp"
-                app:icon="@drawable/ic_arrow_forward_24"
+                app:icon="@drawable/icon_forward"
                 app:iconGravity="end"
                 app:iconTint="@color/black"
                 style="@style/Widget.MaterialComponents.Button.TextButton" />
@@ -147,7 +147,7 @@
                 android:letterSpacing="0"
                 app:cornerRadius="20dp"
                 app:backgroundTint="@color/black"
-                app:icon="@drawable/ic_baseline_search_24"
+                app:icon="@drawable/icon_search"
                 app:iconTint="@color/white"
                 app:iconGravity="textStart"
                 app:rippleColor="@android:color/darker_gray"

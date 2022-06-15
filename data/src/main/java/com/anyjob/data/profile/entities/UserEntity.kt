@@ -1,5 +1,6 @@
 package com.anyjob.data.profile.entities
 
+import com.anyjob.domain.profile.models.MapsAddress
 import com.google.firebase.database.Exclude
 import java.io.Serializable
 
@@ -37,4 +38,9 @@ internal class UserEntity : Serializable {
      * Определяет оказывает ли текущий пользователь услуги
      */
     var isWorker: Boolean = false
+
+    /**
+     * Домашний адрес
+     */
+    var address: MapsAddress? = null
 }

@@ -1,6 +1,7 @@
 package com.anyjob.ui.authorization
 
 import android.app.Activity
+import android.location.Address
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.domain.profile.models.MapsAddress
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
@@ -39,34 +41,44 @@ class ProfileCreationFragment : Fragment() {
         activity.finish()
     }
 
-    private fun isFieldValid(field: TextInputEditText): Boolean {
-        return field.error == null || (field.error != null && field.error.isBlank())
-    }
-
     private fun updateConfirmButton() {
-        _binding.confirmButton.isEnabled = isFieldValid(_binding.lastnameField) && isFieldValid(_binding.firstnameField)
+        val isLastnameValid = _viewModel.isLastnameFilled.value ?: false
+        val isFirstnameValid = _viewModel.isFirstnameFilled.value ?: false
+        val isAddressValid = _viewModel.isAddressFilled.value ?: false
+
+        _binding.confirmButton.isEnabled = isLastnameValid && isFirstnameValid && isAddressValid
     }
 
     private fun onLastnameValidating(isValid: Boolean) {
         if (!isValid) {
             _binding.lastnameField.error = getString(R.string.invalid_lastname)
         }
+
+        updateConfirmButton()
     }
 
     private fun onFirstnameValidating(isValid: Boolean) {
         if (!isValid) {
             _binding.firstnameField.error = getString(R.string.invalid_firstname)
         }
+
+        updateConfirmButton()
+    }
+
+    private fun onAddressValidating(isValid: Boolean) {
+        if (!isValid) {
+            _binding.selectHomeAddressButton.error = getString(R.string.invalid_home_address)
+        }
+
+        updateConfirmButton()
     }
 
     private fun onLastnameChanged(lastname: String) {
         _viewModel.validateLastname(lastname)
-        updateConfirmButton()
     }
 
     private fun onFirstnameChanged(firstname: String) {
         _viewModel.validateFirstname(firstname)
-        updateConfirmButton()
     }
 
     private fun onProfileCreated(result: Result<Unit>) {
@@ -82,6 +94,7 @@ class ProfileCreationFragment : Fragment() {
             _binding.firstnameField.isEnabled = true
             _binding.middlenameField.isEnabled = true
             _binding.isWorkerCheckBox.isEnabled = true
+            _binding.selectHomeAddressButton.isEnabled = true
         }
     }
 
@@ -91,24 +104,30 @@ class ProfileCreationFragment : Fragment() {
         _binding.firstnameField.isEnabled = false
         _binding.middlenameField.isEnabled = false
         _binding.isWorkerCheckBox.isEnabled = false
+        _binding.selectHomeAddressButton.isEnabled = false
 
         _activityViewModel.getAuthorizedUser().observeOnce(this@ProfileCreationFragment) { authorizedUser ->
             authorizedUser?.let {
-                val profileCreationParameters = ProfileCreationParameters(
-                    userId = it.id,
-                    lastname = _binding.lastnameField.text.toString(),
-                    firstname = _binding.firstnameField.text.toString(),
-                    middlename = _binding.middlenameField.text.toString(),
-                    isWorker = _binding.isWorkerCheckBox.isChecked
-                )
+                _viewModel.homeAddress.observeOnce(this@ProfileCreationFragment) { homeAddress ->
+                    val profileCreationParameters = ProfileCreationParameters(
+                        userId = it.id,
+                        lastname = _binding.lastnameField.text.toString(),
+                        firstname = _binding.firstnameField.text.toString(),
+                        middlename = _binding.middlenameField.text.toString(),
+                        isWorker = _binding.isWorkerCheckBox.isChecked,
+                        address = homeAddress
+                    )
 
-                _viewModel.createProfile(profileCreationParameters)
+                    _viewModel.createProfile(profileCreationParameters)
+                }
             }
         }
     }
 
     private fun onHomeAddressChanged(address: UserAddress) {
         _binding.selectHomeAddressButton.text = address.formattedAddress
+        _viewModel.validateAddress(address.source)
+        _viewModel.selectAddress(address.source)
         _addressesBottomSheet.dismiss()
     }
 
@@ -127,6 +146,7 @@ class ProfileCreationFragment : Fragment() {
 
         _viewModel.isLastnameFilled.observe(this@ProfileCreationFragment, ::onLastnameValidating)
         _viewModel.isFirstnameFilled.observe(this@ProfileCreationFragment, ::onFirstnameValidating)
+        _viewModel.isAddressFilled.observe(this@ProfileCreationFragment, ::onAddressValidating)
         _viewModel.onProfileCreated.observe(this@ProfileCreationFragment, ::onProfileCreated)
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)

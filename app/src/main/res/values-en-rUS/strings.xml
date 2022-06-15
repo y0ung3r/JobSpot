@@ -56,4 +56,5 @@
     <string name="one_kilometer_chip_text">1 km</string>
     <string name="five_hundred_meters_chip_text">500 m</string>
     <string name="home_address">Home address</string>
+    <string name="invalid_home_address">Invalid home address</string>
 </resources>

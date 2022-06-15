@@ -1,6 +1,7 @@
 package com.anyjob.domain.profile.interfaces
 
 import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.domain.profile.models.User
 
 /**
  * Определяет репозиторий пользователя
@@ -11,4 +12,9 @@ interface UserRepository {
      * @param parameters Личные данные пользователя
      */
     suspend fun createProfile(parameters: ProfileCreationParameters)
+
+    /**
+     * Возвращает список сотрудников, доступных для получения заказа
+     */
+    suspend fun getFreeWorkers(): List<User>
 }

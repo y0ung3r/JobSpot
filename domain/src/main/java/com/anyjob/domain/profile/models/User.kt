@@ -15,5 +15,6 @@ data class User(
     val lastname: String?,
     val firstname: String?,
     val middlename: String?,
-    val isWorker: Boolean
+    val isWorker: Boolean,
+    val address: MapsAddress?
 )

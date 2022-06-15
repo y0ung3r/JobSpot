@@ -40,7 +40,7 @@
         android:backgroundTint="@color/white"
         android:clickable="true"
         android:contentDescription="@string/current_location_description"
-        android:src="@drawable/ic_current_location_24"
+        android:src="@drawable/icon_location"
         app:borderWidth="0dp"
         app:fabSize="mini"
         android:gravity="bottom|start"

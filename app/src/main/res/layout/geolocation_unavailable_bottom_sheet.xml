@@ -63,7 +63,7 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_current_location_24"
+                android:src="@drawable/icon_location"
                 app:tint="@color/purple_500" />
 
             <Space
@@ -83,7 +83,7 @@
                 android:textSize="20sp"
                 app:backgroundTint="@color/black"
                 app:cornerRadius="20dp"
-                app:icon="@drawable/ic_baseline_settings_24"
+                app:icon="@drawable/icon_settings"
                 app:iconGravity="textStart"
                 app:iconTint="@color/white"
                 app:rippleColor="@android:color/darker_gray" />
