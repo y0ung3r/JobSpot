@@ -1,12 +1,13 @@
 package com.anyjob.domain.search.useCases
 
+import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.OrderCreationParameters
-import com.anyjob.domain.search.interfaces.Finder
+import com.anyjob.domain.search.interfaces.WorkerFinder
 import com.anyjob.domain.search.interfaces.OrderRepository
 
-class SearchWorkerUseCase(private val orderRepository: OrderRepository, private val finder: Finder) {
-    suspend fun execute(parameters: OrderCreationParameters) {
+class SearchWorkerUseCase(private val orderRepository: OrderRepository, private val finder: WorkerFinder) {
+    suspend fun execute(parameters: OrderCreationParameters, onWorkerFound: (User) -> Unit) {
         val order = orderRepository.createOrder(parameters)
-        finder.searchWorker(order)
+        finder.start(order, onWorkerFound)
     }
 }

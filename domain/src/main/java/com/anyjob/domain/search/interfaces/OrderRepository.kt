@@ -7,4 +7,6 @@ interface OrderRepository {
     suspend fun createOrder(parameters: OrderCreationParameters): Order
 
     suspend fun cancelOrder(orderId: String)
+
+    suspend fun removeOrder(orderId: String)
 }

@@ -6,7 +6,7 @@ import com.anyjob.data.profile.entities.UserEntity
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.profile.interfaces.UserRepository
 import com.anyjob.data.extensions.get
-import com.anyjob.data.extensions.list
+import com.anyjob.data.extensions.toList
 import com.anyjob.domain.profile.models.User
 
 internal class FirebaseUserRepository(private val context: FirebaseContext) : UserRepository {
@@ -23,8 +23,8 @@ internal class FirebaseUserRepository(private val context: FirebaseContext) : Us
         context.users.save(userId, storeUser)
     }
 
-    override suspend fun getFreeWorkers(): List<User> {
-        val freeWorkers = context.users.orderByChild("isWorker").equalTo(true).list<UserEntity>()
+    override suspend fun getAvailableWorkers(): List<User> {
+        val freeWorkers = context.users.orderByChild("isWorker").equalTo(true).toList<UserEntity>()
 
         return freeWorkers.map {
             User(

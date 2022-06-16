@@ -1,6 +1,7 @@
 package com.anyjob.data.search
 
 import com.anyjob.data.FirebaseContext
+import com.anyjob.data.extensions.get
 import com.anyjob.data.extensions.remove
 import com.anyjob.data.extensions.save
 import com.anyjob.data.search.entities.OrderEntity
@@ -30,6 +31,15 @@ internal class FirebaseOrderRepository(private val context: FirebaseContext) : O
     }
 
     override suspend fun cancelOrder(orderId: String) {
+        val order = context.orders.get<Order>(orderId)
+
+        if (order != null) {
+            order.isCanceled = true
+            context.orders.save(orderId, order)
+        }
+    }
+
+    override suspend fun removeOrder(orderId: String) {
         context.orders.remove(orderId)
     }
 }

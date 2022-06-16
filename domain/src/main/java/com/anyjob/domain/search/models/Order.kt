@@ -6,5 +6,6 @@ data class Order(
     val id: String,
     val invokerId: String,
     val address: MapsAddress,
-    val searchRadius: Double
+    val searchRadius: Double,
+    var isCanceled: Boolean = false
 )

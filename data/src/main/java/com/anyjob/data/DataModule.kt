@@ -2,11 +2,11 @@ package com.anyjob.data
 
 import com.anyjob.data.authorization.FirebasePhoneNumberAuthorizationProvider
 import com.anyjob.data.profile.FirebaseUserRepository
-import com.anyjob.data.search.DefaultFinder
+import com.anyjob.data.search.DefaultWorkerFinder
 import com.anyjob.data.search.FirebaseOrderRepository
 import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.anyjob.domain.profile.interfaces.UserRepository
-import com.anyjob.domain.search.interfaces.Finder
+import com.anyjob.domain.search.interfaces.WorkerFinder
 import com.anyjob.domain.search.interfaces.OrderRepository
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -35,8 +35,8 @@ val dataModule = module {
         )
     }
 
-    single<Finder> {
-        DefaultFinder(
+    single<WorkerFinder> {
+        DefaultWorkerFinder(
             userRepository = get()
         )
     }

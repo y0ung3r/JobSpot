@@ -16,5 +16,5 @@ interface UserRepository {
     /**
      * Возвращает список сотрудников, доступных для получения заказа
      */
-    suspend fun getFreeWorkers(): List<User>
+    suspend fun getAvailableWorkers(): List<User>
 }
