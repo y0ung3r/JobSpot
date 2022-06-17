@@ -18,6 +18,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
+import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.User
+import com.anyjob.domain.search.OrderCreationParameters
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.fade.FadeParameters
@@ -30,6 +33,7 @@ import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.User
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.getZoomLevel
+import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -345,6 +349,19 @@ class SearchFragment : Fragment() {
             R.string.search_progress_description,
             chip.text
         )
+
+        _activityViewModel.getAuthorizedUser().observeOnce(this@SearchFragment) { authorizedUser ->
+            authorizedUser?.also {
+                _viewModel.startWorkerSearching(
+                    OrderCreationParameters(
+                        invokerId = it.id,
+                        address = MapsAddress(position.latitude, position.longitude),
+                        radius.toDouble()
+                    ),
+                    ::onWorkerFound
+                )
+            }
+        }
     }
 
     private fun onUserCancelSearching(button: View) {
@@ -375,6 +392,14 @@ class SearchFragment : Fragment() {
             position,
             getZoomLevel(radius)
         )
+
+        _viewModel.orderId.observeOnce(this@SearchFragment) { orderId ->
+            _viewModel.cancelWorkerSearching(orderId)
+        }
+    }
+
+    private fun onWorkerFound(worker: User) {
+
     }
 
     private fun onAddressSelected(userAddress: UserAddress) {

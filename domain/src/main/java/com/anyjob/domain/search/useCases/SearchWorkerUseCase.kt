@@ -6,8 +6,9 @@ import com.anyjob.domain.search.interfaces.WorkerFinder
 import com.anyjob.domain.search.interfaces.OrderRepository
 
 class SearchWorkerUseCase(private val orderRepository: OrderRepository, private val finder: WorkerFinder) {
-    suspend fun execute(parameters: OrderCreationParameters, onWorkerFound: (User) -> Unit) {
+    suspend fun execute(parameters: OrderCreationParameters, onWorkerFound: (User) -> Unit): String {
         val order = orderRepository.createOrder(parameters)
         finder.start(order, onWorkerFound)
+        return order.id
     }
 }

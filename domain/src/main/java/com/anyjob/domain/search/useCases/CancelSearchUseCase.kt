@@ -5,7 +5,7 @@ import com.anyjob.domain.search.interfaces.WorkerFinder
 
 class CancelSearchUseCase(private val orderRepository: OrderRepository, private val finder: WorkerFinder) {
     suspend fun execute(orderId: String) {
-        orderRepository.removeOrder(orderId)
+        orderRepository.cancelOrder(orderId)
         finder.stop()
     }
 }

@@ -6,7 +6,9 @@ import com.anyjob.domain.search.interfaces.WorkerFinder
 import com.anyjob.domain.search.models.Order
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 internal class DefaultWorkerFinder(private val userRepository: UserRepository) : WorkerFinder {
     private var _stopped: Boolean = true
@@ -36,7 +38,9 @@ internal class DefaultWorkerFinder(private val userRepository: UserRepository) :
         _stopped = false
 
         coroutineScope {
-            internalStart(order, onWorkerFound)
+            withContext(Dispatchers.Default) {
+                internalStart(order, onWorkerFound)
+            }
         }
     }
 

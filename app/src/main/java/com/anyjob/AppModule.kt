@@ -40,6 +40,9 @@ val appModule = module {
     }
 
     viewModel {
-        SearchViewModel()
+        SearchViewModel(
+            searchWorkerUseCase = get(),
+            cancelSearchUseCase = get()
+        )
     }
 }
