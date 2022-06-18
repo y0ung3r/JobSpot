@@ -43,7 +43,8 @@ val dataModule = module {
 
     factory<UserRepository> {
         FirebaseUserRepository(
-            context = get()
+            context = get(),
+            firebaseProvider = get()
         )
     }
 

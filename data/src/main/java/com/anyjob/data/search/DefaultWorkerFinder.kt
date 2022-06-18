@@ -1,5 +1,6 @@
 package com.anyjob.data.search
 
+import android.location.Location
 import com.anyjob.domain.profile.interfaces.UserRepository
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.interfaces.WorkerFinder
@@ -28,7 +29,9 @@ internal class DefaultWorkerFinder(private val userRepository: UserRepository) :
         }
 
         if (foundWorker != null) {
-            onWorkerFound(foundWorker)
+            withContext(Dispatchers.Main) {
+                onWorkerFound.invoke(foundWorker)
+            }
         }
     }
 

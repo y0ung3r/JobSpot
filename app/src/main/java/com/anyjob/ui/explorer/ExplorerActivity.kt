@@ -82,4 +82,8 @@ class ExplorerActivity : AppCompatActivity() {
         setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
         binding.navigationView.setupWithNavController(_navigationController)*/
     }
+
+    override fun onBackPressed() {
+        // Ignore...
+    }
 }

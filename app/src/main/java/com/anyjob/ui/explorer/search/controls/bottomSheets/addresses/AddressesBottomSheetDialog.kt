@@ -41,6 +41,7 @@ class AddressesBottomSheetDialog(
                     Locale.getDefault()
                 )
 
+                // TODO: Переписать поиск адреса с использованием Google Location API
                 val addresses = withContext(Dispatchers.Default) {
                     geocoder.getFromLocationName(address, maxResults)
                 }

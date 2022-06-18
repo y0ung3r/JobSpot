@@ -1,7 +1,6 @@
 package com.anyjob.data.profile.entities
 
 import com.anyjob.domain.profile.models.MapsAddress
-import com.google.firebase.database.Exclude
 import java.io.Serializable
 
 /**
@@ -11,7 +10,6 @@ internal class UserEntity : Serializable {
     /**
      * Идентификатор пользователя
      */
-    @get:Exclude
     var id: String? = null
 
     /**

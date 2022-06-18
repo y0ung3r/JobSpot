@@ -6,10 +6,18 @@ import com.anyjob.data.profile.entities.UserEntity
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.profile.interfaces.UserRepository
 import com.anyjob.data.extensions.get
+import com.anyjob.data.extensions.notEqualTo
 import com.anyjob.data.extensions.toList
+import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.anyjob.domain.profile.models.User
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-internal class FirebaseUserRepository(private val context: FirebaseContext) : UserRepository {
+internal class FirebaseUserRepository(
+    private val context: FirebaseContext,
+    private val firebaseProvider: FirebaseAuth
+) : UserRepository {
     override suspend fun createProfile(parameters: ProfileCreationParameters) {
         val userId = parameters.userId
         val storeUser = context.users.get<UserEntity>(userId)?.apply {
@@ -24,9 +32,16 @@ internal class FirebaseUserRepository(private val context: FirebaseContext) : Us
     }
 
     override suspend fun getAvailableWorkers(): List<User> {
-        val freeWorkers = context.users.orderByChild("isWorker").equalTo(true).toList<UserEntity>()
+        val currentUser = firebaseProvider.currentUser ?: return emptyList()
+        val availableWorkers = context.users
+            .orderByChild("worker")
+            .equalTo(true)
+            .toList<UserEntity>()
+            .filterNot {
+                it.id.equals(currentUser.uid) // Спасибо Google за то, что нельзя фильтровать по нескольким полям :)
+            }
 
-        return freeWorkers.map {
+        return availableWorkers.map {
             User(
                 id = it.id!!,
                 phoneNumber = it.phoneNumber!!,

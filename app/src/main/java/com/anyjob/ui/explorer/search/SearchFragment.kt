@@ -5,17 +5,16 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.domain.profile.models.MapsAddress
@@ -43,7 +42,6 @@ import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
@@ -65,6 +63,10 @@ class SearchFragment : Fragment() {
     private val _toolbar by lazy {
         val activity = requireActivity() as ExplorerActivity
         return@lazy activity.binding.toolbar
+    }
+
+    private val _navigationController by lazy {
+        findNavController()
     }
 
     private val _mapView by lazy {
@@ -364,6 +366,11 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun onWorkerFound(worker: User) {
+        _activityViewModel.setWorker(worker)
+        _navigationController.navigate(R.id.path_to_order_overview_fragment_from_navigation_search)
+    }
+
     private fun onUserCancelSearching(button: View) {
         _binding.currentLocationButton.fade(
             FadeParameters().apply {
@@ -394,10 +401,6 @@ class SearchFragment : Fragment() {
         )
 
         _viewModel.cancelWorkerSearching()
-    }
-
-    private fun onWorkerFound(worker: User) {
-
     }
 
     private fun onAddressSelected(userAddress: UserAddress) {
