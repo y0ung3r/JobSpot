@@ -28,4 +28,9 @@ internal class OrderEntity : Serializable {
      * Радиус поиска (в метрах)
      */
     var searchRadius: Double? = null
+
+    /**
+     * Отменен ли вызов
+     */
+    var isCanceled: Boolean = false
 }

@@ -393,9 +393,7 @@ class SearchFragment : Fragment() {
             getZoomLevel(radius)
         )
 
-        _viewModel.orderId.observeOnce(this@SearchFragment) { orderId ->
-            _viewModel.cancelWorkerSearching(orderId)
-        }
+        _viewModel.cancelWorkerSearching()
     }
 
     private fun onWorkerFound(worker: User) {

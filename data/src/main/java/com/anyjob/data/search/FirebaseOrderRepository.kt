@@ -26,12 +26,13 @@ internal class FirebaseOrderRepository(private val context: FirebaseContext) : O
             id = orderId,
             invokerId = parameters.invokerId,
             address = parameters.address,
-            searchRadius = parameters.searchRadius
+            searchRadius = parameters.searchRadius,
+            isCanceled = false
         )
     }
 
     override suspend fun cancelOrder(orderId: String) {
-        val order = context.orders.get<Order>(orderId)
+        val order = context.orders.get<OrderEntity>(orderId)
 
         if (order != null) {
             order.isCanceled = true

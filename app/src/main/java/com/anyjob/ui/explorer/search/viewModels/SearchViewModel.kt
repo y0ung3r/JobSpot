@@ -25,9 +25,11 @@ class SearchViewModel(
         }
     }
 
-    fun cancelWorkerSearching(orderId: String) {
+    fun cancelWorkerSearching() {
         viewModelScope.launch {
-            cancelSearchUseCase.execute(orderId)
+            orderId.value?.also {
+                cancelSearchUseCase.execute(it)
+            }
         }
     }
 }
