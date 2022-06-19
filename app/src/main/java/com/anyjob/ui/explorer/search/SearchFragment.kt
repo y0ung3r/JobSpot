@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
@@ -59,6 +60,10 @@ class SearchFragment : Fragment() {
     private lateinit var _googleMap: GoogleMap
     private lateinit var _addressesBottomSheet: BottomSheetDialog
     private var _searchRadiiViews = ArrayList<Circle>()
+
+    private val _fragmentHost by lazy {
+        requireActivity().findViewById<FragmentContainerView>(R.id.explorer_fragments_container)
+    }
 
     private val _toolbar by lazy {
         val activity = requireActivity() as ExplorerActivity
@@ -181,10 +186,12 @@ class SearchFragment : Fragment() {
                 _binding.searchBottomSheet.availableRadii.checkedChipId
             )
 
-            moveCamera(
-                LatLng(location.latitude, location.longitude),
-                getZoomLevel(radius)
-            )
+            if (location != null) {
+                moveCamera(
+                    LatLng(location.latitude, location.longitude),
+                    getZoomLevel(radius)
+                )
+            }
         }
     }
 
@@ -357,11 +364,17 @@ class SearchFragment : Fragment() {
                 _viewModel.startWorkerSearching(
                     OrderCreationParameters(
                         invokerId = it.id,
-                        address = MapsAddress(position.latitude, position.longitude),
+                        address = MapsAddress(
+                            position.latitude,
+                            position.longitude
+                        ),
                         radius.toDouble()
                     ),
                     ::onWorkerFound
                 )
+                .observeOnce(this@SearchFragment) { order ->
+                    _activityViewModel.setOrder(order)
+                }
             }
         }
     }
@@ -400,7 +413,9 @@ class SearchFragment : Fragment() {
             getZoomLevel(radius)
         )
 
-        _viewModel.cancelWorkerSearching()
+        _activityViewModel.order.observeOnce(this@SearchFragment) { order ->
+            _viewModel.cancelWorkerSearching(order)
+        }
     }
 
     private fun onAddressSelected(userAddress: UserAddress) {
@@ -423,6 +438,8 @@ class SearchFragment : Fragment() {
 
         _mapView.getMapAsync(::onMapReady)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
+
+        _fragmentHost.fitsSystemWindows = true
 
         _searchBottomSheetBehavior.apply {
             addBottomSheetCallback(_searchBottomSheetCallback)

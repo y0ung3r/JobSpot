@@ -4,7 +4,7 @@ import com.google.firebase.database.Query
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.tasks.await
 
-internal suspend inline fun <reified TEntity> Query.toList(): List<TEntity> {
+internal suspend inline fun <reified TEntity> Query.asList(): List<TEntity> {
     val querySnapshot = get().await()
     val entities = ArrayList<TEntity>()
 

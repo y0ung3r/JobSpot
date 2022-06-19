@@ -22,7 +22,7 @@
         android:layout_margin="8dp">
 
         <TextView
-            android:id="@+id/address_title"
+            android:id="@+id/address_primary_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -31,10 +31,10 @@
             tools:text="Lorem Ipsum" />
 
         <TextView
-            android:id="@+id/address_admin_area"
+            android:id="@+id/address_secondary_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/address_title"
+            android:layout_below="@id/address_primary_text"
             android:textSize="14sp"
             tools:text="Lorem Ipsum" />
 

@@ -30,7 +30,7 @@ class GeolocationUnavailableBottomSheetDialog(context: Context, theme: Int) : Bo
             Bundle.EMPTY
         )
 
-        hide()
+        dismiss()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

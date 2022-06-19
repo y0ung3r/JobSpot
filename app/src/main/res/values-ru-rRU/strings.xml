@@ -57,4 +57,18 @@
     <string name="five_hundred_meters_chip_text">500 м</string>
     <string name="home_address">Адрес проживания</string>
     <string name="invalid_home_address">Некорректный домашний адрес</string>
+    <string name="call_a_worker">Позвонить специалисту</string>
+    <string name="you_received_an_order_prompt">Вам поступил заказ</string>
+    <string name="cancel_order">Отменить заказ</string>
+    <string name="address_prompt">Адрес</string>
+    <string name="received_your_order_prompt">принял Ваш запрос</string>
+    <string name="accept_button_prompt">Принять</string>
+    <string name="finish_order">Завершить</string>
+    <string name="call_a_client">Позвонить клиенту</string>
+    <string name="cancel_order_alert_title">Подтвердите отмену заказа</string>
+    <string name="cancel_order_alert_description">Вы уверены, что хотите отменить заказ?</string>
+    <string name="cancel_entry_action">Отмена</string>
+    <string name="order_finished_alert_title">Заказ завершен</string>
+    <string name="rate_your_client_description">Пожалуйста, оцените Вашего клиента</string>
+    <string name="rate_worker_description">Пожалуйста, оцените специалиста</string>
 </resources>

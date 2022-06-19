@@ -35,7 +35,16 @@ val appModule = module {
 
     viewModel {
         ExplorerViewModel(
-            getAuthorizedUserUseCase = get()
+            getAuthorizedUserUseCase = get(),
+            searchClientUseCase = get(),
+            acceptJobUseCase = get(),
+            getExecutedOrderUseCase = get(),
+            cancelOrderUseCase = get(),
+            getOrderExecutorUseCase = get(),
+            getOrderInvokerUseCase = get(),
+            checkOrderStateUseCase = get(),
+            finishOrderUseCase = get(),
+            addRateToUserUseCase = get()
         )
     }
 

@@ -17,4 +17,8 @@ interface UserRepository {
      * Возвращает список сотрудников, доступных для получения заказа
      */
     suspend fun getAvailableWorkers(): List<User>
+
+    suspend fun addRateToUser(userId: String, rate: Float)
+
+    suspend fun getUser(id: String): User?
 }

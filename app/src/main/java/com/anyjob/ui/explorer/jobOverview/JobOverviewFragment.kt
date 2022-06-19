@@ -1,5 +1,6 @@
-package com.anyjob.ui.explorer.orderOverview
+package com.anyjob.ui.explorer.jobOverview
 
+import android.app.ActionBar
 import android.app.AlertDialog
 import android.content.Intent
 import android.location.Geocoder
@@ -16,7 +17,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
-import com.anyjob.databinding.FragmentOrderOverviewBinding
+import com.anyjob.databinding.FragmentJobOverviewBinding
 import com.anyjob.domain.profile.models.MapsAddress
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.models.Order
@@ -32,11 +33,11 @@ import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
-class OrderOverviewFragment : Fragment() {
+class JobOverviewFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
     private val _viewModel by viewModel<OrderOverviewViewModel>()
 
-    private lateinit var _binding: FragmentOrderOverviewBinding
+    private lateinit var _binding: FragmentJobOverviewBinding
     private val _navigationController by lazy {
         findNavController()
     }
@@ -48,10 +49,6 @@ class OrderOverviewFragment : Fragment() {
     private val _toolbar by lazy {
         val activity = requireActivity() as ExplorerActivity
         return@lazy activity.binding.toolbar
-    }
-
-    private fun fillWorkerName(firstname: String) {
-        _binding.orderOverviewWorkerName.text = firstname
     }
 
     private fun fillAddress(address: MapsAddress) {
@@ -85,34 +82,37 @@ class OrderOverviewFragment : Fragment() {
             )
             .setTitle(R.string.cancel_order_alert_title)
             .setMessage(R.string.cancel_order_alert_description)
-            .setPositiveButton("Подтвердить") { dialog, id ->
+            .setPositiveButton(R.string.confirm_entry_action) { dialog, id ->
                 _activityViewModel.cancelOrder(order)
             }
-            .setNegativeButton("Отмена") { dialog, id ->
+            .setNegativeButton(R.string.cancel_entry_action) { dialog, id ->
                 dialog.cancel()
             }
 
         confirmationDialog.show()
     }
 
-    private fun onOrderReady(worker: User, order: Order) {
+    private fun onOrderReady(client: User, order: Order) {
+        _binding.callButton.setOnClickListener {
+            onCall(client)
+        }
+
         _activityViewModel.startOrderChecker(order) { isFinished, isCanceled ->
-            onOrderChanged(worker, isFinished, isCanceled)
+            onOrderChanged(client, isFinished, isCanceled)
         }
 
         _binding.cancelButton.setOnClickListener {
             onCancel(order)
         }
 
-        _binding.callButton.setOnClickListener {
-            onCall(worker)
+        _binding.finishButton.setOnClickListener {
+            _activityViewModel.finishOrder(order)
         }
 
-        fillWorkerName(worker.firstname!!)
         fillAddress(order.address)
     }
 
-    private fun showRatingDialog(worker: User) {
+    private fun showRatingDialog(client: User) {
         val context = requireContext()
 
         val ratingBarContainer = LinearLayout(context)
@@ -128,10 +128,10 @@ class OrderOverviewFragment : Fragment() {
             R.style.Theme_AnyJob_AlertDialog
         )
         .setTitle(R.string.order_finished_alert_title)
-        .setMessage(R.string.rate_worker_description)
+        .setMessage(R.string.rate_your_client_description)
         .setView(ratingBarContainer)
         .setPositiveButton(R.string.confirm_entry_action) { dialog, id ->
-            _activityViewModel.addRateToUser(worker, ratingBar.rating)
+            _activityViewModel.addRateToUser(client, ratingBar.rating)
         }
         .setNegativeButton(R.string.cancel_entry_action) { dialog, id ->
             dialog.cancel()
@@ -140,27 +140,27 @@ class OrderOverviewFragment : Fragment() {
         ratingDialog.show()
     }
 
-    private fun onOrderChanged(worker: User, isFinished: Boolean, isCanceled: Boolean) {
+    private fun onOrderChanged(client: User, isFinished: Boolean, isCanceled: Boolean) {
         if (isFinished) {
-            showRatingDialog(worker)
+            showRatingDialog(client)
         }
 
         if (isFinished || isCanceled) {
-            _navigationController.navigate(R.id.path_to_navigation_search_from_order_overview_fragment)
+            _navigationController.navigate(R.id.path_to_navigation_search_from_job_overview_fragment)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentOrderOverviewBinding.inflate(inflater, container, false)
+        _binding = FragmentJobOverviewBinding.inflate(inflater, container, false)
 
         _fragmentHost.fitsSystemWindows = false
         _toolbar.title = null
         _toolbar.subtitle = null
         _toolbar.setOnClickListener(null)
 
-        _activityViewModel.order.observeOnce(this@OrderOverviewFragment) { order ->
-            _activityViewModel.worker.observeOnce(this@OrderOverviewFragment) { worker ->
-                onOrderReady(worker, order)
+        _activityViewModel.order.observeOnce(this@JobOverviewFragment) { order ->
+            _activityViewModel.client.observeOnce(this@JobOverviewFragment) { client ->
+                onOrderReady(client, order)
             }
         }
 

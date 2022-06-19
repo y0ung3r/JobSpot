@@ -41,4 +41,9 @@ internal class UserEntity : Serializable {
      * Домашний адрес
      */
     var address: MapsAddress? = null
+
+    /**
+     * Оценки пользователя
+     */
+    var rates: ArrayList<Float> = arrayListOf(5.0f)
 }

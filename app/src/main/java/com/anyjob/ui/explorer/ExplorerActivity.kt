@@ -1,17 +1,24 @@
 package com.anyjob.ui.explorer
 
 import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.anyjob.R
 import com.anyjob.databinding.ActivityExplorerBinding
+import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
+import com.anyjob.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
@@ -30,17 +37,67 @@ class ExplorerActivity : AppCompatActivity() {
         binding.drawerLayout.open()
     }
 
+    private fun onWorkerAcceptOrder(order: Order) {
+        _navigationController.navigate(R.id.path_to_job_overview_fragment_from_navigation_search)
+    }
+
+    private fun onClientFound(order: Order) {
+        _viewModel.setOrder(order)
+        _viewModel.setClient(order)
+
+        val geocoder = Geocoder(
+            this@ExplorerActivity,
+            Locale.getDefault()
+        )
+
+        lifecycleScope.launch {
+            val address = withContext(Dispatchers.Default) {
+                geocoder.getFromLocation(order.address.latitude, order.address.longitude, 1)[0]
+            }
+
+            val street = address.thoroughfare
+            val houseNumber = address.subThoroughfare
+
+            AcceptJobBottomSheetDialog(
+                _viewModel,
+                order,
+                "$street, $houseNumber",
+                ::onClientFound,
+                ::onWorkerAcceptOrder,
+                this@ExplorerActivity,
+                R.style.Theme_AnyJob_BottomSheetDialog,
+            )
+            .show()
+        }
+    }
+
     private fun onUserReady(user: AuthorizedUser?) {
         if (user != null) {
             val locale = Locale.getDefault()
             val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
-            val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+            val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
+            val phoneNumberField =
+                binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
 
             fullnameField.text = user.fullname
+            ratingField.text = "%.1f".format(user.averageRate)
             phoneNumberField.text = PhoneNumberUtils.formatNumber(
                 user.phoneNumber,
                 locale.country
             )
+
+            if (user.currentOrder != null && user.currentOrder.invokerId == user.id) {
+                return _navigationController.navigate(R.id.path_to_order_overview_fragment_from_navigation_search)
+            }
+            else if (user.currentOrder != null && user.currentOrder.executorId == user.id) {
+                return _navigationController.navigate(R.id.path_to_job_overview_fragment_from_navigation_search)
+            }
+
+            if (user.isWorker) {
+                _viewModel.startClientSearching {
+                    onClientFound(it)
+                }
+            }
         }
     }
 

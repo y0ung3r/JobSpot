@@ -5,44 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    tools:context=".ui.explorer.orderOverview.OrderOverviewFragment">
-
-    <TextView
-        android:id="@+id/order_overview_worker_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:gravity="center"
-        tools:text="Имя"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/order_overview_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:gravity="center"
-        android:text="@string/received_your_order_prompt"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_overview_worker_name" />
+    tools:context=".ui.explorer.jobOverview.JobOverviewFragment">
 
     <LinearLayout
-        android:id="@+id/order_overview_buttons_layout"
+        android:id="@+id/job_overview_buttons_layout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="64dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/order_overview_title">
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -99,7 +72,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="@string/call_a_worker"
+                android:text="@string/call_a_client"
                 android:textSize="14sp" />
 
         </RelativeLayout>
@@ -117,7 +90,7 @@
         app:contentPadding="14dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_overview_buttons_layout">
+        app:layout_constraintTop_toBottomOf="@id/job_overview_buttons_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -145,6 +118,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -173,11 +147,33 @@
                 android:id="@+id/address_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:text="ул. Пушкина, дом колотушкина"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                tools:text="ул. Пушкина, дом колотушкина" />
 
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/finish_button"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:letterSpacing="0"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:text="@string/finish_order"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:backgroundTint="@color/black"
+        app:cornerRadius="20dp"
+        app:icon="@drawable/icon_done"
+        app:iconGravity="textStart"
+        app:iconTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView"
+        app:rippleColor="@android:color/darker_gray" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

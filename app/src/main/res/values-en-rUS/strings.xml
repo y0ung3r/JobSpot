@@ -57,4 +57,18 @@
     <string name="five_hundred_meters_chip_text">500 m</string>
     <string name="home_address">Home address</string>
     <string name="invalid_home_address">Invalid home address</string>
+    <string name="cancel_order">Cancel order</string>
+    <string name="address_prompt">Address</string>
+    <string name="received_your_order_prompt">received your order</string>
+    <string name="accept_button_prompt">Accept</string>
+    <string name="you_received_an_order_prompt">You received an order</string>
+    <string name="call_a_worker">Call a worker</string>
+    <string name="finish_order">Finish order</string>
+    <string name="call_a_client">Call a client</string>
+    <string name="cancel_order_alert_title">Confirm order cancellation</string>
+    <string name="cancel_order_alert_description">Are you sure you want to cancel the order?</string>
+    <string name="cancel_entry_action">Cancel</string>
+    <string name="order_finished_alert_title">Order completed</string>
+    <string name="rate_your_client_description">Please rate your client</string>
+    <string name="rate_worker_description">Please rate worker</string>
 </resources>

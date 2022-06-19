@@ -29,12 +29,12 @@ class AddressesAdapter(
         private val view: View,
         private val onClick: ((UserAddress) -> Unit)? = null
     ) : RecyclerView.ViewHolder(view) {
-        private val addressTitle: TextView = view.findViewById(R.id.address_title)
-        private val addressAdminArea: TextView = view.findViewById(R.id.address_admin_area)
-        private var currentAddress: Address? = null
+        private val _addressTitle: TextView = view.findViewById(R.id.address_primary_text)
+        private val _addressSubtitle: TextView = view.findViewById(R.id.address_secondary_text)
+        private var _currentAddress: Address? = null
 
         fun bind(address: Address) {
-            currentAddress = address
+            _currentAddress = address
 
             val houseAddressLines = listOfNotNull(
                 address.thoroughfare,
@@ -52,20 +52,20 @@ class AddressesAdapter(
             val region = adminAreaLines.joinToString(", ")
 
             if (houseAddress.isNotBlank()) {
-                addressTitle.text = houseAddress
-                addressAdminArea.text = region
+                _addressTitle.text = houseAddress
+                _addressSubtitle.text = region
             }
             else {
-                addressTitle.text = city
-                addressAdminArea.text = adminAreaLines.drop(1).joinToString(", ")
+                _addressTitle.text = city
+                _addressSubtitle.text = adminAreaLines.drop(1).joinToString(", ")
             }
 
             if (onClick != null) {
                 view.setOnClickListener {
-                    currentAddress?.also {
+                    _currentAddress?.also {
                         val userAddress = UserAddress(
                             source = it,
-                            formattedAddress = addressTitle.text.toString()
+                            formattedAddress = _addressTitle.text.toString()
                         )
 
                         onClick.invoke(userAddress)
