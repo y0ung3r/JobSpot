@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ToolbarTitleStyle" parent="@style/TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ToolbarSubtitleStyle" parent="@style/TextAppearance.MaterialComponents.Headline3">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="BottomSheetStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">40dp</item>
+        <item name="cornerSizeTopLeft">40dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="BottomSheetDialogStyle">
+        <item name="backgroundTint">@android:color/transparent</item>
+    </style>
+
+    <style name="AlertDialogStyle" parent="">
+        <item name="cornerSize">20dp</item>
+    </style>
+
+    <style name="ChipChoiceStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_choice_colors</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="checkedIconTint">@color/purple_500</item>
+    </style>
+</resources>

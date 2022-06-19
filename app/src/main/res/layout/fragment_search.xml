@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.explorer.search.SearchFragment">
+
+    <com.anyjob.ui.explorer.search.controls.MapPin
+        android:id="@+id/map_pin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="fill"
+        tools:context=".ui.explorer.search.SearchFragment">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/light_gray" />
+
+    </com.anyjob.ui.explorer.search.controls.MapPin>
+
+    <include
+        android:id="@+id/search_bottom_sheet"
+        layout="@layout/search_bottom_sheet" />
+
+    <include
+        android:id="@+id/search_progress_bottom_sheet"
+        layout="@layout/search_progress_bottom_sheet"
+        android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/current_location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:contentDescription="@string/current_location_description"
+        android:src="@drawable/icon_location"
+        app:borderWidth="0dp"
+        app:fabSize="mini"
+        android:gravity="bottom|start"
+        app:layout_anchor="@id/bottom_sheet"
+        app:layout_anchorGravity="start"
+        app:layout_dodgeInsetEdges="bottom"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
