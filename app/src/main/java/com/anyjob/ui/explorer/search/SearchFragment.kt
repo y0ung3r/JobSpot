@@ -21,6 +21,7 @@ import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.domain.profile.models.MapsAddress
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.OrderCreationParameters
+import com.anyjob.domain.services.models.Service
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.fade.FadeParameters
@@ -30,6 +31,7 @@ import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
+import com.anyjob.ui.explorer.search.controls.bottomSheets.services.ServicesBottomSheetDialog
 import com.anyjob.ui.explorer.search.viewModels.SearchViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.anyjob.ui.extensions.getZoomLevel
@@ -59,6 +61,7 @@ class SearchFragment : Fragment() {
     private lateinit var _binding: FragmentSearchBinding
     private lateinit var _googleMap: GoogleMap
     private lateinit var _addressesBottomSheet: BottomSheetDialog
+    private lateinit var _servicesBottomSheet: BottomSheetDialog
     private var _searchRadiiViews = ArrayList<Circle>()
 
     private val _fragmentHost by lazy {
@@ -361,19 +364,22 @@ class SearchFragment : Fragment() {
 
         _activityViewModel.getAuthorizedUser().observeOnce(this@SearchFragment) { authorizedUser ->
             authorizedUser?.also {
-                _viewModel.startWorkerSearching(
-                    OrderCreationParameters(
-                        invokerId = it.id,
-                        address = MapsAddress(
-                            position.latitude,
-                            position.longitude
+                _viewModel.service.observeOnce(this@SearchFragment) { service ->
+                    _viewModel.startWorkerSearching(
+                        OrderCreationParameters(
+                            invokerId = it.id,
+                            address = MapsAddress(
+                                position.latitude,
+                                position.longitude
+                            ),
+                            radius.toDouble(),
+                            service
                         ),
-                        radius.toDouble()
-                    ),
-                    ::onWorkerFound
-                )
-                .observeOnce(this@SearchFragment) { order ->
-                    _activityViewModel.setOrder(order)
+                        ::onWorkerFound
+                    )
+                    .observeOnce(this@SearchFragment) { order ->
+                        _activityViewModel.setOrder(order)
+                    }
                 }
             }
         }
@@ -433,6 +439,26 @@ class SearchFragment : Fragment() {
         _addressesBottomSheet.show()
     }
 
+    private fun onServiceSelected(service: Service) {
+        _viewModel.setService(service)
+        _binding.searchBottomSheet.selectServiceButton.text = service.title
+        _binding.searchBottomSheet.startSearchingButton.visibility = View.VISIBLE
+        _servicesBottomSheet.dismiss()
+    }
+
+    private fun openServicesBottomSheet(view: View) {
+        _viewModel.getServicesList().observe(this@SearchFragment) { services ->
+            _servicesBottomSheet = ServicesBottomSheetDialog(
+                requireContext(),
+                R.style.Theme_AnyJob_BottomSheetDialog,
+                services,
+                ::onServiceSelected
+            )
+
+            _servicesBottomSheet.show()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
@@ -449,6 +475,7 @@ class SearchFragment : Fragment() {
 
         _searchProgressBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
+        _binding.searchBottomSheet.selectServiceButton.setOnClickListener(::openServicesBottomSheet)
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
         _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearching)
         _binding.searchProgressBottomSheet.cancelButton.setOnClickListener(::onUserCancelSearching)

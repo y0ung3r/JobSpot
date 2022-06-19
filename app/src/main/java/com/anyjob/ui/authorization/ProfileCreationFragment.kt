@@ -1,7 +1,6 @@
 package com.anyjob.ui.authorization
 
 import android.app.Activity
-import android.location.Address
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
-import com.anyjob.domain.profile.models.MapsAddress
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
@@ -19,7 +17,6 @@ import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.User
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
-import com.google.android.material.textfield.TextInputEditText
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 

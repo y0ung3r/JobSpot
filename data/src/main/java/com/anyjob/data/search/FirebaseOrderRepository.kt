@@ -25,6 +25,7 @@ internal class FirebaseOrderRepository(
             invokerId = parameters.invokerId
             address = parameters.address
             searchRadius = parameters.searchRadius
+            service = parameters.service
         }
 
         context.orders.save(orderId, order)
@@ -35,7 +36,8 @@ internal class FirebaseOrderRepository(
             address = parameters.address,
             searchRadius = parameters.searchRadius,
             isCanceled = false,
-            isFinished = false
+            isFinished = false,
+            service = parameters.service
         )
     }
 
@@ -65,7 +67,8 @@ internal class FirebaseOrderRepository(
             searchRadius = order.searchRadius!!,
             isCanceled = order.isCanceled,
             isFinished = order.isFinished,
-            excludedExecutors = order.excludedExecutors
+            excludedExecutors = order.excludedExecutors,
+            service = order.service!!
         )
     }
 
@@ -80,7 +83,8 @@ internal class FirebaseOrderRepository(
             searchRadius = order.searchRadius!!,
             isCanceled = order.isCanceled,
             isFinished = order.isFinished,
-            excludedExecutors = order.excludedExecutors
+            excludedExecutors = order.excludedExecutors,
+            service = order.service!!
         )
     }
 
@@ -154,7 +158,8 @@ internal class FirebaseOrderRepository(
                 searchRadius = it.searchRadius!!,
                 isCanceled = it.isCanceled,
                 isFinished = it.isFinished,
-                excludedExecutors = it.excludedExecutors
+                excludedExecutors = it.excludedExecutors,
+                service = it.service!!
             )
         }
     }

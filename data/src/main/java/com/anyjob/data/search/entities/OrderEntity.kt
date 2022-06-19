@@ -2,6 +2,7 @@ package com.anyjob.data.search.entities
 
 import com.anyjob.data.profile.entities.UserEntity
 import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.services.models.Service
 import java.io.Serializable
 
 /**
@@ -47,4 +48,6 @@ internal class OrderEntity : Serializable {
      * Список идентификаторов исполнителей, которые не могут получить данный заказ
      */
     var excludedExecutors: ArrayList<String> = arrayListOf()
+
+    var service: Service? = null
 }

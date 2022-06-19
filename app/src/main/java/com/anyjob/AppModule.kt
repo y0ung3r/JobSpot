@@ -51,7 +51,8 @@ val appModule = module {
     viewModel {
         SearchViewModel(
             searchWorkerUseCase = get(),
-            cancelSearchUseCase = get()
+            cancelSearchUseCase = get(),
+            getServicesUseCase = get()
         )
     }
 }

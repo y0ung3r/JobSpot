@@ -4,13 +4,6 @@
 
     <group
         android:id="@+id/first_group"
-        android:checkableBehavior="single">
-
-        <item
-            android:id="@+id/search_history"
-            android:icon="@drawable/icon_history"
-            android:title="@string/search_history_drawer_item" />
-
-    </group>
+        android:checkableBehavior="single" />
 
 </menu>

@@ -110,6 +110,9 @@ class OrderOverviewFragment : Fragment() {
 
         fillWorkerName(worker.firstname!!)
         fillAddress(order.address)
+
+        _binding.serviceCategory.text = order.service.category
+        _binding.serviceTitle.text = order.service.title
     }
 
     private fun showRatingDialog(worker: User) {

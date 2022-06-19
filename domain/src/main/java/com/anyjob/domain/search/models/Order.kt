@@ -1,6 +1,7 @@
 package com.anyjob.domain.search.models
 
 import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.services.models.Service
 
 data class Order(
     val id: String,
@@ -10,5 +11,6 @@ data class Order(
     val searchRadius: Double,
     var isCanceled: Boolean = false,
     var isFinished: Boolean = false,
-    val excludedExecutors: List<String> = emptyList()
+    val excludedExecutors: List<String> = emptyList(),
+    val service: Service
 )

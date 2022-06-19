@@ -39,6 +39,8 @@ class AcceptJobBottomSheetDialog(
         super.onCreate(savedInstanceState)
         setContentView(_binding.root)
 
+        _binding.serviceCategory.text = order.service.category
+        _binding.serviceTitle.text = order.service.title
         _binding.addressTextView.text = decodingAddress
 
         _binding.acceptButton.setOnClickListener(::acceptButtonClick)
