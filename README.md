@@ -1,13 +1,13 @@
 # AnyJob
-Мобильное приложение для поиска специалистов
+Mobile application for finding private workers
 
-[Демонстрация](https://i.imgur.com/lGrHbW8.gif "Демонстрация")
+[Demonstration](https://i.imgur.com/lGrHbW8.gif "Демонстрация")
 
-## Описание
-Цель приложения - помочь пользователям в поисках специалиста для выполнения специализированной работы
+## Description
+The purpose of the app is to assist users in finding an expert to perform a specialized job
 
-## Скриншот
+## Screenshots
 ![image](https://user-images.githubusercontent.com/55300023/235253931-b8f05af9-ff16-44d8-8ab7-e35064a37028.png)
 
-## Сборка и запуск
-Для запуска приложения необходимо создать временный проект на Firebase и подключить google-services.json стандартным образом. Также понадобится указать API-ключ от Google Maps в файле local.properties
+## Build and startup
+To run the application, you need to create a temporary project on `Firebase` and connect `google-services.json` in the standard way. You will also need to specify the API key from `Google Maps` in the `local.properties` file
