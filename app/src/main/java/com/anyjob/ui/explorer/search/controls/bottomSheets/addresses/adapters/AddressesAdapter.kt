@@ -1,6 +1,5 @@
 package com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.adapters
 
-import android.location.Address
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,61 +9,43 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.anyjob.R
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
+import com.yandex.mapkit.GeoObject
 
-object AddressDifferenceCallback : DiffUtil.ItemCallback<Address>() {
-    override fun areItemsTheSame(oldItem: Address, newItem: Address): Boolean {
+object AddressDifferenceCallback : DiffUtil.ItemCallback<GeoObject>() {
+    override fun areItemsTheSame(oldItem: GeoObject, newItem: GeoObject): Boolean {
         return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: Address, newItem: Address): Boolean {
-        return oldItem.longitude == newItem.longitude && oldItem.latitude == newItem.latitude
+    override fun areContentsTheSame(oldItem: GeoObject, newItem: GeoObject): Boolean {
+        val oldItemPosition = oldItem.geometry.firstOrNull()?.point
+        val newItemPosition = newItem.geometry.firstOrNull()?.point
+        return oldItemPosition?.latitude == newItemPosition?.latitude && oldItemPosition?.longitude == newItemPosition?.longitude
     }
 }
 
 class AddressesAdapter(
-    private val addresses: List<Address>,
+    private val geoObjects: List<GeoObject>,
     private val onClick: ((UserAddress) -> Unit)? = null
-) : ListAdapter<Address, AddressesAdapter.ViewHolder>(AddressDifferenceCallback) {
+) : ListAdapter<GeoObject, AddressesAdapter.ViewHolder>(AddressDifferenceCallback) {
     class ViewHolder(
         private val view: View,
         private val onClick: ((UserAddress) -> Unit)? = null
     ) : RecyclerView.ViewHolder(view) {
         private val _addressTitle: TextView = view.findViewById(R.id.address_primary_text)
         private val _addressSubtitle: TextView = view.findViewById(R.id.address_secondary_text)
-        private var _currentAddress: Address? = null
+        private var _currentGeoObject: GeoObject? = null
 
-        fun bind(address: Address) {
-            _currentAddress = address
+        fun bind(geoObject: GeoObject) {
+            _currentGeoObject = geoObject
 
-            val houseAddressLines = listOfNotNull(
-                address.thoroughfare,
-                address.subThoroughfare
-            )
-
-            val city = address.locality
-            val adminAreaLines = listOfNotNull(
-                city,
-                address.adminArea,
-                address.subAdminArea
-            )
-
-            val houseAddress = houseAddressLines.joinToString(", ")
-            val region = adminAreaLines.joinToString(", ")
-
-            if (houseAddress.isNotBlank()) {
-                _addressTitle.text = houseAddress
-                _addressSubtitle.text = region
-            }
-            else {
-                _addressTitle.text = city
-                _addressSubtitle.text = adminAreaLines.drop(1).joinToString(", ")
-            }
+            _addressTitle.text = geoObject.name
+            _addressSubtitle.text = geoObject.descriptionText
 
             if (onClick != null) {
                 view.setOnClickListener {
-                    _currentAddress?.also {
+                    _currentGeoObject?.also {
                         val userAddress = UserAddress(
-                            source = it,
+                            geoObject = it,
                             formattedAddress = _addressTitle.text.toString()
                         )
 
@@ -82,12 +63,12 @@ class AddressesAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (addresses.any()) {
-            holder.bind(addresses[position])
+        if (geoObjects.any()) {
+            holder.bind(geoObjects[position])
         }
     }
 
     override fun getItemCount(): Int {
-        return addresses.size
+        return geoObjects.size
     }
 }

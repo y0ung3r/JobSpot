@@ -123,8 +123,8 @@ class ProfileCreationFragment : Fragment() {
 
     private fun onHomeAddressChanged(address: UserAddress) {
         _binding.selectHomeAddressButton.text = address.formattedAddress
-        _viewModel.validateAddress(address.source)
-        _viewModel.selectAddress(address.source)
+        _viewModel.validateAddress(address.geoObject)
+        _viewModel.selectAddress(address.geoObject)
         _addressesBottomSheet.dismiss()
     }
 

@@ -1,6 +1,6 @@
 package com.anyjob.data.profile.entities
 
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
 import java.io.Serializable
 
 /**
@@ -40,7 +40,7 @@ internal class UserEntity : Serializable {
     /**
      * Домашний адрес
      */
-    var address: MapsAddress? = null
+    var address: MapAddress? = null
 
     /**
      * Оценки пользователя

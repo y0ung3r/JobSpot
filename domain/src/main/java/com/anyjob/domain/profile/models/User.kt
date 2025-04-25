@@ -16,7 +16,7 @@ data class User(
     val firstname: String?,
     val middlename: String?,
     val isWorker: Boolean,
-    val address: MapsAddress?,
+    val address: MapAddress?,
     val rates: List<Float> = listOf(5.0f)
 ) {
     val averageRate = rates.average()

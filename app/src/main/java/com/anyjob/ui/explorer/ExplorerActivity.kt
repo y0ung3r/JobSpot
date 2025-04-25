@@ -1,13 +1,10 @@
 package com.anyjob.ui.explorer
 
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.anyjob.R
@@ -16,14 +13,22 @@ import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.anyjob.ui.extensions.getZoomLevel
+import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session
+import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class ExplorerActivity : AppCompatActivity() {
     private val _viewModel by viewModel<ExplorerViewModel>()
+
     val binding: ActivityExplorerBinding by lazy {
         ActivityExplorerBinding.inflate(layoutInflater)
     }
@@ -45,69 +50,73 @@ class ExplorerActivity : AppCompatActivity() {
         _viewModel.setOrder(order)
         _viewModel.setClient(order)
 
-        val geocoder = Geocoder(
-            this@ExplorerActivity,
-            Locale.getDefault()
-        )
+        val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
 
-        lifecycleScope.launch {
-            val address = withContext(Dispatchers.Default) {
-                geocoder.getFromLocation(order.address.latitude, order.address.longitude, 1)[0]
+        val searchListener = object : Session.SearchListener {
+            override fun onSearchResponse(response: Response) {
+                val geoObject = response.collection.children.firstNotNullOf { it.obj }
+
+                AcceptJobBottomSheetDialog(
+                    _viewModel,
+                    order,
+                    "${geoObject.name}",
+                    ::onClientFound,
+                    ::onWorkerAcceptOrder,
+                    this@ExplorerActivity,
+                    R.style.Theme_AnyJob_BottomSheetDialog,
+                )
+                .show()
             }
 
-            val street = address.thoroughfare
-            val houseNumber = address.subThoroughfare
-
-            AcceptJobBottomSheetDialog(
-                _viewModel,
-                order,
-                "$street, $houseNumber",
-                ::onClientFound,
-                ::onWorkerAcceptOrder,
-                this@ExplorerActivity,
-                R.style.Theme_AnyJob_BottomSheetDialog,
-            )
-            .show()
+            override fun onSearchError(error: Error) {
+                // showToast(getString(R.string.failed_to_determine_address))
+            }
         }
+
+        searchManager.submit(
+            Point(order.address.latitude, order.address.longitude),
+            getZoomLevel(500.0f).toInt(),
+            SearchOptions().apply {
+                searchTypes = SearchType.GEO.value
+                resultPageSize = 1
+            },
+            searchListener
+        )
     }
 
     private fun onUserReady(user: AuthorizedUser?) {
-        if (user != null) {
-            val locale = Locale.getDefault()
-            val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
-            val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
-            val phoneNumberField =
-                binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+        if (user == null)
+            return
 
-            fullnameField.text = user.fullname
-            ratingField.text = "%.1f".format(user.averageRate)
-            phoneNumberField.text = PhoneNumberUtils.formatNumber(
-                user.phoneNumber,
-                locale.country
-            )
+        val locale = Locale.getDefault()
+        val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
+        val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
+        val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
 
-            if (user.currentOrder != null && user.currentOrder.invokerId == user.id) {
-                return _navigationController.navigate(R.id.path_to_order_overview_fragment_from_navigation_search)
-            }
-            else if (user.currentOrder != null && user.currentOrder.executorId == user.id) {
-                return _navigationController.navigate(R.id.path_to_job_overview_fragment_from_navigation_search)
+        fullnameField.text = user.fullname
+        ratingField.text = "%.1f".format(user.averageRate)
+        phoneNumberField.text = PhoneNumberUtils.formatNumber(user.phoneNumber, locale.country)
+
+        if (user.isWorker)
+            _viewModel.startClientSearching {
+                onClientFound(it)
             }
 
-            if (user.isWorker) {
-                _viewModel.startClientSearching {
-                    onClientFound(it)
-                }
-            }
-        }
+        if (user.currentOrder == null)
+            return
+
+        if (user.currentOrder.invokerId == user.id && user.currentOrder.executorId != null)
+            return _navigationController.navigate(R.id.path_to_order_overview_fragment_from_navigation_search)
+
+        if (user.currentOrder.executorId == user.id)
+            return _navigationController.navigate(R.id.path_to_job_overview_fragment_from_navigation_search)
     }
 
-    private fun drawAddressInToolbar(address: Address) {
-        val street = address.thoroughfare
-        val houseNumber = address.subThoroughfare
-        val isAddressExists = street != null && street.isNotBlank() && houseNumber != null && houseNumber.isNotBlank()
+    private fun drawAddressInToolbar(geoObject: GeoObject) {
+        val isAddressExists = !geoObject.name.isNullOrBlank()
 
         if (isAddressExists) {
-            binding.toolbar.title = "$street, $houseNumber"
+            binding.toolbar.title = "${geoObject.name}"
             binding.toolbar.subtitle = getString(R.string.address_title)
         }
         else {
@@ -116,8 +125,8 @@ class ExplorerActivity : AppCompatActivity() {
         }
     }
 
-    private fun onAddressChanged(address: Address) {
-        drawAddressInToolbar(address)
+    private fun onAddressChanged(geoObject: GeoObject) {
+        drawAddressInToolbar(geoObject)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,7 +135,7 @@ class ExplorerActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
-        _viewModel.currentAddress.observe(this@ExplorerActivity, ::onAddressChanged)
+        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
         _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
 
         /*val navigationItems = setOf(

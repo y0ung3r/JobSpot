@@ -1,13 +1,13 @@
 package com.anyjob.ui.authorization.viewModels
 
-import android.location.Address
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.authorization.useCases.CreateProfileUseCase
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
+import com.yandex.mapkit.GeoObject
 import kotlinx.coroutines.launch
 
 class ProfileCreationViewModel(
@@ -25,8 +25,8 @@ class ProfileCreationViewModel(
     private val _onProfileCreated = MutableLiveData<Result<Unit>>()
     val onProfileCreated: LiveData<Result<Unit>> = _onProfileCreated
 
-    private val _homeAddress = MutableLiveData<MapsAddress>()
-    val homeAddress: LiveData<MapsAddress> = _homeAddress
+    private val _homeAddress = MutableLiveData<MapAddress>()
+    val homeAddress: LiveData<MapAddress> = _homeAddress
 
     fun validateLastname(lastname: String) {
         _isLastnameFilled.postValue(
@@ -40,17 +40,19 @@ class ProfileCreationViewModel(
         )
     }
 
-    fun validateAddress(address: Address) {
-        _isAddressFilled.postValue(
-            address.hasLatitude() && address.hasLongitude()
-        )
+    fun validateAddress(geoObject: GeoObject) {
+        val geometry = geoObject.geometry.firstOrNull()
+        _isAddressFilled.postValue(geometry?.point != null)
     }
 
-    fun selectAddress(address: Address) {
+    fun selectAddress(geoObject: GeoObject) {
+        val position = geoObject.geometry.firstOrNull()?.point
+            ?: return
+
         _homeAddress.postValue(
-            MapsAddress(
-                address.latitude,
-                address.longitude
+            MapAddress(
+                position.latitude,
+                position.longitude
             )
         )
     }

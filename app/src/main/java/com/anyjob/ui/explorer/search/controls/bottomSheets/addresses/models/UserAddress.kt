@@ -1,8 +1,8 @@
 package com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models
 
-import android.location.Address
+import com.yandex.mapkit.GeoObject
 
 class UserAddress(
-    val source: Address,
+    val geoObject: GeoObject,
     val formattedAddress: String
 )

@@ -1,18 +1,22 @@
 package com.anyjob.data.search
 
+import android.location.Location
 import com.anyjob.data.FirebaseContext
+import com.anyjob.data.extensions.asList
 import com.anyjob.data.extensions.get
 import com.anyjob.data.extensions.remove
 import com.anyjob.data.extensions.save
-import com.anyjob.data.extensions.asList
 import com.anyjob.data.search.entities.OrderEntity
 import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.anyjob.domain.search.OrderCreationParameters
 import com.anyjob.domain.search.interfaces.OrderRepository
 import com.anyjob.domain.search.models.Order
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.SphericalUtil
-import java.util.*
+import java.util.UUID
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 internal class FirebaseOrderRepository(
     private val context: FirebaseContext,
@@ -138,12 +142,10 @@ internal class FirebaseOrderRepository(
                 val orderAddress = it.address!!
                 val searchRadius = it.searchRadius!!
 
-                val distance = SphericalUtil.computeDistanceBetween(
-                    LatLng(workerAddress.latitude, workerAddress.longitude),
-                    LatLng(orderAddress.latitude, orderAddress.longitude)
-                )
+                val results = FloatArray(1)
+                Location.distanceBetween(workerAddress.latitude, workerAddress.longitude, orderAddress.latitude, orderAddress.longitude, results)
 
-                return@filter distance <= searchRadius
+                return@filter results[0] <= searchRadius
             }
             .filterNot {
                 it.excludedExecutors.contains(workerId)

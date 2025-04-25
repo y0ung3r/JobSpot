@@ -13,12 +13,23 @@
         android:layout_gravity="fill"
         tools:context=".ui.explorer.search.SearchFragment">
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/light_gray" />
+            android:layout_height="match_parent">
+
+            <com.yandex.mapkit.mapview.MapView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/light_gray" />
+
+            <com.anyjob.ui.animations.radar.RadarView
+                android:id="@+id/searchRadar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+
+        </FrameLayout>
 
     </com.anyjob.ui.explorer.search.controls.MapPin>
 
