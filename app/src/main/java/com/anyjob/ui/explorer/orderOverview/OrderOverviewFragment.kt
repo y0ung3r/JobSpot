@@ -1,8 +1,6 @@
 package com.anyjob.ui.explorer.orderOverview
 
-import android.app.AlertDialog
 import android.content.Intent
-import android.location.Geocoder
 import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
@@ -13,24 +11,28 @@ import android.widget.LinearLayout
 import android.widget.RatingBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentOrderOverviewBinding
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.orderOverview.viewModels.OrderOverviewViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
+import com.anyjob.ui.extensions.getZoomLevel
 import com.anyjob.ui.extensions.observeOnce
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session
+import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 
 class OrderOverviewFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
@@ -54,22 +56,29 @@ class OrderOverviewFragment : Fragment() {
         _binding.orderOverviewWorkerName.text = firstname
     }
 
-    private fun fillAddress(address: MapsAddress) {
-        val geocoder = Geocoder(
-            requireContext(),
-            Locale.getDefault()
-        )
+    private fun fillAddress(address: MapAddress) {
+        val searchManager = SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
 
-        lifecycleScope.launch {
-            val address = withContext(Dispatchers.Default) {
-                geocoder.getFromLocation(address.latitude, address.longitude, 1)[0]
+        val searchListener = object : Session.SearchListener {
+            override fun onSearchResponse(response: Response) {
+                val geoObject = response.collection.children.firstNotNullOf { it.obj }
+                _binding.addressTextView.text = "${geoObject.name}"
             }
 
-            val street = address.thoroughfare
-            val houseNumber = address.subThoroughfare
-
-            _binding.addressTextView.text = "$street, $houseNumber"
+            override fun onSearchError(error: Error) {
+                // showToast(getString(R.string.failed_to_determine_address))
+            }
         }
+
+        searchManager.submit(
+            Point(address.latitude, address.longitude),
+            getZoomLevel(500.0f).toInt(),
+            SearchOptions().apply {
+                searchTypes = SearchType.GEO.value
+                resultPageSize = 1
+            },
+            searchListener
+        )
     }
 
     private fun onCall(worker: User) {

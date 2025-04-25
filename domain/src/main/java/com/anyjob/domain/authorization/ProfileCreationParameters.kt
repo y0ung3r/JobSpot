@@ -1,6 +1,6 @@
 package com.anyjob.domain.authorization
 
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
 
 /**
  * Данные о пользователе, необходимые для регистрации
@@ -11,5 +11,5 @@ data class ProfileCreationParameters(
     val firstname: String,
     val middlename: String?,
     val isWorker: Boolean,
-    val address: MapsAddress
+    val address: MapAddress
 )

@@ -1,24 +1,22 @@
 package com.anyjob.ui.explorer.search
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentSearchBinding
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.search.OrderCreationParameters
 import com.anyjob.domain.services.models.Service
@@ -26,7 +24,7 @@ import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.fade
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.RadarParameters
-import com.anyjob.ui.animations.radar.extensions.startRadar
+import com.anyjob.ui.animations.radar.RadarView
 import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
@@ -38,31 +36,34 @@ import com.anyjob.ui.extensions.getZoomLevel
 import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.Circle
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.yandex.mapkit.Animation
+import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.map.CameraListener
+import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.mapview.MapView
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.SearchType
+import com.yandex.mapkit.search.Session
+import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
 
 class SearchFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<ExplorerViewModel>()
     private val _viewModel by viewModel<SearchViewModel>()
     private lateinit var _binding: FragmentSearchBinding
-    private lateinit var _googleMap: GoogleMap
+    private lateinit var _yandexMap: Map
     private lateinit var _addressesBottomSheet: BottomSheetDialog
     private lateinit var _servicesBottomSheet: BottomSheetDialog
-    private var _searchRadiiViews = ArrayList<Circle>()
 
     private val _fragmentHost by lazy {
         requireActivity().findViewById<FragmentContainerView>(R.id.explorer_fragments_container)
@@ -78,7 +79,15 @@ class SearchFragment : Fragment() {
     }
 
     private val _mapView by lazy {
-        childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        requireActivity().findViewById<MapView>(R.id.map)
+    }
+
+    private val _searchManager by lazy {
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
+    }
+
+    private val _radarView by lazy {
+        requireActivity().findViewById<RadarView>(R.id.searchRadar)
     }
 
     private val _searchBottomSheetBehavior by lazy {
@@ -99,20 +108,53 @@ class SearchFragment : Fragment() {
 
     private val _searchBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            if (bottomSheet.visibility == View.VISIBLE) {
+            if (bottomSheet.isVisible) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_EXPANDED -> drawSearchRadius(
-                        _googleMap.cameraPosition.target,
-                        getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
-                    )
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        val searchRadius = getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
+                        removeLastSearchRadius()
+                        drawSearchRadius(_yandexMap.cameraPosition.target, searchRadius)
+                    }
 
                     BottomSheetBehavior.STATE_COLLAPSED -> removeLastSearchRadius()
+
+                    else -> { }
                 }
             }
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
             // Ignore...
+        }
+    }
+
+    private val _onCameraCallback = CameraListener { map, position, _, isFinished ->
+        if (isFinished) {
+            val searchListener = object : Session.SearchListener {
+                override fun onSearchResponse(response: Response) {
+                    val geoObject = response.collection.children.firstNotNullOf { it.obj }
+                    _activityViewModel.updateCurrentAddress(geoObject)
+                }
+
+                override fun onSearchError(error: Error) {
+                    showToast(getString(R.string.failed_to_determine_address))
+                }
+            }
+
+            _searchManager.submit(
+                position.target,
+                position.zoom.toInt(),
+                SearchOptions().apply {
+                    searchTypes = SearchType.GEO.value
+                    resultPageSize = 1
+                },
+                searchListener
+            )
+
+            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        }
+        else {
+            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -135,194 +177,96 @@ class SearchFragment : Fragment() {
     private fun showLocationPermissionsRationaleDialog() {
         val context = requireContext()
 
-        GeolocationUnavailableBottomSheetDialog(
-            context,
-            R.style.Theme_AnyJob_BottomSheetDialog
-        )
-        .show()
+        GeolocationUnavailableBottomSheetDialog(context, R.style.Theme_AnyJob_BottomSheetDialog)
+            .show()
     }
 
     private fun isPermissionsDenied(): Boolean {
         val context = requireContext()
-
-        val finePermissionGranted = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-
-        val coarsePermissionGranted = ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
+        val finePermissionGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val coarsePermissionGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
         return !finePermissionGranted || !coarsePermissionGranted
     }
 
-    private fun moveCamera(address: Address) {
-        val radius = getSearchRadius(
-            _binding.searchBottomSheet.availableRadii.checkedChipId
-        )
+    private fun moveCamera(geoObject: GeoObject) {
+        val radius = getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
+        val position = geoObject.geometry.firstOrNull()?.point
+            ?: return
 
-        moveCamera(
-            LatLng(address.latitude, address.longitude),
-            getZoomLevel(radius)
-        )
+        moveCamera(position, getZoomLevel(radius))
     }
 
-    private fun moveCamera(location: LatLng, zoom: Float) {
-        val coordinates = LatLng(location.latitude, location.longitude)
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(coordinates, zoom)
-        _googleMap.animateCamera(cameraUpdate)
+    private fun moveCamera(location: Point, zoom: Float) {
+        val cameraPosition = CameraPosition(location, zoom, 0.0f, 0.0f)
+        val animation = Animation(Animation.Type.SMOOTH, 1.0f)
+        _yandexMap.move(cameraPosition, animation, null)
     }
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun moveCameraToUserLocation() {
-        if (isPermissionsDenied()) {
+        if (isPermissionsDenied())
             return requestLocationPermissions()
-        }
-
-        if (!_googleMap.isMyLocationEnabled) {
-            _googleMap.isMyLocationEnabled = true
-        }
 
         _locationProvider.lastLocation.addOnSuccessListener { location ->
-            val radius = getSearchRadius(
-                _binding.searchBottomSheet.availableRadii.checkedChipId
-            )
+            val radius = getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
 
             if (location != null) {
-                moveCamera(
-                    LatLng(location.latitude, location.longitude),
-                    getZoomLevel(radius)
-                )
+                val point = Point(location.latitude, location.longitude)
+                moveCamera(point, getZoomLevel(radius))
             }
         }
     }
 
-    private fun drawSearchRadius(position: LatLng, radius: Float, radarParameters: RadarParameters? = null): Circle {
-        removeLastSearchRadius()
-
-        val searchRadius = _googleMap.addCircle(
-            CircleOptions().apply {
-                center(position)
-                strokeColor(Color.TRANSPARENT)
-                fillColor(
-                    Color.parseColor(
-                        getString(R.color.light_purple)
-                    )
-                )
-            }
-        )
-
+    @SuppressLint("ResourceType")
+    private fun drawSearchRadius(position: Point, radius: Float, radarParameters: RadarParameters? = null) {
         val animationParameters = radarParameters ?: RadarParameters()
-        val fillColor = Color.alpha(searchRadius.fillColor)
 
-        startRadar(
-            animationParameters.apply {
-                mode = VisibilityMode.Show
-                maxRadius = radius
-                onUpdate = { radiusFraction, invertedRadiusFraction ->
-                    searchRadius.radius = radiusFraction
-
-                    if (infinity) {
-                        val alpha = (invertedRadiusFraction / radius * fillColor).toInt()
-                        searchRadius.fillColor = ColorUtils.setAlphaComponent(searchRadius.fillColor, alpha)
-                    }
-                }
-            }
-        )
-
-        _searchRadiiViews.add(searchRadius)
-
-        return searchRadius
+        _radarView.startNewPulse(_mapView, position, animationParameters.apply {
+            maxRadius = radius
+        })
     }
 
     private fun removeLastSearchRadius() {
-        _searchRadiiViews.lastOrNull()?.also {
-            startRadar(
-                RadarParameters().apply {
-                    mode = VisibilityMode.Hide
-                    animationLength = 500
-                    maxRadius = it.radius.toFloat()
-                    onUpdate = { radiusFraction, _ ->
-                        it.radius = radiusFraction
-
-                        if (it.radius == 0.0) {
-                            it.remove()
-                            _searchRadiiViews.remove(it)
-                        }
-                    }
-                }
-            )
-        }
+        _radarView.stopLastPulse(RadarParameters().apply {
+            animationLength = 500
+        })
     }
 
-    private fun onMapReady(googleMap: GoogleMap) {
-        _googleMap = googleMap
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
+    private fun onMapReady(yandexMap: Map) {
+        _yandexMap = yandexMap
 
-        _googleMap.setMapStyle(
-            MapStyleOptions.loadRawResourceStyle(
-                requireContext(),
-                R.raw.map_style
-            )
-        )
+        _binding.currentLocationButton.isEnabled = true
 
-        val geocoder = Geocoder(
-            requireContext(),
-            Locale.getDefault()
-        )
+        val mapStyle = resources
+            .openRawResource(R.raw.map_style)
+            .bufferedReader()
+            .use { it.readText() }
 
-        _googleMap.uiSettings.isMyLocationButtonEnabled = true
-        _googleMap.uiSettings.isRotateGesturesEnabled = false
-        _googleMap.uiSettings.isTiltGesturesEnabled = false
-        _googleMap.uiSettings.isMyLocationButtonEnabled = false
+        _yandexMap.setMapStyle(mapStyle)
 
-        _googleMap.setOnCameraIdleListener {
-            lifecycleScope.launch {
-                val position = _googleMap.cameraPosition.target
+        _yandexMap.isRotateGesturesEnabled = false
+        _yandexMap.isTiltGesturesEnabled = false
 
-                try {
-                    val addresses = withContext(Dispatchers.Default) {
-                        geocoder.getFromLocation(position.latitude, position.longitude, 1)
-                    }
+        _yandexMap.addCameraListener(_onCameraCallback)
 
-                    if (addresses.any()) {
-                        val address = addresses[0]
-                        _activityViewModel.updateCurrentAddress(address)
-                    }
-                }
-
-                catch (exception: Exception) {
-                    showToast(
-                        getString(R.string.failed_to_determine_address)
-                    )
-                }
-
-                finally {
-                    _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }
-            }
-        }
-
-        _googleMap.setOnCameraMoveStartedListener {
-            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
-
-        moveCameraToUserLocation()
+        if (_yandexMap.isScrollGesturesEnabled)
+            moveCameraToUserLocation()
     }
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun onCurrentLocationButtonClick(button: View) {
         moveCameraToUserLocation()
     }
 
     private fun onUserChangeRadius(chipGroup: View, selectedChip: Int) {
         val radius = getSearchRadius(selectedChip)
-        val location = _googleMap.cameraPosition.target
+        val location = _yandexMap.cameraPosition.target
 
+        moveCamera(Point(location.latitude, location.longitude), getZoomLevel(radius))
+        removeLastSearchRadius()
         drawSearchRadius(location, radius)
-        moveCamera(
-            LatLng(location.latitude, location.longitude),
-            getZoomLevel(radius)
-        )
     }
 
     private fun onUserStartSearching(button: View) {
@@ -337,30 +281,24 @@ class SearchFragment : Fragment() {
         _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
 
         _binding.mapPin.isTouchEventsDisabled = true
-        _googleMap.uiSettings.isScrollGesturesEnabled = false
-        _googleMap.uiSettings.isZoomGesturesEnabled = false
+        _yandexMap.isScrollGesturesEnabled = false
+        _yandexMap.isZoomGesturesEnabled = false
 
         val chipId = _binding.searchBottomSheet.availableRadii.checkedChipId
         val chip = _binding.searchBottomSheet.availableRadii.findViewById<Chip>(chipId)
         val radius = getSearchRadius(chipId)
 
-        val position = _googleMap.cameraPosition.target
+        val position = _yandexMap.cameraPosition.target
         val radarParameters = RadarParameters().apply {
-            infinity = true
+            infinite = true
             animationLength = 3500
         }
 
+        removeLastSearchRadius()
         drawSearchRadius(position, radius, radarParameters)
+        moveCamera(_yandexMap.cameraPosition.target, getZoomLevel(radius))
 
-        moveCamera(
-            position,
-            getZoomLevel(radius)
-        )
-
-        _binding.searchProgressBottomSheet.searchInProgressDescription.text = getString(
-            R.string.search_progress_description,
-            chip.text
-        )
+        _binding.searchProgressBottomSheet.searchInProgressDescription.text = getString(R.string.search_progress_description, chip.text)
 
         _activityViewModel.getAuthorizedUser().observeOnce(this@SearchFragment) { authorizedUser ->
             authorizedUser?.also {
@@ -368,10 +306,7 @@ class SearchFragment : Fragment() {
                     _viewModel.startWorkerSearching(
                         OrderCreationParameters(
                             invokerId = it.id,
-                            address = MapsAddress(
-                                position.latitude,
-                                position.longitude
-                            ),
+                            address = MapAddress(position.latitude, position.longitude),
                             radius.toDouble(),
                             service
                         ),
@@ -404,20 +339,15 @@ class SearchFragment : Fragment() {
         _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
         _binding.mapPin.isTouchEventsDisabled = false
-        _googleMap.uiSettings.isScrollGesturesEnabled = true
-        _googleMap.uiSettings.isZoomGesturesEnabled = true
+        _yandexMap.isScrollGesturesEnabled = true
+        _yandexMap.isZoomGesturesEnabled = true
 
         removeLastSearchRadius()
 
-        val position = _googleMap.cameraPosition.target
-        val radius = getSearchRadius(
-            _binding.searchBottomSheet.availableRadii.checkedChipId
-        )
+        val position = _yandexMap.cameraPosition.target
+        val radius = getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
 
-        moveCamera(
-            position,
-            getZoomLevel(radius)
-        )
+        moveCamera(position, getZoomLevel(radius))
 
         _activityViewModel.order.observeOnce(this@SearchFragment) { order ->
             _viewModel.cancelWorkerSearching(order)
@@ -426,10 +356,10 @@ class SearchFragment : Fragment() {
 
     private fun onAddressSelected(userAddress: UserAddress) {
         _addressesBottomSheet.dismiss()
-        moveCamera(userAddress.source)
+        moveCamera(userAddress.geoObject)
     }
 
-    private fun onAddressTitleClick(view: View) {
+    private fun onAddressTitleClick(addressView: View) {
         _addressesBottomSheet = AddressesBottomSheetDialog(
             requireContext(),
             R.style.Theme_AnyJob_BottomSheetDialog,
@@ -461,9 +391,8 @@ class SearchFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-
-        _mapView.getMapAsync(::onMapReady)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
+        _binding.currentLocationButton.isEnabled = false
 
         _fragmentHost.fitsSystemWindows = true
 
@@ -482,5 +411,25 @@ class SearchFragment : Fragment() {
         _toolbar.setOnClickListener(::onAddressTitleClick)
 
         return _binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(context)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+        _mapView.onStart()
+        _mapView.mapWindow.map.setMapLoadedListener {
+            onMapReady(_mapView.mapWindow.map)
+        }
+    }
+
+    override fun onStop() {
+        _mapView.onStop()
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
     }
 }

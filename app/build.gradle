@@ -16,6 +16,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "MAPKIT_API_KEY", "\"${mapkitApiKey}\""
     }
 
     buildTypes {
@@ -52,8 +53,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.gms:play-services-maps:18.0.2'
-    implementation 'com.google.android.gms:play-services-location:19.0.1'
+    implementation 'com.yandex.android:maps.mobile:4.5.2-full'
     testImplementation 'junit:junit:4.+'
     testImplementation "io.insert-koin:koin-test:3.1.6"
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

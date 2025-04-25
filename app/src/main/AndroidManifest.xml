@@ -13,9 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.AnyJob">
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="${MAPS_API_KEY}" />
         <activity
             android:name=".ui.explorer.ExplorerActivity"
             android:exported="false"

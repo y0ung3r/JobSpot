@@ -13,6 +13,11 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+    ext {
+        def properties = new Properties()
+        project.file("local.properties").withInputStream { properties.load(it) }
+        mapkitApiKey = properties.getProperty("MAPKIT_API_KEY", "")
+    }
 }
 
 task clean(type: Delete) {

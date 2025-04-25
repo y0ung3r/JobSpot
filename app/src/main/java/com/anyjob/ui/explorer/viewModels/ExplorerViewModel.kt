@@ -1,6 +1,5 @@
 package com.anyjob.ui.explorer.viewModels
 
-import android.location.Address
 import androidx.lifecycle.*
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.profile.useCases.AddRateToUserUseCase
@@ -8,6 +7,7 @@ import com.anyjob.domain.profile.useCases.GetAuthorizedUserUseCase
 import com.anyjob.domain.search.models.Order
 import com.anyjob.domain.search.useCases.*
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
+import com.yandex.mapkit.GeoObject
 import kotlinx.coroutines.launch
 
 class ExplorerViewModel(
@@ -22,8 +22,8 @@ class ExplorerViewModel(
     private val finishOrderUseCase: FinishOrderUseCase,
     private val addRateToUserUseCase: AddRateToUserUseCase
 ) : ViewModel() {
-    private val _currentAddress = MutableLiveData<Address>()
-    val currentAddress: LiveData<Address> = _currentAddress
+    private val _currentGeoObject = MutableLiveData<GeoObject>()
+    val currentGeoObject: LiveData<GeoObject> = _currentGeoObject
 
     private val _worker = MutableLiveData<User>()
     val worker: LiveData<User> = _worker
@@ -86,8 +86,8 @@ class ExplorerViewModel(
         }
     }
 
-    fun updateCurrentAddress(address: Address) {
-        _currentAddress.postValue(address)
+    fun updateCurrentAddress(geoObject: GeoObject) {
+        _currentGeoObject.postValue(geoObject)
     }
 
     fun getAuthorizedUser(): LiveData<AuthorizedUser?> = liveData {

@@ -1,7 +1,6 @@
 package com.anyjob.data.search.entities
 
-import com.anyjob.data.profile.entities.UserEntity
-import com.anyjob.domain.profile.models.MapsAddress
+import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.services.models.Service
 import java.io.Serializable
 
@@ -27,7 +26,7 @@ internal class OrderEntity : Serializable {
     /**
      * Географические координаты
      */
-    var address: MapsAddress? = null
+    var address: MapAddress? = null
 
     /**
      * Радиус поиска (в метрах)

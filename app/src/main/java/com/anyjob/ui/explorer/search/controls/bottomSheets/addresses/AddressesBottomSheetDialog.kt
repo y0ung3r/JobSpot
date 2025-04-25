@@ -1,9 +1,6 @@
 package com.anyjob.ui.explorer.search.controls.bottomSheets.addresses
 
 import android.content.Context
-import android.content.res.Resources
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -12,14 +9,20 @@ import com.anyjob.databinding.AddressesBottomSheetBinding
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.adapters.AddressesAdapter
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.extensions.afterTextChanged
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
-import java.util.*
+import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.geometry.BoundingBox
+import com.yandex.mapkit.geometry.Geometry
+import com.yandex.mapkit.geometry.LinearRing
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polygon
+import com.yandex.mapkit.geometry.Polyline
+import com.yandex.mapkit.search.Response
+import com.yandex.mapkit.search.SearchFactory
+import com.yandex.mapkit.search.SearchManagerType
+import com.yandex.mapkit.search.SearchOptions
+import com.yandex.mapkit.search.Session
+import com.yandex.runtime.Error
 
 class AddressesBottomSheetDialog(
     context: Context,
@@ -31,23 +34,15 @@ class AddressesBottomSheetDialog(
     }
 
     private lateinit var _addressesAdapter: AddressesAdapter
+    private val _searchManager by lazy {
+        SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
+    }
 
     private fun onAddressChanged(address: String) {
-        GlobalScope.launch {
-            try {
-                val maxResults = 10
-                val geocoder = Geocoder(
-                    context,
-                    Locale.getDefault()
-                )
-
-                // TODO: Переписать поиск адреса с использованием Google Location API
-                val addresses = withContext(Dispatchers.Default) {
-                    geocoder.getFromLocationName(address, maxResults)
-                }
-
+        val searchListener = object : Session.SearchListener {
+            override fun onSearchResponse(response: Response) {
                 _addressesAdapter = AddressesAdapter(
-                    addresses,
+                    response.collection.children.mapNotNull { it.obj },
                     onItemClick
                 )
 
@@ -55,10 +50,23 @@ class AddressesBottomSheetDialog(
                 _addressesAdapter.notifyDataSetChanged()
             }
 
-            catch (exception: Exception) {
+            override fun onSearchError(error: Error) {
                 // Ignore...
             }
         }
+
+        val southwest = Point(-90.0, -180.0)  // юго-западная точка
+        val northeast = Point(90.0, 180.0)   // северо-восточная точка
+        val boundingBox = BoundingBox(southwest, northeast)
+
+        _searchManager.submit(
+            address,
+            Geometry.fromBoundingBox(boundingBox),
+            SearchOptions().apply {
+                resultPageSize = 24
+            },
+            searchListener
+        )
     }
 
     private fun setupFullHeight() {
@@ -79,7 +87,7 @@ class AddressesBottomSheetDialog(
         _binding.addressField.afterTextChanged(::onAddressChanged)
 
         _addressesAdapter = AddressesAdapter(
-            ArrayList<Address>(),
+            ArrayList(),
             onItemClick
         )
 
