@@ -28,5 +28,6 @@
         <item name="chipBackgroundColor">@color/chip_choice_colors</item>
         <item name="android:textColor">@color/white</item>
         <item name="checkedIconTint">@color/purple_500</item>
+        <item name="android:textSize">12dp</item>
     </style>
 </resources>
