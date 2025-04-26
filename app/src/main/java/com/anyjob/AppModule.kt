@@ -44,7 +44,8 @@ val appModule = module {
             getOrderInvokerUseCase = get(),
             checkOrderStateUseCase = get(),
             finishOrderUseCase = get(),
-            addRateToUserUseCase = get()
+            addRateToUserUseCase = get(),
+            logoutUseCase = get()
         )
     }
 

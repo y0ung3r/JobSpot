@@ -32,5 +32,5 @@ interface PhoneNumberAuthorizationProvider {
     /**
      * Выполняет выход из системы для текущего пользователя
      */
-    fun signOut();
+    fun logout()
 }

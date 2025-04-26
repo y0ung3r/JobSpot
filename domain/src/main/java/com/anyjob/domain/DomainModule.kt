@@ -6,6 +6,7 @@ import com.anyjob.domain.authorization.useCases.SendVerificationCodeUseCase
 import com.anyjob.domain.authorization.useCases.VerifyCodeUseCase
 import com.anyjob.domain.profile.useCases.AddRateToUserUseCase
 import com.anyjob.domain.profile.useCases.GetAuthorizedUserUseCase
+import com.anyjob.domain.profile.useCases.LogoutUseCase
 import com.anyjob.domain.search.useCases.*
 import com.anyjob.domain.services.useCases.GetServicesUseCase
 import org.koin.dsl.module
@@ -113,6 +114,12 @@ val domainModule = module {
     factory {
         GetServicesUseCase(
             serviceRepository = get()
+        )
+    }
+
+    factory {
+        LogoutUseCase(
+            authorizationProvider = get()
         )
     }
 }

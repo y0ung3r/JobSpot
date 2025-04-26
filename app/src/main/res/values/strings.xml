@@ -70,4 +70,5 @@
     <string name="order_finished_alert_title">Order completed</string>
     <string name="rate_your_client_description">Please rate your client</string>
     <string name="rate_worker_description">Please rate worker</string>
+    <string name="logout">Logout</string>
 </resources>
