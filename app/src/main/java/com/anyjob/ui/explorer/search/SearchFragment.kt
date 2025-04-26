@@ -100,6 +100,8 @@ class SearchFragment : Fragment() {
         BottomSheetBehavior.from(_binding.searchProgressBottomSheet.bottomSheetLayout)
     }
 
+    private var _isRadiusChanged: Boolean = false
+
     private fun getSearchRadius(chipId: Int): Float = when (chipId) {
         R.id.one_kilometer_chip -> 1000.0f
         R.id.two_kilometers_chip -> 2000.0f
@@ -163,10 +165,15 @@ class SearchFragment : Fragment() {
                 searchListener
             )
 
-            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            if (!_isRadiusChanged)
+                _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+            if (_isRadiusChanged)
+                _isRadiusChanged = false
         }
         else {
-            _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            if (!_isRadiusChanged)
+                _searchBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
@@ -273,6 +280,8 @@ class SearchFragment : Fragment() {
     }
 
     private fun onUserChangeRadius(chipGroup: View, selectedChip: Int) {
+        _isRadiusChanged = true
+
         val radius = getSearchRadius(selectedChip)
         val location = _yandexMap.cameraPosition.target
 
