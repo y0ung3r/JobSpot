@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
@@ -41,8 +42,8 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="@color/purple_500"
-            android:src="@drawable/icon_rating" />
+            android:src="@drawable/icon_rating"
+            app:tint="@color/purple_500" />
 
         <Space
             android:layout_width="2dp"
@@ -55,6 +56,23 @@
             android:textAppearance="?attr/textAppearanceHeadline6"
             android:textColor="@color/purple_500"
             tools:text="5.0" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/logout_button"
+        style="@style/NavigationDrawerItemStyle"
+        android:onClick="onLogoutButtonClick">
+
+        <TextView
+            android:id="@+id/logout_button_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAppearance="?attr/textAppearanceButton"
+            android:text="@string/logout"
+            android:textColor="@color/crimson"
+            tools:text="Выйти из аккаунта"/>
 
     </LinearLayout>
 

@@ -42,6 +42,11 @@ class ExplorerActivity : AppCompatActivity() {
         binding.drawerLayout.open()
     }
 
+    fun onLogoutButtonClick() {
+        _viewModel.logout()
+        _navigationController.navigate(R.id.path_to_authorization_activity_from_explorer_activity)
+    }
+
     private fun onWorkerAcceptOrder(order: Order) {
         _navigationController.navigate(R.id.path_to_job_overview_fragment_from_navigation_search)
     }
@@ -92,6 +97,11 @@ class ExplorerActivity : AppCompatActivity() {
         val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
         val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
         val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+
+        val logoutButton = binding.drawerLayout.findViewById<TextView>(R.id.logout_button_title)
+        logoutButton.setOnClickListener {
+            onLogoutButtonClick()
+        }
 
         fullnameField.text = user.fullname
         ratingField.text = "%.1f".format(user.averageRate)

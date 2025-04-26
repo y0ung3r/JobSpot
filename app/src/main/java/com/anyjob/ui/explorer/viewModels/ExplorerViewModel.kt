@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.anyjob.domain.profile.models.User
 import com.anyjob.domain.profile.useCases.AddRateToUserUseCase
 import com.anyjob.domain.profile.useCases.GetAuthorizedUserUseCase
+import com.anyjob.domain.profile.useCases.LogoutUseCase
 import com.anyjob.domain.search.models.Order
 import com.anyjob.domain.search.useCases.*
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
@@ -20,7 +21,8 @@ class ExplorerViewModel(
     private val getOrderInvokerUseCase: GetOrderInvokerUseCase,
     private val checkOrderStateUseCase: CheckOrderStateUseCase,
     private val finishOrderUseCase: FinishOrderUseCase,
-    private val addRateToUserUseCase: AddRateToUserUseCase
+    private val addRateToUserUseCase: AddRateToUserUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
     private val _currentGeoObject = MutableLiveData<GeoObject>()
     val currentGeoObject: LiveData<GeoObject> = _currentGeoObject
@@ -88,6 +90,12 @@ class ExplorerViewModel(
 
     fun updateCurrentAddress(geoObject: GeoObject) {
         _currentGeoObject.postValue(geoObject)
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase.execute()
+        }
     }
 
     fun getAuthorizedUser(): LiveData<AuthorizedUser?> = liveData {

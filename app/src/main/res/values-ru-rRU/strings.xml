@@ -71,4 +71,5 @@
     <string name="order_finished_alert_title">Заказ завершен</string>
     <string name="rate_your_client_description">Пожалуйста, оцените Вашего клиента</string>
     <string name="rate_worker_description">Пожалуйста, оцените специалиста</string>
+    <string name="logout">Выйти из аккаунта</string>
 </resources>

@@ -172,7 +172,7 @@ internal class FirebasePhoneNumberAuthorizationProvider(
         )
     }
 
-    override fun signOut() {
+    override fun logout() {
         firebaseProvider.signOut()
     }
 }
