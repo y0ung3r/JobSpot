@@ -43,6 +43,7 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.logo.Padding
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
@@ -94,6 +95,7 @@ class SearchFragment : Fragment() {
         BottomSheetBehavior.from(_binding.searchBottomSheet.bottomSheetLayout)
     }
 
+
     private val _searchProgressBottomSheetBehavior by lazy {
         BottomSheetBehavior.from(_binding.searchProgressBottomSheet.bottomSheetLayout)
     }
@@ -124,7 +126,17 @@ class SearchFragment : Fragment() {
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            updateLogoAfterSliding(bottomSheet, slideOffset)
+        }
+    }
+
+    private val _searchProgressBottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
             // Ignore...
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            updateLogoAfterSliding(bottomSheet, slideOffset)
         }
     }
 
@@ -280,6 +292,8 @@ class SearchFragment : Fragment() {
         _binding.searchBottomSheet.bottomSheetLayout.visibility = View.GONE
         _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
 
+        _searchProgressBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+
         _binding.mapPin.isTouchEventsDisabled = true
         _yandexMap.isScrollGesturesEnabled = false
         _yandexMap.isZoomGesturesEnabled = false
@@ -332,6 +346,8 @@ class SearchFragment : Fragment() {
                 animationLength = 300
             }
         )
+
+        _searchProgressBottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
         _binding.searchProgressBottomSheet.bottomSheetLayout.visibility = View.GONE
         _binding.searchBottomSheet.bottomSheetLayout.visibility = View.VISIBLE
@@ -389,6 +405,35 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun updateLogoUsingAbsoluteBottomSheetHeight(absoluteHeight: Int) {
+        val newPadding = Padding(0, absoluteHeight)
+        _mapView.mapWindow.map.logo.setPadding(newPadding)
+    }
+
+    private fun updateLogoAfterSliding(bottomSheet: View, slideOffset: Float) {
+        if (!bottomSheet.isVisible)
+            return
+
+        val sheetBehaviour = when {
+            _binding.searchBottomSheet.bottomSheetLayout == bottomSheet -> _searchBottomSheetBehavior
+            _binding.searchProgressBottomSheet.bottomSheetLayout == bottomSheet -> _searchProgressBottomSheetBehavior
+            else -> return
+        }
+
+        val peekHeight = sheetBehaviour.peekHeight.toFloat()
+        val sheetHeight = (peekHeight + (bottomSheet.bottom - bottomSheet.top - peekHeight) * slideOffset).toInt()
+        val newPadding = Padding(0, sheetHeight)
+        _mapView.mapWindow.map.logo.setPadding(newPadding)
+    }
+
+    private fun onBottomSheetHeightChanged(bottomSheet: View, left: Int, top: Int, right: Int, bottom: Int, oldLeft: Int, oldTop: Int, oldRight: Int, oldBottom: Int) {
+        val newHeight = bottom - top
+        val oldHeight = oldBottom - oldTop
+
+        if (newHeight != oldHeight && bottomSheet.isVisible)
+            updateLogoUsingAbsoluteBottomSheetHeight(newHeight)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
@@ -402,7 +447,13 @@ class SearchFragment : Fragment() {
             state = BottomSheetBehavior.STATE_EXPANDED
         }
 
-        _searchProgressBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        _searchProgressBottomSheetBehavior.apply {
+            addBottomSheetCallback(_searchProgressBottomSheetCallback)
+            state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        
+        _binding.searchBottomSheet.bottomSheetLayout.addOnLayoutChangeListener(::onBottomSheetHeightChanged)
+        _binding.searchProgressBottomSheet.bottomSheetLayout.addOnLayoutChangeListener(::onBottomSheetHeightChanged)
 
         _binding.searchBottomSheet.selectServiceButton.setOnClickListener(::openServicesBottomSheet)
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
