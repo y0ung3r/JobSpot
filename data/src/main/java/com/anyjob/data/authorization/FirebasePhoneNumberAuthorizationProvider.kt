@@ -167,7 +167,8 @@ internal class FirebasePhoneNumberAuthorizationProvider(
             firstname = storeUser.firstname,
             middlename = storeUser.middlename,
             isWorker = storeUser.isWorker,
-            address = storeUser.address,
+            homeAddress = storeUser.homeAddress,
+            geolocation = storeUser.geolocation,
             rates = storeUser.rates
         )
     }

@@ -11,5 +11,5 @@ data class ProfileCreationParameters(
     val firstname: String,
     val middlename: String?,
     val isWorker: Boolean,
-    val address: MapAddress
+    val homeAddress: MapAddress
 )

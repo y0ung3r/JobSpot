@@ -40,7 +40,12 @@ internal class UserEntity : Serializable {
     /**
      * Домашний адрес
      */
-    var address: MapAddress? = null
+    var homeAddress: MapAddress? = null
+
+    /**
+     * Геолокация
+     */
+    var geolocation: MapAddress? = null
 
     /**
      * Оценки пользователя
