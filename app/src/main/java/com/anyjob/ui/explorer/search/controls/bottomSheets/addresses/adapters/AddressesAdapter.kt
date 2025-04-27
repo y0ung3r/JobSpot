@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.anyjob.R
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.search.ToponymObjectMetadata
 
 object AddressDifferenceCallback : DiffUtil.ItemCallback<GeoObject>() {
     override fun areItemsTheSame(oldItem: GeoObject, newItem: GeoObject): Boolean {

@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.findNavController
 import com.anyjob.R
+import com.anyjob.data.extensions.isGeolocationPermissionsDenied
 import com.anyjob.databinding.FragmentSearchBinding
 import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.profile.models.User
@@ -54,6 +55,7 @@ import com.yandex.mapkit.search.SearchManagerType
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -157,7 +159,7 @@ class SearchFragment : Fragment() {
 
             _searchManager.submit(
                 position.target,
-                position.zoom.toInt(),
+                16,
                 SearchOptions().apply {
                     searchTypes = SearchType.GEO.value
                     resultPageSize = 1
@@ -200,17 +202,9 @@ class SearchFragment : Fragment() {
             .show()
     }
 
-    private fun isPermissionsDenied(): Boolean {
-        val context = requireContext()
-        val finePermissionGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        val coarsePermissionGranted = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-
-        return !finePermissionGranted || !coarsePermissionGranted
-    }
-
     private fun moveCamera(geoObject: GeoObject) {
         val radius = getSearchRadius(_binding.searchBottomSheet.availableRadii.checkedChipId)
-        val position = geoObject.geometry.firstOrNull()?.point
+        val position = geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java)?.balloonPoint
             ?: return
 
         moveCamera(position, getZoomLevel(radius))
@@ -224,7 +218,7 @@ class SearchFragment : Fragment() {
 
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun moveCameraToUserLocation() {
-        if (isPermissionsDenied())
+        if (requireContext().isGeolocationPermissionsDenied())
             return requestLocationPermissions()
 
         _locationProvider.lastLocation.addOnSuccessListener { location ->

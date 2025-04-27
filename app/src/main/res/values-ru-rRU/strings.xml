@@ -72,4 +72,8 @@
     <string name="rate_your_client_description">Пожалуйста, оцените Вашего клиента</string>
     <string name="rate_worker_description">Пожалуйста, оцените специалиста</string>
     <string name="logout">Выйти из аккаунта</string>
+    <string name="empty_services_prompt">На данный момент выбор услуг не поддерживается =(</string>
+    <string name="start_search_prompt">Начните вводить адрес для поиска</string>
+    <string name="address_search_failed_prompt">Произошла ошибка при поиске адреса</string>
+    <string name="empty_addresses_prompt">Адрес не найден</string>
 </resources>

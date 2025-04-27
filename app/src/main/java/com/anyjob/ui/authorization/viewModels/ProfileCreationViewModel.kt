@@ -8,6 +8,7 @@ import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.authorization.useCases.CreateProfileUseCase
 import com.anyjob.domain.profile.models.MapAddress
 import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import kotlinx.coroutines.launch
 
 class ProfileCreationViewModel(
@@ -41,12 +42,12 @@ class ProfileCreationViewModel(
     }
 
     fun validateAddress(geoObject: GeoObject) {
-        val geometry = geoObject.geometry.firstOrNull()
-        _isAddressFilled.postValue(geometry?.point != null)
+        val toponym = geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java)
+        _isAddressFilled.postValue(toponym?.balloonPoint != null)
     }
 
     fun selectAddress(geoObject: GeoObject) {
-        val position = geoObject.geometry.firstOrNull()?.point
+        val position = geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java)?.balloonPoint
             ?: return
 
         _homeAddress.postValue(

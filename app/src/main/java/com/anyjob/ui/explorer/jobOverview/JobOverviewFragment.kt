@@ -20,7 +20,6 @@ import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.orderOverview.viewModels.OrderOverviewViewModel
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
-import com.anyjob.ui.extensions.getZoomLevel
 import com.anyjob.ui.extensions.observeOnce
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yandex.mapkit.geometry.Point
@@ -58,7 +57,7 @@ class JobOverviewFragment : Fragment() {
         val searchListener = object : Session.SearchListener {
             override fun onSearchResponse(response: Response) {
                 val geoObject = response.collection.children.firstNotNullOf { it.obj }
-                _binding.addressTextView.text = "${geoObject.name}"
+                _binding.addressTextView.text = geoObject.name
             }
 
             override fun onSearchError(error: Error) {
@@ -68,7 +67,7 @@ class JobOverviewFragment : Fragment() {
 
         searchManager.submit(
             Point(address.latitude, address.longitude),
-            getZoomLevel(500.0f).toInt(),
+            16,
             SearchOptions().apply {
                 searchTypes = SearchType.GEO.value
                 resultPageSize = 1

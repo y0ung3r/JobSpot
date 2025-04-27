@@ -33,12 +33,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="8dp" />
 
+            <LinearLayout
+                android:id="@+id/empty_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_services_prompt"
+                    android:textAppearance="?attr/textAppearanceHeadline5"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/services_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp"
-                app:layoutManager="LinearLayoutManager" />
+                app:layoutManager="LinearLayoutManager"/>
 
         </LinearLayout>
 

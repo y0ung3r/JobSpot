@@ -138,14 +138,19 @@ internal class FirebaseOrderRepository(
                 it.executorId == null
             }
             .filter {
-                val workerAddress = currentUser.address!!
-                val orderAddress = it.address!!
+                val workerAddress = Location("").apply {
+                    latitude = currentUser.address!!.latitude
+                    longitude = currentUser.address!!.longitude
+                }
+
+                val orderAddress = Location("").apply {
+                    latitude = it.address!!.latitude
+                    longitude = it.address!!.longitude
+                }
+
                 val searchRadius = it.searchRadius!!
 
-                val results = FloatArray(1)
-                Location.distanceBetween(workerAddress.latitude, workerAddress.longitude, orderAddress.latitude, orderAddress.longitude, results)
-
-                return@filter results[0] <= searchRadius
+                return@filter workerAddress.distanceTo(orderAddress) <= searchRadius
             }
             .filterNot {
                 it.excludedExecutors.contains(workerId)

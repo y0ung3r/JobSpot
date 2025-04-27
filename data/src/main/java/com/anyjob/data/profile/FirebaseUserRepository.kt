@@ -8,6 +8,7 @@ import com.anyjob.data.profile.entities.UserEntity
 import com.anyjob.domain.authorization.ProfileCreationParameters
 import com.anyjob.domain.authorization.interfaces.PhoneNumberAuthorizationProvider
 import com.anyjob.domain.profile.interfaces.UserRepository
+import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.profile.models.User
 
 internal class FirebaseUserRepository(
@@ -56,6 +57,15 @@ internal class FirebaseUserRepository(
 
         user?.also {
             user.rates.add(rate)
+            context.users.save(userId, user)
+        }
+    }
+
+    override suspend fun updateAddress(userId: String, address: MapAddress) {
+        val user = context.users.get<UserEntity>(userId)
+
+        user?.also {
+            user.address = address
             context.users.save(userId, user)
         }
     }
