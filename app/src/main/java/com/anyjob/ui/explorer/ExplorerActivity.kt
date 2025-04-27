@@ -7,10 +7,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.anyjob.R
@@ -20,7 +18,6 @@ import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
-import com.anyjob.ui.extensions.getZoomLevel
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Response
@@ -172,7 +169,7 @@ class ExplorerActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
-        reload()
+        reloadObservers()
 
         /*val navigationItems = setOf(
             R.id.navigation_home,
@@ -185,7 +182,7 @@ class ExplorerActivity : AppCompatActivity() {
         binding.navigationView.setupWithNavController(_navigationController)*/
     }
 
-    fun reload() {
+    fun reloadObservers() {
         _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
         _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
         _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
