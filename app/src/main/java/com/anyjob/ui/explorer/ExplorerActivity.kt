@@ -7,7 +7,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.anyjob.R
+import com.anyjob.data.search.GeolocationUpdater
 import com.anyjob.databinding.ActivityExplorerBinding
 import com.anyjob.domain.search.models.Order
 import com.anyjob.ui.explorer.profile.models.AuthorizedUser
@@ -22,9 +29,11 @@ import com.yandex.mapkit.search.SearchManagerType
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ExplorerActivity : AppCompatActivity() {
     private val _viewModel by viewModel<ExplorerViewModel>()
@@ -80,7 +89,7 @@ class ExplorerActivity : AppCompatActivity() {
 
         searchManager.submit(
             Point(order.address.latitude, order.address.longitude),
-            getZoomLevel(500.0f).toInt(),
+            16,
             SearchOptions().apply {
                 searchTypes = SearchType.GEO.value
                 resultPageSize = 1
@@ -107,10 +116,27 @@ class ExplorerActivity : AppCompatActivity() {
         ratingField.text = "%.1f".format(user.averageRate)
         phoneNumberField.text = PhoneNumberUtils.formatNumber(user.phoneNumber, locale.country)
 
-        if (user.isWorker)
+        val workManager = WorkManager.getInstance(applicationContext)
+
+        if (user.isWorker) {
             _viewModel.startClientSearching {
                 onClientFound(it)
             }
+
+            val geolocationUpdateRequest = OneTimeWorkRequestBuilder<GeolocationUpdater>()
+                .setInputData(workDataOf("USER_ID" to user.id))
+                .setInitialDelay(5, TimeUnit.SECONDS)
+                .build()
+
+            workManager
+                .enqueueUniqueWork(
+                    GeolocationUpdater::class.java.name,
+                    ExistingWorkPolicy.KEEP,
+                    geolocationUpdateRequest)
+        }
+        else {
+            workManager.cancelUniqueWork(GeolocationUpdater::class.java.name)
+        }
 
         if (user.currentOrder == null)
             return
@@ -123,10 +149,11 @@ class ExplorerActivity : AppCompatActivity() {
     }
 
     private fun drawAddressInToolbar(geoObject: GeoObject) {
-        val isAddressExists = !geoObject.name.isNullOrBlank()
+        val toponym = geoObject.metadataContainer.getItem(ToponymObjectMetadata::class.java)
+        val isAddressExists = toponym?.balloonPoint != null
 
         if (isAddressExists) {
-            binding.toolbar.title = "${geoObject.name}"
+            binding.toolbar.title = geoObject.name
             binding.toolbar.subtitle = getString(R.string.address_title)
         }
         else {
@@ -145,8 +172,7 @@ class ExplorerActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
-        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
-        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
+        reload()
 
         /*val navigationItems = setOf(
             R.id.navigation_home,
@@ -157,6 +183,13 @@ class ExplorerActivity : AppCompatActivity() {
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
         setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
         binding.navigationView.setupWithNavController(_navigationController)*/
+    }
+
+    fun reload() {
+        _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
+        _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
+        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
+        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
     }
 
     override fun onBackPressed() {

@@ -49,6 +49,22 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:id="@+id/addresses_action_prompt_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:id="@+id/addresses_action_prompt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_search_prompt"
+                    android:textAppearance="?attr/textAppearanceSearchResultSubtitle"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/addresses_list"
                 android:layout_width="match_parent"

@@ -36,9 +36,17 @@ class ServicesBottomSheetDialog(
         setContentView(_binding.root)
         setupFullHeight()
 
-        _binding.servicesList.adapter = ServicesAdapter(
-            services,
-            onItemClick
-        )
+        val adapter = ServicesAdapter(services, onItemClick)
+
+        if (adapter.itemCount == 0) {
+            _binding.servicesList.visibility = View.GONE
+            _binding.emptyPrompt.visibility = View.VISIBLE
+        }
+        else {
+            _binding.servicesList.visibility = View.VISIBLE
+            _binding.emptyPrompt.visibility = View.GONE
+        }
+
+        _binding.servicesList.adapter = adapter
     }
 }

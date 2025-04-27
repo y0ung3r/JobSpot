@@ -30,6 +30,7 @@ import com.yandex.mapkit.search.SearchManagerType
 import com.yandex.mapkit.search.SearchOptions
 import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
+import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -62,7 +63,7 @@ class OrderOverviewFragment : Fragment() {
         val searchListener = object : Session.SearchListener {
             override fun onSearchResponse(response: Response) {
                 val geoObject = response.collection.children.firstNotNullOf { it.obj }
-                _binding.addressTextView.text = "${geoObject.name}"
+                _binding.addressTextView.text = geoObject.name
             }
 
             override fun onSearchError(error: Error) {
@@ -72,7 +73,7 @@ class OrderOverviewFragment : Fragment() {
 
         searchManager.submit(
             Point(address.latitude, address.longitude),
-            getZoomLevel(500.0f).toInt(),
+            16,
             SearchOptions().apply {
                 searchTypes = SearchType.GEO.value
                 resultPageSize = 1

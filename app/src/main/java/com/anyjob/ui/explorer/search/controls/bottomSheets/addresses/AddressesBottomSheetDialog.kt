@@ -4,19 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import com.anyjob.R
 import com.anyjob.databinding.AddressesBottomSheetBinding
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.adapters.AddressesAdapter
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.extensions.afterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
-import com.yandex.mapkit.geometry.LinearRing
 import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.geometry.Polygon
-import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
 import com.yandex.mapkit.search.SearchManagerType
@@ -38,28 +35,43 @@ class AddressesBottomSheetDialog(
         SearchFactory.getInstance().createSearchManager(SearchManagerType.ONLINE)
     }
 
+    private var _lastSession: Session? = null
+
     private fun onAddressChanged(address: String) {
+        _lastSession?.cancel()
+
         val searchListener = object : Session.SearchListener {
             override fun onSearchResponse(response: Response) {
-                _addressesAdapter = AddressesAdapter(
-                    response.collection.children.mapNotNull { it.obj },
-                    onItemClick
-                )
+                val geoObjects = response.collection.children.mapNotNull { it.obj }
+
+                if (geoObjects.isEmpty()) {
+                    _binding.addressesActionPrompt.text = context.getString(R.string.empty_addresses_prompt)
+                    _binding.addressesActionPromptContainer.visibility = View.VISIBLE
+                    _binding.addressesList.visibility = View.GONE
+                }
+                else {
+                    _binding.addressesActionPromptContainer.visibility = View.GONE
+                    _binding.addressesList.visibility = View.VISIBLE
+                }
+
+                _addressesAdapter = AddressesAdapter(geoObjects, onItemClick)
 
                 _binding.addressesList.adapter = _addressesAdapter
                 _addressesAdapter.notifyDataSetChanged()
             }
 
             override fun onSearchError(error: Error) {
-                // Ignore...
+                _binding.addressesActionPrompt.text = context.getString(R.string.address_search_failed_prompt)
+                _binding.addressesActionPromptContainer.visibility = View.VISIBLE
+                _binding.addressesList.visibility = View.GONE
             }
         }
 
-        val southwest = Point(-90.0, -180.0)  // юго-западная точка
-        val northeast = Point(90.0, 180.0)   // северо-восточная точка
+        val southwest = Point(-90.0, -180.0)
+        val northeast = Point(90.0, 180.0)
         val boundingBox = BoundingBox(southwest, northeast)
 
-        _searchManager.submit(
+        _lastSession = _searchManager.submit(
             address,
             Geometry.fromBoundingBox(boundingBox),
             SearchOptions().apply {
@@ -86,11 +98,12 @@ class AddressesBottomSheetDialog(
 
         _binding.addressField.afterTextChanged(::onAddressChanged)
 
-        _addressesAdapter = AddressesAdapter(
-            ArrayList(),
-            onItemClick
-        )
+        _addressesAdapter = AddressesAdapter(ArrayList(), onItemClick)
 
         _binding.addressesList.adapter = _addressesAdapter
+
+        _binding.addressesActionPrompt.text = context.getString(R.string.start_search_prompt)
+        _binding.addressesActionPromptContainer.visibility = View.VISIBLE
+        _binding.addressesList.visibility = View.GONE
     }
 }

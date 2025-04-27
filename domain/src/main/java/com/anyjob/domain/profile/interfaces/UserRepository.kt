@@ -1,6 +1,7 @@
 package com.anyjob.domain.profile.interfaces
 
 import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.domain.profile.models.MapAddress
 import com.anyjob.domain.profile.models.User
 
 /**
@@ -19,6 +20,8 @@ interface UserRepository {
     suspend fun getAvailableWorkers(): List<User>
 
     suspend fun addRateToUser(userId: String, rate: Float)
+
+    suspend fun updateAddress(userId: String, address: MapAddress)
 
     suspend fun getUser(id: String): User?
 }
