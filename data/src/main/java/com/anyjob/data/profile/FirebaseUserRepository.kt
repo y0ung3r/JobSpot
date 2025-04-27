@@ -22,7 +22,7 @@ internal class FirebaseUserRepository(
             firstname = parameters.firstname
             middlename = parameters.middlename
             isWorker = parameters.isWorker
-            address = parameters.address
+            homeAddress = parameters.homeAddress
         }
 
         context.users.save(userId, storeUser)
@@ -46,7 +46,8 @@ internal class FirebaseUserRepository(
                 firstname = it.firstname,
                 middlename = it.middlename,
                 isWorker = it.isWorker,
-                address = it.address,
+                homeAddress = it.homeAddress,
+                geolocation = it.geolocation,
                 rates = it.rates
             )
         }
@@ -61,11 +62,11 @@ internal class FirebaseUserRepository(
         }
     }
 
-    override suspend fun updateAddress(userId: String, address: MapAddress) {
+    override suspend fun updateGeolocation(userId: String, geolocation: MapAddress) {
         val user = context.users.get<UserEntity>(userId)
 
         user?.also {
-            user.address = address
+            user.geolocation = geolocation
             context.users.save(userId, user)
         }
     }
@@ -80,7 +81,8 @@ internal class FirebaseUserRepository(
             firstname = user.firstname,
             middlename = user.middlename,
             isWorker = user.isWorker,
-            address = user.address,
+            homeAddress = user.homeAddress,
+            geolocation = user.geolocation,
             rates = user.rates
         )
     }

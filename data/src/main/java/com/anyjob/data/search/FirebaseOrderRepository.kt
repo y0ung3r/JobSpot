@@ -139,8 +139,8 @@ internal class FirebaseOrderRepository(
             }
             .filter {
                 val workerAddress = Location("").apply {
-                    latitude = currentUser.address!!.latitude
-                    longitude = currentUser.address!!.longitude
+                    latitude = currentUser.geolocation!!.latitude
+                    longitude = currentUser.geolocation!!.longitude
                 }
 
                 val orderAddress = Location("").apply {

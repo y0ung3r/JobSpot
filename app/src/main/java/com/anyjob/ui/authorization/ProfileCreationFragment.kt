@@ -112,7 +112,7 @@ class ProfileCreationFragment : Fragment() {
                         firstname = _binding.firstnameField.text.toString(),
                         middlename = _binding.middlenameField.text.toString(),
                         isWorker = _binding.isWorkerCheckBox.isChecked,
-                        address = homeAddress
+                        homeAddress = homeAddress
                     )
 
                     _viewModel.createProfile(profileCreationParameters)

@@ -21,7 +21,7 @@ interface UserRepository {
 
     suspend fun addRateToUser(userId: String, rate: Float)
 
-    suspend fun updateAddress(userId: String, address: MapAddress)
+    suspend fun updateGeolocation(userId: String, geolocation: MapAddress)
 
     suspend fun getUser(id: String): User?
 }

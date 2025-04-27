@@ -32,7 +32,7 @@ class GeolocationUpdater(appContext: Context, workerParams: WorkerParameters, pr
         locationProvider.lastLocation.addOnSuccessListener {
             if (it != null) {
                 GlobalScope.async {
-                    userRepository.updateAddress(userId, MapAddress(it.latitude, it.longitude))
+                    userRepository.updateGeolocation(userId, MapAddress(it.latitude, it.longitude))
                 }
             }
         }
