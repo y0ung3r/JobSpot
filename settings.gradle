@@ -9,7 +9,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "AnyJob"
+rootProject.name = "JobSpot"
 include ':app'
 include ':data'
 include ':domain'

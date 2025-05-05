@@ -1,4 +1,4 @@
-# AnyJob
+# JobSpot
 Mobile application for finding private workers
 
 [Demonstration](https://i.imgur.com/lGrHbW8.gif "Демонстрация")
@@ -10,4 +10,4 @@ The purpose of the app is to assist users in finding an expert to perform a spec
 ![image](https://user-images.githubusercontent.com/55300023/235253931-b8f05af9-ff16-44d8-8ab7-e35064a37028.png)
 
 ## Build and startup
-To run the application, you need to create a temporary project on `Firebase` and connect `google-services.json` in the standard way. You will also need to specify the API key from `Google Maps` in the `local.properties` file
+To run the application, you need to create a temporary project on `Firebase` and connect `google-services.json` in the standard way. You will also need to specify the API key from `Yandex MapKit API` in the `local.properties` file (`MAPKIT_API_KEY`)

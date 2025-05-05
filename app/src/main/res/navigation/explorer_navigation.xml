@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_search"
-        android:name="com.anyjob.ui.explorer.search.SearchFragment"
+        android:name="com.jobspot.ui.explorer.search.SearchFragment"
         android:label="@string/home_fragment_title"
         tools:layout="@layout/fragment_search" >
 
@@ -31,7 +31,7 @@
 
     <fragment
         android:id="@+id/navigation_order_overview"
-        android:name="com.anyjob.ui.explorer.orderOverview.OrderOverviewFragment"
+        android:name="com.jobspot.ui.explorer.orderOverview.OrderOverviewFragment"
         android:label="fragment_order_overview"
         tools:layout="@layout/fragment_order_overview">
 
@@ -47,7 +47,7 @@
 
     <fragment
         android:id="@+id/navigation_job_overview"
-        android:name="com.anyjob.ui.explorer.jobOverview.JobOverviewFragment"
+        android:name="com.jobspot.ui.explorer.jobOverview.JobOverviewFragment"
         android:label="fragment_order_overview"
         tools:layout="@layout/fragment_order_overview">
 
@@ -63,7 +63,7 @@
 
     <activity
         android:id="@+id/navigation_authorization_activity"
-        android:name="com.anyjob.ui.authorization.AuthorizationActivity"
+        android:name="com.jobspot.ui.authorization.AuthorizationActivity"
         android:label="AuthorizationActivity" />
 
     <action

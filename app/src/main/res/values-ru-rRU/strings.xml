@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AnyJob</string>
+    <string name="app_name">JobSpot</string>
     <string name="phone_number_entry_fragment_title">Авторизация</string>
     <string name="phone_number_entry_fragment_description">Укажите номер телефона, чтобы авторизоваться или зарегистрироваться</string>
     <string name="phone_number_prompt">Номер телефона</string>

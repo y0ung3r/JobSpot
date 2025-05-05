@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
-      <module name="AnyJob.app" target="16" />
-      <module name="AnyJob.data" target="16" />
+      <module name="JobSpot.app" target="16" />
+      <module name="JobSpot.data" target="16" />
     </bytecodeTargetLevel>
   </component>
 </project>

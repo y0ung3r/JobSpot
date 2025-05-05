@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AnyJob</string>
+    <string name="app_name">JobSpot</string>
     <string name="phone_number_entry_fragment_title">Sign In</string>
     <string name="phone_number_entry_fragment_description">Please, enter your phone number</string>
     <string name="phone_number_prompt">Phone number</string>

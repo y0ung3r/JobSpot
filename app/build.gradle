@@ -9,7 +9,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.anyjob"
+        applicationId "com.jobspot"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -35,7 +35,7 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'com.anyjob'
+    namespace 'com.jobspot'
 }
 
 dependencies {
