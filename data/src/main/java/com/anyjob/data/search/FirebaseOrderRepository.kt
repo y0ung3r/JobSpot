@@ -152,6 +152,9 @@ internal class FirebaseOrderRepository(
 
                 return@filter workerAddress.distanceTo(orderAddress) <= searchRadius
             }
+            .filter {
+                it.service!!.id == currentUser.professionId
+            }
             .filterNot {
                 it.excludedExecutors.contains(workerId)
             }

@@ -75,4 +75,6 @@
     <string name="start_search_prompt">Start typing the address to begin the search</string>
     <string name="address_search_failed_prompt">An error occurred while searching for an address</string>
     <string name="empty_addresses_prompt">Address not found</string>
+    <string name="profession">Profession</string>
+    <string name="invalid_profession">Invalid profession</string>
 </resources>

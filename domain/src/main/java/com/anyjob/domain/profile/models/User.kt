@@ -7,6 +7,7 @@ package com.anyjob.domain.profile.models
  * @param lastname Фамилия
  * @param firstname Имя
  * @param middlename Отчество
+ * @param professionId Идентификатор рода занятий
  * @param isWorker Определяет оказывает ли текущий пользователь услуги
  */
 data class User(
@@ -18,6 +19,7 @@ data class User(
     val isWorker: Boolean,
     val homeAddress: MapAddress?,
     val geolocation: MapAddress?,
+    val professionId: String?,
     val rates: List<Float> = listOf(5.0f)
 ) {
     val averageRate = rates.average()

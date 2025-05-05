@@ -29,7 +29,8 @@ val appModule = module {
 
     viewModel {
         ProfileCreationViewModel(
-            createProfileUseCase = get()
+            createProfileUseCase = get(),
+            getServicesUseCase = get()
         )
     }
 

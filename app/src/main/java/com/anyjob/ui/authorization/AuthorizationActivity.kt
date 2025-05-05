@@ -10,6 +10,7 @@ import com.anyjob.R
 import com.anyjob.databinding.ActivityAuthorizationBinding
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.extensions.observeOnce
+import com.yandex.mapkit.MapKitFactory
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class AuthorizationActivity : AppCompatActivity() {
@@ -37,6 +38,8 @@ class AuthorizationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(this)
+
         setContentView(_binding.root)
 
         _binding.authorizationFragmentsContainer.visibility = View.INVISIBLE
@@ -44,6 +47,7 @@ class AuthorizationActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        MapKitFactory.getInstance().onStart()
 
         _viewModel.getAuthorizedUser().observeOnce(this@AuthorizationActivity) { authorizedUser ->
             if (authorizedUser != null && authorizedUser.fullname.isNotBlank()) {
@@ -56,5 +60,10 @@ class AuthorizationActivity : AppCompatActivity() {
 
             _binding.authorizationFragmentsContainer.visibility = View.VISIBLE
         }
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
     }
 }

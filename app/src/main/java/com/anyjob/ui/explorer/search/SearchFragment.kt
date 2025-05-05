@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -23,9 +24,12 @@ import com.anyjob.domain.search.OrderCreationParameters
 import com.anyjob.domain.services.models.Service
 import com.anyjob.ui.animations.VisibilityMode
 import com.anyjob.ui.animations.extensions.fade
+import com.anyjob.ui.animations.extensions.slide
 import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.animations.radar.RadarParameters
 import com.anyjob.ui.animations.radar.RadarView
+import com.anyjob.ui.animations.slide.SlideFrom
+import com.anyjob.ui.animations.slide.SlideParameters
 import com.anyjob.ui.explorer.ExplorerActivity
 import com.anyjob.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
@@ -189,6 +193,9 @@ class SearchFragment : Fragment() {
         if (!isGranted) {
             showLocationPermissionsRationaleDialog()
         }
+        else {
+            moveCameraToUserLocation()
+        }
     }
 
     private fun requestLocationPermissions() {
@@ -250,7 +257,8 @@ class SearchFragment : Fragment() {
     private fun onMapReady(yandexMap: Map) {
         _yandexMap = yandexMap
 
-        _binding.currentLocationButton.isEnabled = true
+        _binding.searchBottomSheet.bottomSheetLayout.isVisible = true
+        _binding.currentLocationButton.isVisible = true
 
         val mapStyle = resources
             .openRawResource(R.raw.map_style)
@@ -440,7 +448,8 @@ class SearchFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         _binding.currentLocationButton.setOnClickListener(::onCurrentLocationButtonClick)
-        _binding.currentLocationButton.isEnabled = false
+        _binding.currentLocationButton.isVisible = false
+        _binding.searchBottomSheet.bottomSheetLayout.isVisible = false
 
         _fragmentHost.fitsSystemWindows = true
 
@@ -467,14 +476,8 @@ class SearchFragment : Fragment() {
         return _binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(context)
-    }
-
     override fun onStart() {
         super.onStart()
-        MapKitFactory.getInstance().onStart()
         _mapView.onStart()
         _mapView.mapWindow.map.setMapLoadedListener {
             onMapReady(_mapView.mapWindow.map)
@@ -483,7 +486,6 @@ class SearchFragment : Fragment() {
 
     override fun onStop() {
         _mapView.onStop()
-        MapKitFactory.getInstance().onStop()
         super.onStop()
     }
 }

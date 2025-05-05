@@ -61,8 +61,7 @@
 
     <LinearLayout
         android:id="@+id/logout_button"
-        style="@style/NavigationDrawerItemStyle"
-        android:onClick="onLogoutButtonClick">
+        style="@style/NavigationDrawerItemStyle">
 
         <TextView
             android:id="@+id/logout_button_title"

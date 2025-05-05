@@ -85,6 +85,7 @@ fun View.slide(parameters: SlideParameters) {
 
     beginAnimation(transitionSet) {
         visibility = parameters.mode.asVisibility()
+        parameters.launchAfter?.invoke()
     }
 }
 

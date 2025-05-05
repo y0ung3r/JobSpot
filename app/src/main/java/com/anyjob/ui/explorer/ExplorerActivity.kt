@@ -19,6 +19,7 @@ import com.anyjob.ui.explorer.profile.models.AuthorizedUser
 import com.anyjob.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.anyjob.ui.explorer.viewModels.ExplorerViewModel
 import com.yandex.mapkit.GeoObject
+import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
@@ -165,6 +166,7 @@ class ExplorerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MapKitFactory.initialize(this)
         setContentView(binding.root)
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
@@ -180,6 +182,16 @@ class ExplorerActivity : AppCompatActivity() {
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
         setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
         binding.navigationView.setupWithNavController(_navigationController)*/
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
+    }
+
+    override fun onStop() {
+        MapKitFactory.getInstance().onStop()
+        super.onStop()
     }
 
     fun reloadObservers() {
