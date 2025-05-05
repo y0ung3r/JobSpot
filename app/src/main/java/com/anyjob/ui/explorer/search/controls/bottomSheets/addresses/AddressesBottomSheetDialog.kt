@@ -4,13 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import androidx.core.view.isVisible
 import com.anyjob.R
 import com.anyjob.databinding.AddressesBottomSheetBinding
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.adapters.AddressesAdapter
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
 import com.anyjob.ui.extensions.afterTextChanged
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.BoundingBox
 import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
@@ -93,6 +93,7 @@ class AddressesBottomSheetDialog(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(_binding.root)
         setupFullHeight()
 

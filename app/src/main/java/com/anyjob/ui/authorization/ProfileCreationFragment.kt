@@ -10,10 +10,15 @@ import androidx.navigation.fragment.findNavController
 import com.anyjob.R
 import com.anyjob.databinding.FragmentProfileCreationBinding
 import com.anyjob.domain.authorization.ProfileCreationParameters
+import com.anyjob.domain.services.models.Service
+import com.anyjob.ui.animations.VisibilityMode
+import com.anyjob.ui.animations.extensions.fade
+import com.anyjob.ui.animations.fade.FadeParameters
 import com.anyjob.ui.authorization.viewModels.AuthorizationViewModel
 import com.anyjob.ui.authorization.viewModels.ProfileCreationViewModel
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
 import com.anyjob.ui.explorer.search.controls.bottomSheets.addresses.models.UserAddress
+import com.anyjob.ui.explorer.search.controls.bottomSheets.services.ServicesBottomSheetDialog
 import com.anyjob.ui.extensions.afterTextChanged
 import com.anyjob.ui.extensions.observeOnce
 import com.anyjob.ui.extensions.showToast
@@ -24,6 +29,7 @@ class ProfileCreationFragment : Fragment() {
     private val _activityViewModel by sharedViewModel<AuthorizationViewModel>()
     private val _viewModel by viewModel<ProfileCreationViewModel>()
     private lateinit var _addressesBottomSheet: AddressesBottomSheetDialog
+    private lateinit var _servicesBottomSheet: ServicesBottomSheetDialog
 
     private lateinit var _binding: FragmentProfileCreationBinding
     private val _navigationController by lazy {
@@ -42,8 +48,9 @@ class ProfileCreationFragment : Fragment() {
         val isLastnameValid = _viewModel.isLastnameFilled.value ?: false
         val isFirstnameValid = _viewModel.isFirstnameFilled.value ?: false
         val isAddressValid = _viewModel.isAddressFilled.value ?: false
+        val isProfessionValid = !_binding.isWorkerCheckBox.isChecked || (_viewModel.isProfessionFilled.value ?: false)
 
-        _binding.confirmButton.isEnabled = isLastnameValid && isFirstnameValid && isAddressValid
+        _binding.confirmButton.isEnabled = isLastnameValid && isFirstnameValid && isAddressValid && isProfessionValid
     }
 
     private fun onLastnameValidating(isValid: Boolean) {
@@ -65,6 +72,14 @@ class ProfileCreationFragment : Fragment() {
     private fun onAddressValidating(isValid: Boolean) {
         if (!isValid) {
             _binding.selectHomeAddressButton.error = getString(R.string.invalid_home_address)
+        }
+
+        updateConfirmButton()
+    }
+
+    private fun onProfessionValidating(isValid: Boolean) {
+        if (!isValid) {
+            _binding.selectHomeAddressButton.error = getString(R.string.invalid_profession)
         }
 
         updateConfirmButton()
@@ -92,6 +107,7 @@ class ProfileCreationFragment : Fragment() {
             _binding.middlenameField.isEnabled = true
             _binding.isWorkerCheckBox.isEnabled = true
             _binding.selectHomeAddressButton.isEnabled = true
+            _binding.selectProfessionButton.isEnabled = true
         }
     }
 
@@ -102,20 +118,24 @@ class ProfileCreationFragment : Fragment() {
         _binding.middlenameField.isEnabled = false
         _binding.isWorkerCheckBox.isEnabled = false
         _binding.selectHomeAddressButton.isEnabled = false
+        _binding.selectProfessionButton.isEnabled = false
 
         _activityViewModel.getAuthorizedUser().observeOnce(this@ProfileCreationFragment) { authorizedUser ->
             authorizedUser?.let {
                 _viewModel.homeAddress.observeOnce(this@ProfileCreationFragment) { homeAddress ->
-                    val profileCreationParameters = ProfileCreationParameters(
-                        userId = it.id,
-                        lastname = _binding.lastnameField.text.toString(),
-                        firstname = _binding.firstnameField.text.toString(),
-                        middlename = _binding.middlenameField.text.toString(),
-                        isWorker = _binding.isWorkerCheckBox.isChecked,
-                        homeAddress = homeAddress
-                    )
+                    _viewModel.professionId.observeOnce(this@ProfileCreationFragment) { professionId ->
+                        val profileCreationParameters = ProfileCreationParameters(
+                            userId = it.id,
+                            lastname = _binding.lastnameField.text.toString(),
+                            firstname = _binding.firstnameField.text.toString(),
+                            middlename = _binding.middlenameField.text.toString(),
+                            isWorker = _binding.isWorkerCheckBox.isChecked,
+                            homeAddress = homeAddress,
+                            professionId = professionId
+                        )
 
-                    _viewModel.createProfile(profileCreationParameters)
+                        _viewModel.createProfile(profileCreationParameters)
+                    }
                 }
             }
         }
@@ -138,18 +158,47 @@ class ProfileCreationFragment : Fragment() {
         _addressesBottomSheet.show()
     }
 
+    private fun onProfessionChanged(service: Service) {
+        _binding.selectProfessionButton.text = service.title
+        _viewModel.validateProfession(service.id)
+        _viewModel.selectProfession(service.id)
+        _servicesBottomSheet.dismiss()
+    }
+
+    private fun onSelectProfessionButtonClick(button: View) {
+        _viewModel.getServicesList().observe(this@ProfileCreationFragment) { services ->
+            _servicesBottomSheet = ServicesBottomSheetDialog(
+                requireContext(),
+                R.style.Theme_AnyJob_BottomSheetDialog,
+                services,
+                ::onProfessionChanged
+            )
+
+            _servicesBottomSheet.show()
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileCreationBinding.inflate(inflater, container, false)
 
         _viewModel.isLastnameFilled.observe(this@ProfileCreationFragment, ::onLastnameValidating)
         _viewModel.isFirstnameFilled.observe(this@ProfileCreationFragment, ::onFirstnameValidating)
         _viewModel.isAddressFilled.observe(this@ProfileCreationFragment, ::onAddressValidating)
+        _viewModel.isProfessionFilled.observe(this@ProfileCreationFragment, ::onProfessionValidating)
         _viewModel.onProfileCreated.observe(this@ProfileCreationFragment, ::onProfileCreated)
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)
         _binding.firstnameField.afterTextChanged(::onFirstnameChanged)
         _binding.selectHomeAddressButton.setOnClickListener(::onSelectHomeAddressButtonClick)
+        _binding.selectProfessionButton.setOnClickListener(::onSelectProfessionButtonClick)
         _binding.confirmButton.setOnClickListener(::onConfirmButtonClick)
+        _binding.isWorkerCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            _binding.selectProfessionButton.fade(FadeParameters().apply {
+                mode = if (isChecked) VisibilityMode.Show else VisibilityMode.Hide
+            })
+
+            updateConfirmButton()
+        }
 
         return _binding.root
     }

@@ -23,6 +23,7 @@ internal class FirebaseUserRepository(
             middlename = parameters.middlename
             isWorker = parameters.isWorker
             homeAddress = parameters.homeAddress
+            professionId = parameters.professionId
         }
 
         context.users.save(userId, storeUser)
@@ -48,6 +49,7 @@ internal class FirebaseUserRepository(
                 isWorker = it.isWorker,
                 homeAddress = it.homeAddress,
                 geolocation = it.geolocation,
+                professionId = it.professionId,
                 rates = it.rates
             )
         }
@@ -83,6 +85,7 @@ internal class FirebaseUserRepository(
             isWorker = user.isWorker,
             homeAddress = user.homeAddress,
             geolocation = user.geolocation,
+            professionId = user.professionId,
             rates = user.rates
         )
     }

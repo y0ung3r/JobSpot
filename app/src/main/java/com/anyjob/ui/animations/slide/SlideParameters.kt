@@ -16,4 +16,9 @@ class SlideParameters : AnimationParameters() {
      * Указывает как нужно запустить Slide: на скрытие View или на его отображение
      */
     var mode: VisibilityMode = VisibilityMode.Show
+
+    /**
+     * Запускает действие после выполнения Slide
+     */
+    var launchAfter: (() -> Unit)? = null
 }

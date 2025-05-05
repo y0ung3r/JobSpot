@@ -48,6 +48,11 @@ internal class UserEntity : Serializable {
     var geolocation: MapAddress? = null
 
     /**
+     * Идентификатор рода занятий
+     */
+    var professionId: String? = null
+
+    /**
      * Оценки пользователя
      */
     var rates: ArrayList<Float> = arrayListOf(5.0f)
