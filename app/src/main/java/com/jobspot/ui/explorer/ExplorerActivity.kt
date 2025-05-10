@@ -199,7 +199,10 @@ class ExplorerActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
-        reloadObservers()
+        _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
+        _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
+        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
+        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
 
         /*val navigationItems = setOf(
             R.id.navigation_home,
@@ -220,13 +223,6 @@ class ExplorerActivity : AppCompatActivity() {
     override fun onStop() {
         MapKitFactory.getInstance().onStop()
         super.onStop()
-    }
-
-    fun reloadObservers() {
-        _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
-        _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
-        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
-        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
     }
 
     override fun onBackPressed() {
