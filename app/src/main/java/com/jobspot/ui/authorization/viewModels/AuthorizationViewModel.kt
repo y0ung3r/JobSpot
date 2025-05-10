@@ -76,6 +76,7 @@ class AuthorizationViewModel(
                 userSource.middlename,
                 userSource.phoneNumber,
                 userSource.isWorker,
+                isDocumentsVerified = userSource.isDocumentsVerified,
                 averageRate = userSource.averageRate
             )
         }

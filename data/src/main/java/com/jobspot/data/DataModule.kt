@@ -17,6 +17,8 @@ import com.jobspot.domain.services.interfaces.ServiceRepository
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.jobspot.data.profile.DefaultVerificationListener
+import com.jobspot.domain.profile.interfaces.VerificationListener
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -57,6 +59,12 @@ val dataModule = module {
     single<ClientFinder> {
         DefaultClientFinder(
             orderRepository = get(),
+            authorizationProvider = get()
+        )
+    }
+
+    single<VerificationListener> {
+        DefaultVerificationListener(
             authorizationProvider = get()
         )
     }
