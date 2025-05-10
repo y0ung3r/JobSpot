@@ -1,18 +1,18 @@
 package com.jobspot.ui.explorer
 
+import android.Manifest
 import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.jobspot.R
-import com.jobspot.data.search.GeolocationUpdater
+import com.jobspot.data.search.DefaultGeolocationUpdater
 import com.jobspot.databinding.ActivityExplorerBinding
 import com.jobspot.domain.search.models.Order
 import com.jobspot.ui.animations.VisibilityMode
@@ -36,7 +36,6 @@ import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
-import java.util.concurrent.TimeUnit
 
 class ExplorerActivity : AppCompatActivity() {
     private val _viewModel by viewModel<ExplorerViewModel>()
@@ -104,25 +103,15 @@ class ExplorerActivity : AppCompatActivity() {
         )
     }
 
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun onUserReady(user: AuthorizedUser?) {
         if (user == null)
             return
-
-        val locale = Locale.getDefault()
-        val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
-        val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
-        val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
 
         val logoutButton = binding.drawerLayout.findViewById<TextView>(R.id.logout_button_title)
         logoutButton.setOnClickListener {
             onLogoutButtonClick()
         }
-
-        fullnameField.text = user.fullname
-        ratingField.text = "%.1f".format(user.averageRate)
-        phoneNumberField.text = PhoneNumberUtils.formatNumber(user.phoneNumber, locale.country)
-
-        val workManager = WorkManager.getInstance(applicationContext)
 
         if (user.isWorker) {
             _viewModel.startVerificationListener {
@@ -142,19 +131,8 @@ class ExplorerActivity : AppCompatActivity() {
                 onClientFound(it)
             }
 
-            val geolocationUpdateRequest = OneTimeWorkRequestBuilder<GeolocationUpdater>()
-                .setInputData(workDataOf("USER_ID" to user.id))
-                .setInitialDelay(5, TimeUnit.SECONDS)
-                .build()
-
-            workManager
-                .enqueueUniqueWork(
-                    GeolocationUpdater::class.java.name,
-                    ExistingWorkPolicy.KEEP,
-                    geolocationUpdateRequest)
-        }
-        else {
-            workManager.cancelUniqueWork(GeolocationUpdater::class.java.name)
+            _viewModel.createGeolocationUpdater(applicationContext)
+                .start(user.id)
         }
 
         if (user.currentOrder == null)
@@ -187,10 +165,40 @@ class ExplorerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(this)
         setContentView(binding.root)
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
+
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                // Nothing
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+                val locale = Locale.getDefault()
+                val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
+                val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
+                val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+
+                _viewModel.getAuthorizedUser().observeOnce(this@ExplorerActivity) {
+                    if (it == null)
+                        return@observeOnce
+
+                    fullnameField.text = it.fullname
+                    ratingField.text = "%.1f".format(it.averageRate)
+                    phoneNumberField.text = PhoneNumberUtils.formatNumber(it.phoneNumber, locale.country)
+                }
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                // Nothing
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                // Nothing
+            }
+
+        })
 
         reloadObservers()
 

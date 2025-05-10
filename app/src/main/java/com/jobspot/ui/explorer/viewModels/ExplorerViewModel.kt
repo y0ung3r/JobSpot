@@ -1,6 +1,9 @@
 package com.jobspot.ui.explorer.viewModels
 
+import android.content.Context
 import androidx.lifecycle.*
+import com.jobspot.data.search.DefaultGeolocationUpdater
+import com.jobspot.domain.profile.interfaces.UserRepository
 import com.jobspot.domain.profile.models.User
 import com.jobspot.domain.profile.useCases.AddRateToUserUseCase
 import com.jobspot.domain.profile.useCases.GetAuthorizedUserUseCase
@@ -24,7 +27,8 @@ class ExplorerViewModel(
     private val startVerificationListenerUseCase: StartVerificationListenerUseCase,
     private val finishOrderUseCase: FinishOrderUseCase,
     private val addRateToUserUseCase: AddRateToUserUseCase,
-    private val logoutUseCase: LogoutUseCase
+    private val logoutUseCase: LogoutUseCase,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _currentGeoObject = MutableLiveData<GeoObject>()
     val currentGeoObject: LiveData<GeoObject> = _currentGeoObject
@@ -95,6 +99,9 @@ class ExplorerViewModel(
             acceptJobUseCase.execute(order)
         }
     }
+
+    fun createGeolocationUpdater(applicationContext: Context)
+        = DefaultGeolocationUpdater(applicationContext, userRepository)
 
     fun updateCurrentAddress(geoObject: GeoObject) {
         _currentGeoObject.postValue(geoObject)

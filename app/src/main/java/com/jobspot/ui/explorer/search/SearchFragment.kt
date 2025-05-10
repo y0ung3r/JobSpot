@@ -45,6 +45,7 @@ import com.yandex.mapkit.logo.Padding
 import com.yandex.mapkit.map.CameraListener
 import com.yandex.mapkit.map.CameraPosition
 import com.yandex.mapkit.map.Map
+import com.yandex.mapkit.map.MapLoadedListener
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.search.Response
 import com.yandex.mapkit.search.SearchFactory
@@ -468,12 +469,14 @@ class SearchFragment : Fragment() {
         return _binding.root
     }
 
+    private val _mapLoadedListener = MapLoadedListener {
+        onMapReady(_mapView.mapWindow.map)
+    }
+
     override fun onStart() {
         super.onStart()
         _mapView.onStart()
-        _mapView.mapWindow.map.setMapLoadedListener {
-            onMapReady(_mapView.mapWindow.map)
-        }
+        _mapView.mapWindow.map.setMapLoadedListener(_mapLoadedListener)
     }
 
     override fun onStop() {

@@ -38,7 +38,6 @@ class AuthorizationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MapKitFactory.initialize(this)
 
         setContentView(_binding.root)
 
