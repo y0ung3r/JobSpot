@@ -18,7 +18,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.jobspot.data.profile.DefaultVerificationListener
+import com.jobspot.data.profile.FirebaseWorkerFileRepository
 import com.jobspot.domain.profile.interfaces.VerificationListener
+import com.jobspot.domain.profile.interfaces.WorkerFileRepository
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -73,6 +75,12 @@ val dataModule = module {
         FirebaseUserRepository(
             context = get(),
             authorizationProvider = get()
+        )
+    }
+
+    factory<WorkerFileRepository> {
+        FirebaseWorkerFileRepository(
+            context = get()
         )
     }
 

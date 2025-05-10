@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.jobspot.domain.authorization.ProfileCreationParameters
+import com.jobspot.domain.authorization.useCases.AddWorkerFilesUseCase
 import com.jobspot.domain.authorization.useCases.CreateProfileUseCase
 import com.jobspot.domain.profile.models.MapAddress
 import com.jobspot.domain.services.models.Service
@@ -13,14 +14,14 @@ import com.jobspot.domain.services.useCases.GetServicesUseCase
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.search.ToponymObjectMetadata
 import kotlinx.coroutines.launch
-import java.io.File
 import java.io.InputStream
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ProfileCreationViewModel(
     private val createProfileUseCase: CreateProfileUseCase,
-    private val getServicesUseCase: GetServicesUseCase
+    private val getServicesUseCase: GetServicesUseCase,
+    private val addWorkerFilesUseCase: AddWorkerFilesUseCase
 ) : ViewModel() {
     private val _isLastnameFilled = MutableLiveData<Boolean>()
     val isLastnameFilled: LiveData<Boolean> = _isLastnameFilled
@@ -45,6 +46,9 @@ class ProfileCreationViewModel(
 
     private val _onProfileCreated = MutableLiveData<Result<Unit>>()
     val onProfileCreated: LiveData<Result<Unit>> = _onProfileCreated
+
+    private val _onWorkerFilesAdded = MutableLiveData<Result<Unit>>()
+    val onWorkerFilesAdded: LiveData<Result<Unit>> = _onWorkerFilesAdded
 
     private val _homeAddress = MutableLiveData<MapAddress>()
     val homeAddress: LiveData<MapAddress> = _homeAddress
@@ -137,6 +141,24 @@ class ProfileCreationViewModel(
             }
             .onFailure { exception ->
                 _onProfileCreated.postValue(
+                    Result.failure(exception)
+                )
+            }
+        }
+    }
+
+    fun addWorkerFiles(userId: String, encodedInn: String?, encodedDiploma: String?, encodedEmploymentHistoryBook: String?) {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                addWorkerFilesUseCase.execute(userId, encodedInn, encodedDiploma, encodedEmploymentHistoryBook)
+            }
+            .onSuccess {
+                _onWorkerFilesAdded.postValue(
+                    Result.success(Unit)
+                )
+            }
+            .onFailure { exception ->
+                _onWorkerFilesAdded.postValue(
                     Result.failure(exception)
                 )
             }

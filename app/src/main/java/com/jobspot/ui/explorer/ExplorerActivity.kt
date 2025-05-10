@@ -5,7 +5,6 @@ import android.telephony.PhoneNumberUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.ExistingWorkPolicy
@@ -17,9 +16,7 @@ import com.jobspot.data.search.GeolocationUpdater
 import com.jobspot.databinding.ActivityExplorerBinding
 import com.jobspot.domain.search.models.Order
 import com.jobspot.ui.animations.VisibilityMode
-import com.jobspot.ui.animations.extensions.fade
 import com.jobspot.ui.animations.extensions.slide
-import com.jobspot.ui.animations.fade.FadeParameters
 import com.jobspot.ui.animations.slide.SlideFrom
 import com.jobspot.ui.animations.slide.SlideParameters
 import com.jobspot.ui.explorer.profile.models.AuthorizedUser
@@ -37,12 +34,8 @@ import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
 import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class ExplorerActivity : AppCompatActivity() {
@@ -199,10 +192,7 @@ class ExplorerActivity : AppCompatActivity() {
 
         binding.toolbar.setNavigationOnClickListener(::onDrawerOpenButtonClick)
 
-        _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
-        _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
-        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
-        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
+        reloadObservers()
 
         /*val navigationItems = setOf(
             R.id.navigation_home,
@@ -213,6 +203,13 @@ class ExplorerActivity : AppCompatActivity() {
         val applicationBarConfiguration = AppBarConfiguration(navigationItems)
         setupActionBarWithNavController(_navigationController, applicationBarConfiguration)
         binding.navigationView.setupWithNavController(_navigationController)*/
+    }
+
+    fun reloadObservers() {
+        _viewModel.currentGeoObject.removeObservers(this@ExplorerActivity)
+        _viewModel.getAuthorizedUser().removeObservers(this@ExplorerActivity)
+        _viewModel.currentGeoObject.observe(this@ExplorerActivity, ::onAddressChanged)
+        _viewModel.getAuthorizedUser().observe(this@ExplorerActivity, ::onUserReady)
     }
 
     override fun onStart() {

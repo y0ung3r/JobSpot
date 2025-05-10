@@ -155,8 +155,13 @@ class JobOverviewFragment : Fragment() {
             showRatingDialog(client)
         }
 
+        val activity = requireActivity()
+
         if (isFinished || isCanceled) {
             _navigationController.navigate(R.id.path_to_navigation_search_from_job_overview_fragment)
+
+            if (activity is ExplorerActivity)
+                activity.reloadObservers()
         }
     }
 

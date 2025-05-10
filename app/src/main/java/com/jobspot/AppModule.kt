@@ -30,7 +30,8 @@ val appModule = module {
     viewModel {
         ProfileCreationViewModel(
             createProfileUseCase = get(),
-            getServicesUseCase = get()
+            getServicesUseCase = get(),
+            addWorkerFilesUseCase = get()
         )
     }
 

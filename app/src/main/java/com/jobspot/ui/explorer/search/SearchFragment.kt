@@ -2,19 +2,20 @@ package com.jobspot.ui.explorer.search
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.findNavController
+import com.google.android.gms.location.LocationServices
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.chip.Chip
 import com.jobspot.R
 import com.jobspot.data.extensions.isGeolocationPermissionsDenied
 import com.jobspot.databinding.FragmentSearchBinding
@@ -24,12 +25,9 @@ import com.jobspot.domain.search.OrderCreationParameters
 import com.jobspot.domain.services.models.Service
 import com.jobspot.ui.animations.VisibilityMode
 import com.jobspot.ui.animations.extensions.fade
-import com.jobspot.ui.animations.extensions.slide
 import com.jobspot.ui.animations.fade.FadeParameters
 import com.jobspot.ui.animations.radar.RadarParameters
 import com.jobspot.ui.animations.radar.RadarView
-import com.jobspot.ui.animations.slide.SlideFrom
-import com.jobspot.ui.animations.slide.SlideParameters
 import com.jobspot.ui.explorer.ExplorerActivity
 import com.jobspot.ui.explorer.search.controls.bottomSheets.GeolocationUnavailableBottomSheetDialog
 import com.jobspot.ui.explorer.search.controls.bottomSheets.addresses.AddressesBottomSheetDialog
@@ -40,13 +38,8 @@ import com.jobspot.ui.explorer.viewModels.ExplorerViewModel
 import com.jobspot.ui.extensions.getZoomLevel
 import com.jobspot.ui.extensions.observeOnce
 import com.jobspot.ui.extensions.showToast
-import com.google.android.gms.location.LocationServices
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.chip.Chip
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.GeoObject
-import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.logo.Padding
 import com.yandex.mapkit.map.CameraListener
@@ -100,7 +93,6 @@ class SearchFragment : Fragment() {
     private val _searchBottomSheetBehavior by lazy {
         BottomSheetBehavior.from(_binding.searchBottomSheet.bottomSheetLayout)
     }
-
 
     private val _searchProgressBottomSheetBehavior by lazy {
         BottomSheetBehavior.from(_binding.searchProgressBottomSheet.bottomSheetLayout)

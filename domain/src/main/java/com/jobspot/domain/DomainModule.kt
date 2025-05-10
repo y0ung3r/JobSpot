@@ -1,5 +1,6 @@
 package com.jobspot.domain
 
+import com.jobspot.domain.authorization.useCases.AddWorkerFilesUseCase
 import com.jobspot.domain.authorization.useCases.CreateProfileUseCase
 import com.jobspot.domain.authorization.useCases.ResendVerificationCodeUseCase
 import com.jobspot.domain.authorization.useCases.SendVerificationCodeUseCase
@@ -109,6 +110,12 @@ val domainModule = module {
     factory {
         CreateProfileUseCase(
             userRepository = get()
+        )
+    }
+
+    factory {
+        AddWorkerFilesUseCase(
+            workerFileRepository = get()
         )
     }
 

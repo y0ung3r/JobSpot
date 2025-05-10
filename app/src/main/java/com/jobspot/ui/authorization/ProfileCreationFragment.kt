@@ -171,21 +171,34 @@ class ProfileCreationFragment : Fragment() {
             navigateToExplorerActivity()
         }
         .onFailure {
-            val errorMessage = getString(R.string.unexpected_error)
-            showToast(errorMessage)
-
-            _binding.confirmButton.isEnabled = true
-            _binding.lastnameField.isEnabled = true
-            _binding.firstnameField.isEnabled = true
-            _binding.middlenameField.isEnabled = true
-            _binding.isWorkerCheckBox.isEnabled = true
-            _binding.selectHomeAddressButton.isEnabled = true
-            _binding.selectProfessionButton.isEnabled = true
-            _binding.innFileButton.isEnabled = true
-            _binding.diplomaFileButton.isEnabled = true
-            _binding.employmentHistoryBookFileButton.isEnabled = true
-            _binding.personalDataAgreementCheckBox.isEnabled = true
+            showUnexpectedError()
         }
+    }
+
+    private fun onWorkerFilesAdded(result: Result<Unit>) {
+        result.onSuccess {
+            // Nothing
+        }
+        .onFailure {
+            showUnexpectedError()
+        }
+    }
+
+    private fun showUnexpectedError() {
+        val errorMessage = getString(R.string.unexpected_error)
+        showToast(errorMessage)
+
+        _binding.confirmButton.isEnabled = true
+        _binding.lastnameField.isEnabled = true
+        _binding.firstnameField.isEnabled = true
+        _binding.middlenameField.isEnabled = true
+        _binding.isWorkerCheckBox.isEnabled = true
+        _binding.selectHomeAddressButton.isEnabled = true
+        _binding.selectProfessionButton.isEnabled = true
+        _binding.innFileButton.isEnabled = true
+        _binding.diplomaFileButton.isEnabled = true
+        _binding.employmentHistoryBookFileButton.isEnabled = true
+        _binding.personalDataAgreementCheckBox.isEnabled = true
     }
 
     private fun onConfirmButtonClick(button: View) {
@@ -215,13 +228,11 @@ class ProfileCreationFragment : Fragment() {
                                         middlename = _binding.middlenameField.text.toString(),
                                         isWorker = _binding.isWorkerCheckBox.isChecked,
                                         homeAddress = homeAddress,
-                                        professionId = professionId,
-                                        encodedInn = encodedInn,
-                                        encodedDiploma = encodedDiploma,
-                                        encodedEmploymentHistoryBook = encodedEmploymentHistoryBook,
+                                        professionId = professionId
                                     )
 
                                     _viewModel.createProfile(profileCreationParameters)
+                                    _viewModel.addWorkerFiles(it.id, encodedInn, encodedDiploma, encodedEmploymentHistoryBook)
                                 }
                             }
                         }
@@ -291,6 +302,7 @@ class ProfileCreationFragment : Fragment() {
         _viewModel.isDiplomaFilled.observe(this@ProfileCreationFragment, ::onDiplomaValidating)
         _viewModel.isEmploymentHistoryBookFilled.observe(this@ProfileCreationFragment, ::onEmploymentHistoryBookValidating)
         _viewModel.onProfileCreated.observe(this@ProfileCreationFragment, ::onProfileCreated)
+        _viewModel.onWorkerFilesAdded.observe(this@ProfileCreationFragment, ::onWorkerFilesAdded)
 
         val workerButtons = arrayOf(
             _binding.selectProfessionButton,
