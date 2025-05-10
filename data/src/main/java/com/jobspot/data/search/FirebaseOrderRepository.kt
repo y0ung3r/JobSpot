@@ -121,6 +121,10 @@ internal class FirebaseOrderRepository(
 
     override suspend fun getAvailableOrders(): List<Order> {
         val currentUser = authorizationProvider.getAuthorizedUser() ?: return emptyList()
+
+        if (!currentUser.isDocumentsVerified)
+            return emptyList()
+
         val workerId = currentUser.id
         val availableOrders = context.orders
             .asList<OrderEntity>()
