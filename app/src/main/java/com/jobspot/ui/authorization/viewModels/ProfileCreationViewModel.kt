@@ -13,6 +13,10 @@ import com.jobspot.domain.services.useCases.GetServicesUseCase
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.search.ToponymObjectMetadata
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.InputStream
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class ProfileCreationViewModel(
     private val createProfileUseCase: CreateProfileUseCase,
@@ -30,6 +34,15 @@ class ProfileCreationViewModel(
     private val _isProfessionFilled = MutableLiveData<Boolean>()
     val isProfessionFilled: LiveData<Boolean> = _isProfessionFilled
 
+    private val _isInnFilled = MutableLiveData<Boolean>()
+    val isInnFilled: LiveData<Boolean> = _isInnFilled
+
+    private val _isDiplomaFilled = MutableLiveData<Boolean>()
+    val isDiplomaFilled: LiveData<Boolean> = _isDiplomaFilled
+
+    private val _isEmploymentHistoryBookFilled = MutableLiveData<Boolean>()
+    val isEmploymentHistoryBookFilled: LiveData<Boolean> = _isEmploymentHistoryBookFilled
+
     private val _onProfileCreated = MutableLiveData<Result<Unit>>()
     val onProfileCreated: LiveData<Result<Unit>> = _onProfileCreated
 
@@ -38,6 +51,15 @@ class ProfileCreationViewModel(
 
     private val _professionId = MutableLiveData<String?>(null)
     val professionId: LiveData<String?> = _professionId
+
+    private val _encodedInn = MutableLiveData<String?>(null)
+    val encodedInn: LiveData<String?> = _encodedInn
+
+    private val _encodedDiploma = MutableLiveData<String?>(null)
+    val encodedDiploma: LiveData<String?> = _encodedDiploma
+
+    private val _encodedEmploymentHistoryBook = MutableLiveData<String?>(null)
+    val encodedEmploymentHistoryBook: LiveData<String?> = _encodedEmploymentHistoryBook
 
     fun validateLastname(lastname: String) {
         _isLastnameFilled.postValue(
@@ -66,6 +88,33 @@ class ProfileCreationViewModel(
                 position.longitude
             )
         )
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    fun selectInn(stream: InputStream?) {
+        _encodedInn.postValue(stream?.let { Base64.encode(it.readBytes()) })
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    fun selectDiploma(stream: InputStream?) {
+        _encodedDiploma.postValue(stream?.let { Base64.encode(it.readBytes()) })
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    fun selectEmploymentHistoryBook(stream: InputStream?) {
+        _encodedEmploymentHistoryBook.postValue(stream?.let { Base64.encode(it.readBytes()) })
+    }
+
+    fun validateInn(fileName: String?) {
+        _isInnFilled.postValue(fileName != null && fileName.contains("pdf"))
+    }
+
+    fun validateDiploma(fileName: String?) {
+        _isDiplomaFilled.postValue(fileName != null && fileName.contains("pdf"))
+    }
+
+    fun validateEmploymentHistoryBook(fileName: String?) {
+        _isEmploymentHistoryBookFilled.postValue(fileName != null && fileName.contains("pdf"))
     }
 
     fun selectProfession(professionId: String?) {

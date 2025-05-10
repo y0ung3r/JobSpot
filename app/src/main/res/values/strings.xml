@@ -77,4 +77,10 @@
     <string name="empty_addresses_prompt">Address not found</string>
     <string name="profession">Profession</string>
     <string name="invalid_profession">Invalid profession</string>
+    <string name="verification_bar_title">Your profile is being verified</string>
+    <string name="verification_bar_prompt">You are unable to take orders at this time</string>
+    <string name="diploma">Diploma</string>
+    <string name="inn">Taxpayer Identification Number</string>
+    <string name="employment_history_book">Employment history book</string>
+    <string name="personal_data_agreement">I agree to the processing of my personal data</string>
 </resources>

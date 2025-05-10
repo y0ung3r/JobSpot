@@ -11,4 +11,5 @@
     <color name="gray">#40000000</color>
     <color name="light_gray">#F4F4F4</color>
     <color name="crimson">#DC143C</color>
+    <color name="gold">#FFD700</color>
 </resources>
