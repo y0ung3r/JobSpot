@@ -122,16 +122,18 @@ class ConfirmationCodeVerifyingFragment : Fragment() {
                 )
             )
 
+            val resendText = getString(R.string.resend_code_action)
+
             val resendTimeout = _activityViewModel.resendTimeout.value!!.times(1000L)
             val cooldownTimer = object : CountDownTimer(resendTimeout, 1000L) {
                 override fun onTick(milliseconds: Long) {
                     val seconds = milliseconds.div(1000L)
-                    _binding.resendButton.text = "${getString(R.string.resend_code_action)} (${seconds + 1})"
+                    _binding.resendButton.text = "${resendText} (${seconds + 1})"
                 }
 
                 override fun onFinish() {
                     _binding.resendButton.isEnabled = true
-                    _binding.resendButton.text = getString(R.string.resend_code_action)
+                    _binding.resendButton.text = resendText
                 }
             }
 
