@@ -5,6 +5,7 @@ import android.telephony.PhoneNumberUtils
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.work.ExistingWorkPolicy
@@ -15,6 +16,12 @@ import com.jobspot.R
 import com.jobspot.data.search.GeolocationUpdater
 import com.jobspot.databinding.ActivityExplorerBinding
 import com.jobspot.domain.search.models.Order
+import com.jobspot.ui.animations.VisibilityMode
+import com.jobspot.ui.animations.extensions.fade
+import com.jobspot.ui.animations.extensions.slide
+import com.jobspot.ui.animations.fade.FadeParameters
+import com.jobspot.ui.animations.slide.SlideFrom
+import com.jobspot.ui.animations.slide.SlideParameters
 import com.jobspot.ui.explorer.profile.models.AuthorizedUser
 import com.jobspot.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.jobspot.ui.explorer.viewModels.ExplorerViewModel
@@ -29,6 +36,10 @@ import com.yandex.mapkit.search.SearchType
 import com.yandex.mapkit.search.Session
 import com.yandex.mapkit.search.ToponymObjectMetadata
 import com.yandex.runtime.Error
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -117,6 +128,19 @@ class ExplorerActivity : AppCompatActivity() {
         val workManager = WorkManager.getInstance(applicationContext)
 
         if (user.isWorker) {
+            _viewModel.startVerificationListener {
+                binding.verificationBar.slide(SlideParameters().apply {
+                    mode = VisibilityMode.Hide
+                    from = SlideFrom.Top
+                })
+            }
+
+            if (!user.isDocumentsVerified)
+                binding.verificationBar.slide(SlideParameters().apply {
+                    mode = VisibilityMode.Show
+                    from = SlideFrom.Top
+                })
+
             _viewModel.startClientSearching {
                 onClientFound(it)
             }

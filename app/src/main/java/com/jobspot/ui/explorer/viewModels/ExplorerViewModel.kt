@@ -5,6 +5,7 @@ import com.jobspot.domain.profile.models.User
 import com.jobspot.domain.profile.useCases.AddRateToUserUseCase
 import com.jobspot.domain.profile.useCases.GetAuthorizedUserUseCase
 import com.jobspot.domain.profile.useCases.LogoutUseCase
+import com.jobspot.domain.profile.useCases.StartVerificationListenerUseCase
 import com.jobspot.domain.search.models.Order
 import com.jobspot.domain.search.useCases.*
 import com.jobspot.ui.explorer.profile.models.AuthorizedUser
@@ -20,6 +21,7 @@ class ExplorerViewModel(
     private val getOrderExecutorUseCase: GetOrderExecutorUseCase,
     private val getOrderInvokerUseCase: GetOrderInvokerUseCase,
     private val checkOrderStateUseCase: CheckOrderStateUseCase,
+    private val startVerificationListenerUseCase: StartVerificationListenerUseCase,
     private val finishOrderUseCase: FinishOrderUseCase,
     private val addRateToUserUseCase: AddRateToUserUseCase,
     private val logoutUseCase: LogoutUseCase
@@ -55,6 +57,12 @@ class ExplorerViewModel(
     fun startOrderChecker(order: Order, onOrderChanged: (isFinished: Boolean, isCanceled: Boolean) -> Unit) {
         viewModelScope.launch {
             checkOrderStateUseCase.execute(order.id, onOrderChanged)
+        }
+    }
+
+    fun startVerificationListener(onVerified: (User) -> Unit) {
+        viewModelScope.launch {
+            startVerificationListenerUseCase.execute(onVerified)
         }
     }
 
@@ -123,7 +131,8 @@ class ExplorerViewModel(
                 userSource.phoneNumber,
                 userSource.isWorker,
                 currentOrder,
-                averageRate = userSource.averageRate
+                userSource.isDocumentsVerified,
+                userSource.averageRate
             )
         }
 

@@ -13,6 +13,7 @@ data class AuthorizedUser(
     val phoneNumber: String,
     val isWorker: Boolean,
     val currentOrder: Order? = null,
+    val isDocumentsVerified: Boolean,
     val averageRate: Double
 ) {
     val fullname: String = "${lastname.orEmpty()} ${firstname.orEmpty()} ${middlename.orEmpty()}".trim()

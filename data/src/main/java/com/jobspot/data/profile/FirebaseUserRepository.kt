@@ -54,6 +54,7 @@ internal class FirebaseUserRepository(
                 homeAddress = it.homeAddress,
                 geolocation = it.geolocation,
                 professionId = it.professionId,
+                isDocumentsVerified = it.isDocumentsVerified,
                 rates = it.rates
             )
         }
@@ -90,6 +91,7 @@ internal class FirebaseUserRepository(
             homeAddress = user.homeAddress,
             geolocation = user.geolocation,
             professionId = user.professionId,
+            isDocumentsVerified = user.isDocumentsVerified,
             rates = user.rates
         )
     }

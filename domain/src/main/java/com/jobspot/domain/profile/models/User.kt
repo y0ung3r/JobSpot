@@ -20,6 +20,7 @@ data class User(
     val homeAddress: MapAddress?,
     val geolocation: MapAddress?,
     val professionId: String?,
+    val isDocumentsVerified: Boolean,
     val rates: List<Float> = listOf(5.0f)
 ) {
     val averageRate = rates.average()

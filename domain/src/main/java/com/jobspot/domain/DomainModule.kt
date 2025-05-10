@@ -7,6 +7,7 @@ import com.jobspot.domain.authorization.useCases.VerifyCodeUseCase
 import com.jobspot.domain.profile.useCases.AddRateToUserUseCase
 import com.jobspot.domain.profile.useCases.GetAuthorizedUserUseCase
 import com.jobspot.domain.profile.useCases.LogoutUseCase
+import com.jobspot.domain.profile.useCases.StartVerificationListenerUseCase
 import com.jobspot.domain.search.useCases.*
 import com.jobspot.domain.services.useCases.GetServicesUseCase
 import org.koin.dsl.module
@@ -47,6 +48,12 @@ val domainModule = module {
     factory {
         CheckOrderStateUseCase(
             checker = get()
+        )
+    }
+
+    factory {
+        StartVerificationListenerUseCase(
+            verificationListener = get()
         )
     }
 
