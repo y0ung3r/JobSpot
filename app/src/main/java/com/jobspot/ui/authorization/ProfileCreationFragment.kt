@@ -89,6 +89,7 @@ class ProfileCreationFragment : Fragment() {
         val isInnValid = !_binding.isWorkerCheckBox.isChecked || (_viewModel.isInnFilled.value ?: false)
         val isDiplomaValid = !_binding.isWorkerCheckBox.isChecked || (_viewModel.isDiplomaFilled.value ?: false)
         val isEmploymentHistoryBookValid = !_binding.isWorkerCheckBox.isChecked || (_viewModel.isEmploymentHistoryBookFilled.value ?: false)
+        val isAgreeWithProcessingOfPersonalData = !_binding.isWorkerCheckBox.isChecked || _binding.personalDataAgreementCheckBox.isChecked
 
         _binding.confirmButton.isEnabled =
             isLastnameValid &&
@@ -98,7 +99,7 @@ class ProfileCreationFragment : Fragment() {
             isInnValid &&
             isDiplomaValid &&
             isEmploymentHistoryBookValid &&
-            _binding.personalDataAgreementCheckBox.isChecked
+            isAgreeWithProcessingOfPersonalData
     }
 
     private fun onLastnameValidating(isValid: Boolean) {
