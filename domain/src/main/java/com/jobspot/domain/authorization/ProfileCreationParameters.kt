@@ -12,5 +12,8 @@ data class ProfileCreationParameters(
     val middlename: String?,
     val isWorker: Boolean,
     val homeAddress: MapAddress,
-    val professionId: String?
+    val professionId: String?,
+    val encodedInn: String?,
+    val encodedDiploma: String?,
+    val encodedEmploymentHistoryBook: String?,
 )

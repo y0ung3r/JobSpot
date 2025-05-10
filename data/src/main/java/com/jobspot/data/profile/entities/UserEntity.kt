@@ -53,6 +53,26 @@ internal class UserEntity : Serializable {
     var professionId: String? = null
 
     /**
+     * Закодированный файл, содержащий ИНН
+     */
+    var encodedInn: String? = null
+
+    /**
+     * Закодированный файл, содержащий диплом
+     */
+    var encodedDiploma: String? = null
+
+    /**
+     * Закодированный файл, содержащий трудовую книгу
+     */
+    var encodedEmploymentHistoryBook: String? = null
+
+    /**
+     * Указывает, что документы подтверждены
+     */
+    var isDocumentsVerified: Boolean = false
+
+    /**
      * Оценки пользователя
      */
     var rates: ArrayList<Float> = arrayListOf(5.0f)

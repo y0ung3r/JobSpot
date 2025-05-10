@@ -24,6 +24,10 @@ internal class FirebaseUserRepository(
             isWorker = parameters.isWorker
             homeAddress = parameters.homeAddress
             professionId = parameters.professionId
+            encodedInn = parameters.encodedInn
+            encodedDiploma = parameters.encodedDiploma
+            encodedEmploymentHistoryBook = parameters.encodedEmploymentHistoryBook
+            isDocumentsVerified = false
         }
 
         context.users.save(userId, storeUser)

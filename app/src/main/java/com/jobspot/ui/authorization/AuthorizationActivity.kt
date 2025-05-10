@@ -43,11 +43,6 @@ class AuthorizationActivity : AppCompatActivity() {
         setContentView(_binding.root)
 
         _binding.authorizationFragmentsContainer.visibility = View.INVISIBLE
-    }
-
-    override fun onStart() {
-        super.onStart()
-        MapKitFactory.getInstance().onStart()
 
         _viewModel.getAuthorizedUser().observeOnce(this@AuthorizationActivity) { authorizedUser ->
             if (authorizedUser != null && authorizedUser.fullname.isNotBlank()) {
@@ -60,6 +55,11 @@ class AuthorizationActivity : AppCompatActivity() {
 
             _binding.authorizationFragmentsContainer.visibility = View.VISIBLE
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        MapKitFactory.getInstance().onStart()
     }
 
     override fun onStop() {
