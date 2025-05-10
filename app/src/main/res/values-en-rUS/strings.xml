@@ -84,4 +84,5 @@
     <string name="inn">Taxpayer Identification Number</string>
     <string name="employment_history_book">Employment history book</string>
     <string name="personal_data_agreement">I agree to the processing of my personal data</string>
+    <string name="client_rating">Client rating</string>
 </resources>

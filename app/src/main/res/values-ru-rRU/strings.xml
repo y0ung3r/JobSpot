@@ -84,4 +84,5 @@
     <string name="inn">Идентификационный номер налогоплательщика</string>
     <string name="employment_history_book">Трудовая книга</string>
     <string name="personal_data_agreement">Я согласен на обработку моих персональных данных</string>
+    <string name="client_rating">Рейтинг клиента</string>
 </resources>

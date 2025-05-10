@@ -121,6 +121,7 @@ class OrderOverviewFragment : Fragment() {
         fillWorkerName(worker.firstname!!)
         fillAddress(order.address)
 
+        _binding.workerRating.text = "%.1f".format(worker.averageRate)
         _binding.serviceCategory.text = order.service.category
         _binding.serviceTitle.text = order.service.title
     }

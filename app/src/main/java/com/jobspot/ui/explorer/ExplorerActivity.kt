@@ -25,6 +25,7 @@ import com.jobspot.ui.animations.slide.SlideParameters
 import com.jobspot.ui.explorer.profile.models.AuthorizedUser
 import com.jobspot.ui.explorer.search.controls.bottomSheets.AcceptJobBottomSheetDialog
 import com.jobspot.ui.explorer.viewModels.ExplorerViewModel
+import com.jobspot.ui.extensions.observeOnce
 import com.yandex.mapkit.GeoObject
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -79,16 +80,19 @@ class ExplorerActivity : AppCompatActivity() {
             override fun onSearchResponse(response: Response) {
                 val geoObject = response.collection.children.firstNotNullOf { it.obj }
 
-                AcceptJobBottomSheetDialog(
-                    _viewModel,
-                    order,
-                    "${geoObject.name}",
-                    ::onClientFound,
-                    ::onWorkerAcceptOrder,
-                    this@ExplorerActivity,
-                    R.style.Theme_JobSpot_BottomSheetDialog,
-                )
-                .show()
+                _viewModel.client.observeOnce(this@ExplorerActivity) {
+                    AcceptJobBottomSheetDialog(
+                        _viewModel,
+                        it,
+                        order,
+                        "${geoObject.name}",
+                        ::onClientFound,
+                        ::onWorkerAcceptOrder,
+                        this@ExplorerActivity,
+                        R.style.Theme_JobSpot_BottomSheetDialog,
+                    )
+                    .show()
+                }
             }
 
             override fun onSearchError(error: Error) {
@@ -226,6 +230,7 @@ class ExplorerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        // Ignore...
+        if (binding.drawerLayout.isOpen)
+            binding.drawerLayout.close()
     }
 }

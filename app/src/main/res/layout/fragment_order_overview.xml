@@ -7,19 +7,46 @@
     android:layout_margin="8dp"
     tools:context=".ui.explorer.orderOverview.OrderOverviewFragment">
 
-    <TextView
-        android:id="@+id/order_overview_worker_name"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:id="@+id/title_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
         android:gravity="center"
-        tools:text="Имя"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        android:paddingTop="48dp">
+
+        <TextView
+            android:id="@+id/order_overview_worker_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Фамилия Имя Отчество"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="5dp"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_rating"
+            app:tint="@color/purple_500" />
+
+        <Space
+            android:layout_width="2dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/worker_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textColor="@color/purple_500"
+            tools:text="5.0" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/order_overview_title"
@@ -32,7 +59,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_overview_worker_name" />
+        app:layout_constraintTop_toBottomOf="@id/title_container" />
 
     <LinearLayout
         android:id="@+id/order_overview_buttons_layout"
