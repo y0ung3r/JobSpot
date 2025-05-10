@@ -108,6 +108,8 @@ class ExplorerActivity : AppCompatActivity() {
         if (user == null)
             return
 
+        updateProfile(user)
+
         val logoutButton = binding.drawerLayout.findViewById<TextView>(R.id.logout_button_title)
         logoutButton.setOnClickListener {
             onLogoutButtonClick()
@@ -159,6 +161,17 @@ class ExplorerActivity : AppCompatActivity() {
         }
     }
 
+    private fun updateProfile(user: AuthorizedUser) {
+        val locale = Locale.getDefault()
+        val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
+        val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
+        val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
+
+        fullnameField.text = user.fullname
+        ratingField.text = "%.1f".format(user.averageRate)
+        phoneNumberField.text = PhoneNumberUtils.formatNumber(user.phoneNumber, locale.country)
+    }
+
     private fun onAddressChanged(geoObject: GeoObject) {
         drawAddressInToolbar(geoObject)
     }
@@ -175,18 +188,11 @@ class ExplorerActivity : AppCompatActivity() {
             }
 
             override fun onDrawerOpened(drawerView: View) {
-                val locale = Locale.getDefault()
-                val fullnameField = binding.drawerLayout.findViewById<TextView>(R.id.fullname_field)
-                val ratingField = binding.drawerLayout.findViewById<TextView>(R.id.user_rating)
-                val phoneNumberField = binding.drawerLayout.findViewById<TextView>(R.id.phone_number_field)
-
                 _viewModel.getAuthorizedUser().observeOnce(this@ExplorerActivity) {
                     if (it == null)
                         return@observeOnce
 
-                    fullnameField.text = it.fullname
-                    ratingField.text = "%.1f".format(it.averageRate)
-                    phoneNumberField.text = PhoneNumberUtils.formatNumber(it.phoneNumber, locale.country)
+                    updateProfile(it)
                 }
             }
 
