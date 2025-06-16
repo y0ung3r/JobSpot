@@ -308,8 +308,7 @@ class ProfileCreationFragment : Fragment() {
             _binding.selectProfessionButton,
             _binding.diplomaFileButton,
             _binding.innFileButton,
-            _binding.employmentHistoryBookFileButton,
-            _binding.personalDataAgreementCheckBox
+            _binding.employmentHistoryBookFileButton
         )
 
         _binding.lastnameField.afterTextChanged(::onLastnameChanged)
