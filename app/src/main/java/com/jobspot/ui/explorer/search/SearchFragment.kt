@@ -3,9 +3,12 @@ package com.jobspot.ui.explorer.search
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.core.view.isVisible
@@ -16,6 +19,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 import com.jobspot.R
 import com.jobspot.data.extensions.isGeolocationPermissionsDenied
 import com.jobspot.databinding.FragmentSearchBinding
@@ -462,7 +467,30 @@ class SearchFragment : Fragment() {
 
         _binding.searchBottomSheet.selectServiceButton.setOnClickListener(::openServicesBottomSheet)
         _binding.searchBottomSheet.availableRadii.setOnCheckedChangeListener(::onUserChangeRadius)
-        _binding.searchBottomSheet.startSearchingButton.setOnClickListener(::onUserStartSearching)
+        _binding.searchBottomSheet.startSearchingButton.setOnClickListener {
+            val context = requireContext()
+
+            val clarifyContainer = LinearLayout(context)
+            clarifyContainer.gravity = Gravity.CENTER
+
+            val textInput = TextInputEditText(context).apply {
+                inputType = EditorInfo.TYPE_CLASS_NUMBER
+                minWidth = 125
+            }
+
+            clarifyContainer.addView(textInput)
+
+            val clarifyDialog = MaterialAlertDialogBuilder(context, R.style.Theme_JobSpot_AlertDialog)
+                .setMessage(R.string.clarify_apartment_number)
+                .setView(clarifyContainer)
+                .setPositiveButton(R.string.confirm_entry_action) { dialog, id ->
+                    onUserStartSearching(it)
+                    dialog.cancel()
+                }
+
+            clarifyDialog.show()
+        }
+
         _binding.searchProgressBottomSheet.cancelButton.setOnClickListener(::onUserCancelSearching)
         _toolbar.setOnClickListener(::onAddressTitleClick)
 
